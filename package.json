@@ -1,0 +1,23 @@
+{
+  "name": "evolveyourgarden",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "Roblox",
+    "Nevermore",
+    "Lua"
+  ],
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@quenty/attributeutils": "^14.29.0",
+    "@quenty/binder": "^14.34.0",
+    "@quenty/clienttranslator": "^14.35.0",
+    "@quenty/cmdrservice": "^13.41.0",
+    "@quenty/loader": "^10.11.0",
+    "@quenty/playerutils": "^8.31.2",
+    "@quenty/servicebag": "^11.17.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}
