@@ -17,7 +17,7 @@ local Blend = require("Blend")
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local GenericText = function(props: Props)
+local GenericTextComponent = function(props: Props)
     return Blend.New "TextLabel" {
         Name = props.Name or "GenericText",
         Position = props.Position or UDim2.fromScale(0.5, 0.5),
@@ -51,10 +51,10 @@ type Props = {
 }
 type ModuleData = {}
 
-export type Module = typeof(GenericText) & ModuleData
+export type Module = typeof(GenericTextComponent) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return GenericText :: Module
+return GenericTextComponent :: Module

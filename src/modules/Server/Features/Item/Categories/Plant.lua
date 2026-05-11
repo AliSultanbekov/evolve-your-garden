@@ -52,7 +52,7 @@ function Plant.ClaimProductionCycles(self: Module, item: ItemTypes.PlantItem): n
 end
 
 function Plant.Produce(self: Module, item: ItemTypes.PlantItem): { ItemTypes.RawItem }
-    local PlantConfig = PlantsConfig[item.Name]
+    local PlantConfig = PlantsConfig.Plants[item.Name]
     local Genetics = PlantsConfig:GetGenetics(item.Name, item.GeneticNumber)
 
     local Amount = ChanceClass.new(
@@ -70,6 +70,8 @@ function Plant.Produce(self: Module, item: ItemTypes.PlantItem): { ItemTypes.Raw
         }
 
         local RawItem: ItemTypes.RawItem
+
+        print(ChanceClass.new(Pool))
 
         if ChanceClass.new(Pool):Choose() == "Yes" then
             local Baby: ItemTypes.RawPlantItem = {

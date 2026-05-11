@@ -50,4 +50,13 @@ export type PlantPlacedRemotePacket = {
     Plant: ItemTypes.PlantItem,
 }
 
+export type PlacePlantRemotePacket = {
+    SlotId: SlotId,
+    ItemId: ItemTypes.ItemId,
+}
+
+export type RemovePlantRemotePacket = {
+    SlotId: SlotId,
+}
+
 return nil

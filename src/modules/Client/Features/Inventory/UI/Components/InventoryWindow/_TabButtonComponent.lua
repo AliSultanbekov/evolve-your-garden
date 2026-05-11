@@ -1,5 +1,5 @@
 --[=[
-    @class CloseButton
+    @class TabButton
 ]=]
 
 -- [ Roblox Services ] --
@@ -11,45 +11,45 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local Blend = require("Blend")
 
 -- [ Components ] --
-local GenericButton = require("GenericButton")
+local GenericButtonComponent = require("GenericButtonComponent")
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local CloseButton = function(props: Props)
-    return GenericButton({
-        Position = props.Position or UDim2.new(0.5, 0, 0.5, 0),
-        Size = props.Size or UDim2.fromOffset(50,50),
+local TabButtonComponent = function(props: Props)
+    local TabName = props.TabName
+
+    return GenericButtonComponent({
+        Size = UDim2.fromOffset(100,100),
         AnchorPoint = Vector2.new(0.5,0.5),
-        BackgroundColor3 = Color3.fromRGB(255, 55, 59),
+        BackgroundColor3 = Color3.fromRGB(64, 179, 255),
         BackgroundTransparency = 0,
+        OnPressed = function () props.OnTabSwitched(TabName) end,
         Children = {
             Blend.New "UICorner" {
                 CornerRadius = UDim.new(0, 5)
             },
             Blend.New "UIStroke" {
                 Thickness = 4,
-                Color = Color3.fromRGB(137, 28, 28)
+                Color = Color3.fromRGB(36, 66, 125)
             },
         },
-        OnPressed = props.OnClose
     })
 end
 
 -- [ Types ] --
 type Props = {
-    Position: UDim2?,
-    Size: UDim2?,
-    OnClose: () -> (),
+    TabName: string,
+    OnTabSwitched: (tabName: string) -> ()
 }
 type ModuleData = {}
 
-export type Module = typeof(CloseButton) & ModuleData
+export type Module = typeof(TabButtonComponent) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return CloseButton :: Module
+return TabButtonComponent :: Module

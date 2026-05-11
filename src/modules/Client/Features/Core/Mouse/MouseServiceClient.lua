@@ -93,13 +93,13 @@ function MouseServiceClient.ObserveOnClick(self: Module, targetInstance: Instanc
     end)
 end
 
-function MouseServiceClient.ObserveIsHovering(self: Module, targetInstance: Instance)
+function MouseServiceClient.ObserveIsHovering(self: Module, targetInstance: Instance): Observable.Observable<boolean>
     return self._HoveredInstance:Observe():Pipe({
         Rx.map(function(instance: Instance?)
             return instance ~= nil and (instance:IsDescendantOf(targetInstance) or instance == targetInstance)
         end) :: any,
         Rx.distinct() :: any,
-    })
+    }) :: any
 end
 
 function MouseServiceClient.ObserveHoveredModel(self: Module)

@@ -13,14 +13,14 @@ local ValueObject = require("ValueObject")
 local Observable = require("Observable")
 
 -- [ Components ] --
-local Scaler = require("Scaler")
+local ScalerComponent = require("ScalerComponent")
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local GenericButton = function(props: Props)
+local GenericButtonComponent = function(props: Props)
     local IsPressed = ValueObject.new(false)
     local Scale = Blend.Spring(
         Blend.Computed(
@@ -66,7 +66,7 @@ local GenericButton = function(props: Props)
             IsPressed.Value = false
         end,
         [Blend.Children] = {
-            Scaler({ Scale = Scale }),
+            ScalerComponent({ Scale = Scale }),
             props.Children :: any
         }
     }
@@ -85,10 +85,10 @@ type Props = {
 }
 type ModuleData = {}
 
-export type Module = typeof(GenericButton) & ModuleData
+export type Module = typeof(GenericButtonComponent) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return GenericButton :: Module
+return GenericButtonComponent :: Module

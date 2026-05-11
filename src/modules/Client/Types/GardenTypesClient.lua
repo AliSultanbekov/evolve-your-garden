@@ -37,5 +37,6 @@ export type ReactiveSlot = {
 export type ReactiveSlots = ObservableMap.ObservableMap<GardenTypesShared.SlotId, ReactiveSlot>
 export type ReactiveHarvest = ObservableMap.ObservableMap<GardenTypesShared.SlotId, ReactiveItemTypes.ReactiveItem>
 export type SlotModel = typeof(ReplicatedStorage.Assets.Objects.Garden.Slot)
+export type GardenModel = typeof(ReplicatedStorage.Assets.Objects.Garden.Upgrades["1"])
 
 return nil

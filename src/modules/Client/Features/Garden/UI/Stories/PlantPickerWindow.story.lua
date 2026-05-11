@@ -15,7 +15,7 @@ local ObservableMap = require("ObservableMap")
 local ItemUtil = require("ItemUtil")
 
 -- [ Components ] --
-local PlantPicketWindow = require(script.Parent.Parent.Components.PlantPickerWindow.PlantPickerWindow)
+local PlantPicketWindow = require(script.Parent.Parent.Components.PlantPickerWindow.PlantPickerWindowComponent)
 
 -- [ Constants ] --
 

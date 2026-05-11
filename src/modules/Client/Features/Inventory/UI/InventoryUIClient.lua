@@ -13,7 +13,7 @@ local Maid = require("Maid")
 local Blend = require("Blend")
 local ValueObject = require("ValueObject")
 
-local InventoryWindow = require(script.Parent.Components.InventoryWindow._InventoryWindow)
+local WindowComponent = require(script.Parent.Components.InventoryWindow._WindowComponent)
 local InventoryConfig = require(script.Parent.Parent._InventoryConfig)
 
 -- [ Constants ] --
@@ -63,7 +63,7 @@ function InventoryUIClient.Start(self: Module)
     local TabsConfig = InventoryConfig.TabsConfig
 
     self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("Main"), {
-        InventoryWindow({
+        WindowComponent({
             -- Vars
             IsOpen = IsOpen,
 

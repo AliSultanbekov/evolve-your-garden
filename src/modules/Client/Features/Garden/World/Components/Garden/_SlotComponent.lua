@@ -15,6 +15,8 @@ local ReactiveItemTypes = require("ReactiveItemTypes")
 local AssetProvider = require("AssetProvider")
 
 -- [ Components ] --
+local HighlightComponent = require("HighlightComponent")
+local PlantComponent = require(script.Parent._PlantComponent)
 
 -- [ Constants ] --
 
@@ -23,40 +25,45 @@ local AssetProvider = require("AssetProvider")
 -- [ Module Table ] --
 local SlotComponent = function(props: Props)
     local MaidObject = Maid.new()
+    local PlantMaid = MaidObject:Add(Maid.new())
     local MouseServiceClient = props.MouseServiceClient
-    local Garden = props.Garden
     local Slot = props.Slot
     local SlotID = Slot.Id
 
     local function SetupSlot(slotModel: GardenTypesClient.SlotModel)
         slotModel.Name = SlotID
         slotModel:PivotTo(props.SlotCFrame)
-        slotModel.Parent = workspace.World.Gardens[Garden.GardenId]
+        slotModel.Parent = props.GardenModel.Slots
 
         return slotModel
     end
 
     local SlotModel = MaidObject:Add(SetupSlot(AssetProvider:Get("Objects/Garden/Slot")))
 
-    local Highlight = Instance.new("Highlight")
-    Highlight.Adornee = SlotModel
-    Highlight.FillColor = Color3.fromRGB(255, 220, 100)
-    Highlight.OutlineColor = Color3.fromRGB(255, 200, 0)
-    Highlight.FillTransparency = 0.5
-    Highlight.Enabled = false
-    Highlight.Parent = SlotModel
-    MaidObject:Add(Highlight)
-    
-    MaidObject:Add(MouseServiceClient:ObserveIsHovering(SlotModel):Subscribe(function(hovering: boolean)
-        Highlight.Enabled = hovering
-    end))
+    MaidObject:Add(HighlightComponent({
+        Enabled = MouseServiceClient:ObserveIsHovering(SlotModel),
+        Adornee = SlotModel,
+        FillColor = Color3.fromRGB(245, 245, 245),
+        FillTransparency = 0.8,
+        OutlineColor = Color3.fromRGB(255, 255, 255),
+        OutlineTransparency = 0.8,
+    }))
 
     MaidObject:Add(MouseServiceClient:ObserveOnClick(SlotModel):Subscribe(function()
         props.OnSlotSelected(SlotID)
     end))
 
     MaidObject:Add(Slot.Plant:Observe():Subscribe(function(plant: ReactiveItemTypes.ReactivePlantItem?)
-        
+        PlantMaid:DoCleaning()
+
+        if not plant then
+            return
+        end
+
+        PlantMaid:Add(PlantComponent({
+            Plant = plant,
+            SlotModel = SlotModel
+        }))
     end))
 
     return MaidObject
@@ -67,6 +74,7 @@ type Props = {
     MouseServiceClient: typeof(require("MouseServiceClient")),
 
     Garden: GardenTypesClient.ReactiveGarden,
+    GardenModel: GardenTypesClient.GardenModel,
     Slot: GardenTypesClient.ReactiveSlot,
     SlotCFrame: CFrame,
 

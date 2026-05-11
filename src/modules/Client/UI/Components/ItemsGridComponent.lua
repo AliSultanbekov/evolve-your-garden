@@ -12,21 +12,22 @@ local Blend = require("Blend")
 local InventoryTypesClient = require("InventoryTypesClient")
 local RxBrioUtils = require("RxBrioUtils")
 local ItemTypes = require("ItemTypes")
+local ReactiveItemTypes = require("ReactiveItemTypes")
 
 -- [ Components ] --
-local ItemCard = require("ItemCard")
+local ItemCardComponent = require("ItemCardComponent")
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local ItemsGrid = function(props: Props)
+local ItemsGridComponent = function(props: Props)
     local Items = props.Items
     local ItemCategories = props.ItemCategories
     local Cards = (Items:ObserveValuesBrio():Pipe({
         RxBrioUtils.where(function(item) return ItemCategories[item.Category] == true end) :: any,
-        RxBrioUtils.map(function(item) return ItemCard({ Item = item }) end) :: any,
+        RxBrioUtils.map(function(item) return ItemCardComponent({ Item = item, OnPressed = props.OnItemPressed }) end) :: any,
     })) :: any
 
     return Blend.New "ScrollingFrame" {
@@ -61,14 +62,15 @@ type Props = {
     Position: UDim2?,
     AnchorPoint: Vector2?,
     Items: InventoryTypesClient.Items,
-    ItemCategories: { [ItemTypes.Category]: boolean }
+    ItemCategories: { [ItemTypes.Category]: boolean },
+    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem) -> (),
 }
 type ModuleData = {}
 
-export type Module = typeof(ItemsGrid) & ModuleData
+export type Module = typeof(ItemsGridComponent) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return ItemsGrid :: Module
+return ItemsGridComponent :: Module

@@ -13,18 +13,19 @@ local ReactiveItemTypes = require("ReactiveItemTypes")
 local ItemConfig = require("ItemConfig")
 
 -- [ Components ] --
-local GenericButton = require("GenericButton")
-local GenericText = require("GenericText")
+local GenericButtonComponent = require("GenericButtonComponent")
+local GenericTextComponent = require("GenericTextComponent")
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local ItemCard = function(props: Props)
+local ItemCardComponent = function(props: Props)
     local Item = props.Item
 
-    return GenericButton({
+    return GenericButtonComponent({
+        OnPressed = function() props.OnPressed(Item) end,
         Children = {
             Blend.New "ImageLabel" {
                 Name = "Wiggle",
@@ -49,7 +50,7 @@ local ItemCard = function(props: Props)
             },
 
             if Item.Category == "Material" then
-                GenericText({
+                GenericTextComponent({
                     Name = "Amount",
                     TextSize = 30,
                     Position = UDim2.new(1, -19, 1, -19),
@@ -66,13 +67,14 @@ end
 -- [ Types ] --
 type Props = {
     Item: ReactiveItemTypes.ReactiveItem,
+    OnPressed: (item: ReactiveItemTypes.ReactiveItem) -> (),
 }
 type ModuleData = {}
 
-export type Module = typeof(ItemCard) & ModuleData
+export type Module = typeof(ItemCardComponent) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return ItemCard :: Module
+return ItemCardComponent :: Module

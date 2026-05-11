@@ -12,14 +12,14 @@ local Blend = require("Blend")
 local Observable = require("Observable")
 
 -- [ Components ] --
-local Scaler = require("Scaler")
+local ScalerComponent = require("ScalerComponent")
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local AnimatedFrame = function(props: Props)
+local AnimatedFrameComponent = function(props: Props)
     local Scale = Blend.Spring(
         Blend.Computed(props.IsOpen, function(open: boolean)
             return if open then 1 else 0
@@ -43,7 +43,7 @@ local AnimatedFrame = function(props: Props)
             return if scale < 0.01 then false else true
         end),
         [Blend.Children] = {
-            Scaler({ Scale = Scale, ApplyDeviceScale = true }),
+            ScalerComponent({ Scale = Scale, ApplyDeviceScale = true }),
             props.Children :: any,
         }
     }
@@ -62,10 +62,10 @@ type Props = {
 }
 type ModuleData = {}
 
-export type Module = typeof(AnimatedFrame) & ModuleData
+export type Module = typeof(AnimatedFrameComponent) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return AnimatedFrame :: Module
+return AnimatedFrameComponent :: Module

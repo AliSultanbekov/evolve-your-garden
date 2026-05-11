@@ -28,7 +28,7 @@ export type Module = typeof(ReactiveItemUtil) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
-function ReactiveItemUtil.ProccessItem(self: Module, item: ItemTypes.Item): ReactiveItemTypes.ReactiveItem
+function ReactiveItemUtil.ToReactive(self: Module, item: ItemTypes.Item): ReactiveItemTypes.ReactiveItem
     local ReactiveItem: ReactiveItemTypes.ReactiveItem
 
     ItemUtil:OnItemCategory(item, {
@@ -48,12 +48,50 @@ function ReactiveItemUtil.ProccessItem(self: Module, item: ItemTypes.Item): Reac
                 Id = item.Id,
                 Name = item.Name,
                 Category = item.Category,
-                Amount = ValueObject.new(item.Amount)
+                Amount = ValueObject.new(item.Amount),
             }
-        end
+        end,
     })
 
     return ReactiveItem
+end
+
+function ReactiveItemUtil.ToPlain(self: Module, reactiveItem: ReactiveItemTypes.ReactiveItem): ItemTypes.Item
+    local PlainItem: ItemTypes.Item
+
+    self:OnItemCategory(reactiveItem, {
+        ["Plant"] = function(item: ReactiveItemTypes.ReactivePlantItem)
+            PlainItem = {
+                Id = item.Id,
+                Name = item.Name,
+                Category = item.Category,
+                GeneticNumber = item.GeneticNumber,
+                GrowthTime = item.GrowthTime.Value,
+                LastProduction = item.LastProduction.Value,
+                Mutations = item.Mutations.Value,
+            }
+        end,
+        ["Material"] = function(item: ReactiveItemTypes.ReactiveMaterialItem)
+            PlainItem = {
+                Id = item.Id,
+                Name = item.Name,
+                Category = item.Category,
+                Amount = item.Amount.Value,
+            }
+        end,
+    })
+
+    return PlainItem
+end
+
+function ReactiveItemUtil.SyncFromPlain(self: Module, reactiveItem: ReactiveItemTypes.ReactiveItem, item: ItemTypes.Item)
+    if reactiveItem.Category == "Plant" and item.Category == "Plant" then
+        reactiveItem.GrowthTime.Value = item.GrowthTime
+        reactiveItem.LastProduction.Value = item.LastProduction
+        reactiveItem.Mutations.Value = item.Mutations
+    elseif reactiveItem.Category == "Material" and item.Category == "Material" then
+        reactiveItem.Amount.Value = item.Amount
+    end
 end
 
 function ReactiveItemUtil.OnItemCategory(
@@ -84,17 +122,6 @@ function ReactiveItemUtil.OnItemCategory(
 
     if cbs.Other then
         cbs.Other(item)
-    end
-end
-
-
-function ReactiveItemUtil.ApplyUpdate(self: Module, reactiveItem: ReactiveItemTypes.ReactiveItem, item: ItemTypes.Item)
-    if reactiveItem.Category == "Plant" and item.Category == "Plant" then
-        reactiveItem.GrowthTime.Value = item.GrowthTime
-        reactiveItem.LastProduction.Value = item.LastProduction
-        reactiveItem.Mutations.Value = item.Mutations
-    elseif reactiveItem.Category == "Material" and item.Category == "Material" then
-        reactiveItem.Amount.Value = item.Amount
     end
 end
 

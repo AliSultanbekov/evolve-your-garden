@@ -38,9 +38,9 @@ export type Module = typeof(ItemConfig) & ModuleData
 
 -- [ Public Functions ] --
 function ItemConfig.GetCategory(self: Module, itemName: string): ItemTypes.Category
-    if PlantsConfig[itemName] then
+    if PlantsConfig.Plants[itemName] then
         return "Plant"
-    elseif MaterialsConfig[itemName] then
+    elseif MaterialsConfig.Materials[itemName] then
         return "Material"
     else
         error("Issue")

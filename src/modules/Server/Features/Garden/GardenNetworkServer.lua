@@ -10,6 +10,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
 local GardenTypesShared = require("GardenTypesShared")
+local Signal = require("Signal")
 
 -- [ Constants ] --
 
@@ -23,7 +24,10 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _NetworkServiceShared: typeof(require("NetworkServiceShared")),
 
-    RemoteEvents: {},
+    RemoteEvents: {
+        PlacePlant: Signal.Signal<Player, GardenTypesShared.PlacePlantRemotePacket>,
+        RemovePlant: Signal.Signal<Player, GardenTypesShared.RemovePlantRemotePacket>
+    },
     RemoteFunctions: {}
 }
 
@@ -65,7 +69,8 @@ function GardenNetworkServer.Init(self: Module, serviceBag: ServiceBag.ServiceBa
     self._NetworkServiceShared = self._ServiceBag:GetService(require("NetworkServiceShared"))
 
     self.RemoteEvents = {
-
+        PlacePlant = Signal.new(),
+        RemovePlant = Signal.new(),
     } :: any
 
     self.RemoteFunctions = {
@@ -76,8 +81,18 @@ end
 function GardenNetworkServer.Start(self: Module)
     local Channel = self._NetworkServiceShared:GetChannel("Garden")
 
+    Channel:DeclareEvent("PlantPlaced")
+    Channel:DeclareEvent("PlantRemoved")
     Channel:DeclareEvent("GardenClaimed")
     Channel:DeclareEvent("GardenAbandoned")
+
+    Channel:Connect("PlacePlant", function(player: Player, packet: GardenTypesShared.PlacePlantRemotePacket)
+        self.RemoteEvents.PlacePlant:Fire(player, packet)
+    end)
+
+    Channel:Connect("RemovePlant", function(player: Player, packet: GardenTypesShared.RemovePlantRemotePacket)
+        self.RemoteEvents.RemovePlant:Fire(player, packet)
+    end)
 end
 
 return GardenNetworkServer :: Module

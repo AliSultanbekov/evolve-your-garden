@@ -5,7 +5,7 @@
 -- [ Roblox Services ] --
 
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script) :: typeof(require)
+local _require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 
@@ -31,31 +31,15 @@ export type Module = typeof(ChanceClass)
 
 -- [ Private Functions ] --
 function ChanceClass._UpdateWeights<K>(self: Object<K>, chancePool: ChancePool<K>)
-    local function GetDecimalCount(num: number): number
-        local s = tostring(num)
-        local dotIndex = string.find(s, "%.")
-        if not dotIndex then return 0 end
-        return #s - dotIndex
-    end
-
-    local UpdatesWeights = {}
     local TotalWeight = 0
-    local Multiplier = 0
-
-    for _, chance in chancePool do
-        local DecimalCount = GetDecimalCount(chance)
-        if Multiplier == 0 or Multiplier < DecimalCount then
-            Multiplier = DecimalCount
-        end
-    end
+    local WeightPool = {}
 
     for key, chance in chancePool do
-        local Weight = chance * math.pow(10, math.max(1, Multiplier))
-        UpdatesWeights[key] = Weight
-        TotalWeight += Weight
+        WeightPool[key] = chance
+        TotalWeight += chance
     end
 
-    self._WeightPool = UpdatesWeights
+    self._WeightPool = WeightPool
     self._TotalWeight = TotalWeight
 end
 
@@ -112,13 +96,13 @@ function ChanceClass.GetChance<K>(self: Object<K>, key: K)
 end
 
 function ChanceClass.Choose<K>(self: Object<K>): K
-    local RandomNumber = math.random(1, self._TotalWeight)
+    local RandomNumber = math.random() * self._TotalWeight
     local WeightProgress = 0
 
     for key, weight in self._WeightPool do
         WeightProgress += weight
 
-        if RandomNumber <= WeightProgress then
+        if RandomNumber < WeightProgress then
             return key
         end
     end

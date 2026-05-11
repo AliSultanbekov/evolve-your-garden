@@ -18,7 +18,7 @@ local Blend = require("Blend")
 local Observable = require("Observable")
 
 -- [ Module Table ] --
-local GenericSkeleton = function(props: Props)
+local GenericSkeletonComponent = function(props: Props)
     return Blend.New "Frame" {
         Name = "Content",
         Size = UDim2.fromScale(1, 1),
@@ -74,10 +74,10 @@ type Props = {
 }
 type ModuleData = {}
 
-export type Module = typeof(GenericSkeleton) & ModuleData
+export type Module = typeof(GenericSkeletonComponent) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return GenericSkeleton :: Module
+return GenericSkeletonComponent :: Module

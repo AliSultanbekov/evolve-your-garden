@@ -12,14 +12,14 @@ local Blend = require("Blend")
 local InventoryTypesClient = require("InventoryTypesClient")
 
 -- [ Components ] --
-local TabButton = require(script.Parent._TabButton)
+local TabButtonComponent = require(script.Parent._TabButtonComponent)
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local InventoryNavBar = function(props: Props)
+local NavBarComponent = function(props: Props)
     return Blend.New "Frame" {
         Name = "NavBar",
         Size = UDim2.new(0, 120, 1, 0),
@@ -38,7 +38,7 @@ local InventoryNavBar = function(props: Props)
                 PaddingRight = UDim.new(0, 4),
             },
             Blend.ComputedPairs(props.TabsConfig, function(tabName: string, _, _)
-                return TabButton({
+                return TabButtonComponent({
                     TabName = tabName,
                     OnTabSwitched = props.OnTabSwitched
                 })
@@ -54,10 +54,10 @@ type Props = {
 }
 type ModuleData = {}
 
-export type Module = typeof(InventoryNavBar) & ModuleData
+export type Module = typeof(NavBarComponent) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return InventoryNavBar :: Module
+return NavBarComponent :: Module

@@ -12,7 +12,7 @@ local ServiceBag = require("ServiceBag")
 local Maid = require("Maid")
 local GardenTypesShared = require("GardenTypesShared")
 
-local GardenComponent = require(script.Parent.Garden._Garden)
+local GardenComponent = require(script.Parent.Garden._GardenComponent)
 
 -- [ Constants ] --
 
@@ -47,16 +47,24 @@ end
 
 function GardenWorldClient.Start(self: Module)
     local Gardens = self._GardenServiceClient:GetGardens()
-    
-    local OnSlotSelected = function(slotId: GardenTypesShared.SlotId)
-        self._GardenServiceClient:SelectSlot(slotId)
-    end
 
     for _, garden in pairs(Gardens) do
         self._Maid:Add(GardenComponent({
             Garden = garden,
             MouseServiceClient = self._MouseServiceClient,
-            OnSlotSelected = OnSlotSelected
+            OnSlotSelected = function(slotId: GardenTypesShared.SlotId)
+                local Slot = self._GardenServiceClient:GetLocalSlot(slotId)
+
+                if not Slot then
+                    return
+                end
+
+                self._GardenServiceClient:SelectSlot(slotId)
+
+                if Slot.Plant.Value then
+                    self._GardenServiceClient:RemovePlant()
+                end
+            end
         }))
     end
 end

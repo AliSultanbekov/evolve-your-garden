@@ -83,7 +83,7 @@ type ModuleData = {
             Name: string,
             Rarity: string,
             Icon: string,
-            Genertics: GeneticsConfig,
+            Genetics: GeneticsConfig,
             Production: {
                 AmountPool: { [number]: number },
                 ItemPool: { [string]: number },
@@ -101,14 +101,14 @@ end
 
 -- [ Public Functions ] --
 function PlantConfig.GetGenetics(self: Module, plantName: string, geneticNumber: number): Genetics
-    local GeneticsConfig = self.Plants[plantName].Genertics
+    local GeneticsConfig = self.Plants[plantName].Genetics
 
     return {
         ProductionTime = self:_ScaleGenetic(GeneticsConfig.ProductionTime, Random.new(geneticNumber + GENETIC_OFFSETS.ProductionTime):NextNumber()),
         BabyChance = self:_ScaleGenetic(GeneticsConfig.BabyChance, Random.new(geneticNumber + GENETIC_OFFSETS.BabyChance):NextNumber()),
         Luck = {
             ItemProductionLuck = self:_ScaleGenetic(GeneticsConfig.Luck.ItemProductionLuck, Random.new(geneticNumber + GENETIC_OFFSETS.ItemProductionLuck):NextNumber()),
-            AmountProductionLuck = self:_ScaleGenetic(GeneticsConfig.Luck.AmountProductLuck, Random.new(geneticNumber + GENETIC_OFFSETS.AmountProductionLuck):NextNumber()),
+            AmountProductionLuck = self:_ScaleGenetic(GeneticsConfig.Luck.AmountProductionLuck, Random.new(geneticNumber + GENETIC_OFFSETS.AmountProductionLuck):NextNumber()),
             MutationLuck = self:_ScaleGenetic(GeneticsConfig.Luck.MutationLuck, Random.new(geneticNumber + GENETIC_OFFSETS.MutationLuck):NextNumber()),
         },
     }

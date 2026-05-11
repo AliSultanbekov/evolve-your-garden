@@ -15,7 +15,7 @@ local ObservableMap = require("ObservableMap")
 local ItemUtil = require("ItemUtil")
 
 -- [ Components ] --
-local InventoryWindow = require(script.Parent.Parent.Components.InventoryWindow._InventoryWindow)
+local WindowComponent = require(script.Parent.Parent.Components.InventoryWindow._WindowComponent)
 local InventoryConfig = require(script.Parent.Parent.Parent._InventoryConfig)
 
 -- [ Constants ] --
@@ -63,7 +63,7 @@ local InventoryWindowStory = {
         end))
 
         MaidObject:Add(Blend.mount(props.target, {
-            InventoryWindow({
+            WindowComponent({
                 IsOpen = IsOpen:Observe(),
                 Items = Items,
                 ActiveTab = ActiveTab:Observe(),

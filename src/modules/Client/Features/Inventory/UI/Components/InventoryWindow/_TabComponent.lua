@@ -1,5 +1,5 @@
 --[=[
-    @class InventoryTab
+    @class Tab
 ]=]
 
 -- [ Roblox Services ] --
@@ -14,14 +14,14 @@ local ItemTypes = require("ItemTypes")
 local Observable = require("Observable")
 
 -- [ Components ] --
-local ItemsGrid = require("ItemsGrid")
+local ItemsGridComponent = require("ItemsGridComponent")
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local InventoryTab = function(props: Props)
+local TabComponent = function(props: Props)
     local TabName = props.TabName
     local ActiveTab = props.ActiveTab
 
@@ -38,7 +38,7 @@ local InventoryTab = function(props: Props)
                 HorizontalAlignment = Enum.HorizontalAlignment.Center,
                 VerticalAlignment = Enum.VerticalAlignment.Bottom
             },
-            ItemsGrid({ Items = props.Items, ItemCategories = props.ItemCategories })
+            ItemsGridComponent({ Items = props.Items, ItemCategories = props.ItemCategories })
         }
     }
 end
@@ -52,10 +52,10 @@ type Props = {
 }
 type ModuleData = {}
 
-export type Module = typeof(InventoryTab) & ModuleData
+export type Module = typeof(TabComponent) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return InventoryTab :: Module
+return TabComponent :: Module

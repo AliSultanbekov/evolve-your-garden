@@ -19,14 +19,14 @@ local GardenConfig = require("GardenConfig")
 local Brio = require("Brio")
 
 -- [ Components ] --
-local SlotComponent = require(script.Parent._Slot)
+local SlotComponent = require(script.Parent._SlotComponent)
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local Garden = function(props: Props)
+local GardenComponent = function(props: Props)
     local MaidObject = Maid.new()
     local GardenMaid = MaidObject:Add(Maid.new())
     local Garden = props.Garden
@@ -94,6 +94,7 @@ local Garden = function(props: Props)
                     MouseServiceClient = props.MouseServiceClient,
 
                     Garden = Garden,
+                    GardenModel = GardenModel,
                     Slot = Slot,
                     SlotCFrame = GetSlotCFrame(GardenModel, state.Level, SlotNumber),
 
@@ -117,6 +118,6 @@ type Props = {
 
 type ModuleData = {}
 
-export type Module = typeof(Garden) & ModuleData
+export type Module = typeof(GardenComponent) & ModuleData
 
-return Garden :: Module
+return GardenComponent :: Module

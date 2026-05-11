@@ -12,8 +12,9 @@ local ServiceBag = require("ServiceBag")
 local Maid = require("Maid")
 local Blend = require("Blend")
 local GardenTypesShared = require("GardenTypesShared")
+local ReactiveItmeTypes = require("ReactiveItemTypes")
 
-local PlantPickerWindow = require(script.Parent.Components.PlantPickerWindow.PlantPickerWindow)
+local PlantPickerWindow = require(script.Parent.Components.PlantPickerWindow.PlantPickerWindowComponent)
 
 -- [ Constants ] --
 
@@ -74,7 +75,9 @@ function GardenUIClient.Start(self: Module)
             Items = Items,
             OnClose = function()
                 self._GardenServiceClient:SelectSlot(nil)
-                self._UIServiceClient:CloseUI("GardenPlantPicker")
+            end,
+            OnItemPressed = function(item: ReactiveItmeTypes.ReactiveItem)
+                self._GardenServiceClient:PlacePlant(item.Id)
             end
         })
     }))

@@ -34,7 +34,7 @@ export type Module = typeof(InventoryServiceClient) & ModuleData
 -- [ Private Functions ] --
 function InventoryServiceClient._ProcessItems(self: Module, items: { [any]: ItemTypes.Item })
     for _, item in items do
-        self._Items:Set(item.Id,  ReactiveItemUtil:ProccessItem(item))
+        self._Items:Set(item.Id, ReactiveItemUtil:ToReactive(item))
     end
 end
 
@@ -66,7 +66,7 @@ function InventoryServiceClient.Start(self: Module)
                 continue
             end
 
-            ReactiveItemUtil:ApplyUpdate(Item, item)
+            ReactiveItemUtil:SyncFromPlain(Item, item)
         end
     end)    
 

@@ -25,8 +25,10 @@ type ModuleData = {
     _NetworkServiceShared: typeof(require("NetworkServiceShared")),
 
     RemoteEvents: {
+        PlantPlaced: Signal.Signal<GardenTypesShared.PlantPlacedRemotePacket>,
+        PlantRemoved: Signal.Signal<GardenTypesShared.PlantRemovedRemotePacket>,
         GardenClaimed: Signal.Signal<GardenTypesShared.GardenClaimedRemotePacket>,
-        GardenAbandoned: Signal.Signal<GardenTypesShared.GardenAbandonedRemotePacket>
+        GardenAbandoned: Signal.Signal<GardenTypesShared.GardenAbandonedRemotePacket>,
     },
     RemoteFunctions: {}
 }
@@ -36,6 +38,18 @@ export type Module = typeof(GardenNetworkClient) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
+function GardenNetworkClient.RemovePlant(self: Module, packet: GardenTypesShared.RemovePlantRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:FireServer("RemovePlant", packet)
+end
+
+function GardenNetworkClient.PlacePlant(self: Module, packet: GardenTypesShared.PlacePlantRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:FireServer("PlacePlant", packet)
+end
+
 function GardenNetworkClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     if self._ServiceBag ~= nil then
         error("Service already initialized")
@@ -45,17 +59,27 @@ function GardenNetworkClient.Init(self: Module, serviceBag: ServiceBag.ServiceBa
     self._NetworkServiceShared = self._ServiceBag:GetService(require("NetworkServiceShared"))
 
     self.RemoteEvents = {
+        PlantPlaced = Signal.new(),
+        PlantRemoved = Signal.new(),
         GardenClaimed = Signal.new(),
         GardenAbandoned = Signal.new()
     } :: any
 
     self.RemoteFunctions = {
-
+        
     } :: any
 end
 
 function GardenNetworkClient.Start(self: Module)
     local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:Connect("PlantPlaced", function(packet: GardenTypesShared.PlantPlacedRemotePacket)
+        self.RemoteEvents.PlantPlaced:Fire(packet)
+    end)
+
+    Channel:Connect("PlantRemoved", function(packet: GardenTypesShared.PlantRemovedRemotePacket)
+        self.RemoteEvents.PlantRemoved:Fire(packet)
+    end)
 
     Channel:Connect("GardenClaimed", function(packet: GardenTypesShared.GardenClaimedRemotePacket)
         self.RemoteEvents.GardenClaimed:Fire(packet)

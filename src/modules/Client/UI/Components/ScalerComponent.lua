@@ -19,7 +19,7 @@ local ScreenSizeUtils = require("ScreenSizeUtils")
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local Scaler = function(props: Props)
+local ScalerComponent = function(props: Props)
     local DeviceScale = ScreenSizeUtils.ComputeScale()
 
     return Blend.New "UIScale" {
@@ -41,10 +41,10 @@ type Props = {
 }
 type ModuleData = {}
 
-export type Module = typeof(Scaler) & ModuleData
+export type Module = typeof(ScalerComponent) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return Scaler :: Module
+return ScalerComponent :: Module

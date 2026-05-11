@@ -34,6 +34,20 @@ export type Module = typeof(InventoryServiceServer) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
+function InventoryServiceServer.CheckItemExists(self: Module, player: Player, itemId: ItemTypes.ItemId): boolean
+    if not self:GetItem(player, itemId) then
+        return false
+    else
+        return true
+    end
+end
+
+function InventoryServiceServer.GetItem(self: Module, player: Player, itemId: ItemTypes.ItemId): ItemTypes.Item?
+    local Data = self._DataServiceServer:GetData(player)
+
+    return Data.Inventory[itemId]
+end
+
 function InventoryServiceServer.AddRawItems(self: Module, player: Player, rawItems: { [any]: ItemTypes.RawItem })
     local Items: { ItemTypes.Item } = {}
 
@@ -167,6 +181,17 @@ function InventoryServiceServer.Start(self: Module)
 
     RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
         local Maid, Player = brio:ToMaidAndValue()
+
+        local Plants: { ItemTypes.Item } = {}
+
+        for _ = 1, 10 do
+            table.insert(Plants, ItemUtil:ProcessRawItem({
+                Name = "Snow Blossom",
+                Category = "Plant",
+            }))
+        end
+
+        self:AddItems(Player, Plants)
 
         Maid:Add(function()
 

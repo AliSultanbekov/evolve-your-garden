@@ -1,10 +1,11 @@
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
+
 --[=[
     @class GardenServiceServer
 ]=]
 
 -- [ Roblox Services ] --
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 -- [ Require ] --
 local require = require(script.Parent.loader).load(script) :: typeof(require)
@@ -172,7 +173,7 @@ function GardenServiceServer.CollectHarvest(self: Module, player: Player, slotId
     SlotData.Harvest = {}
 end
 
-function GardenServiceServer.PlacePlant(self: Module, player: Player, plant: ItemTypes.PlantItem, slotId: GardenTypesShared.SlotId)
+function GardenServiceServer.PlacePlant(self: Module, player: Player, slotId: GardenTypesShared.SlotId, itemId: ItemTypes.ItemId)
     local data = self._DataServiceServer:GetProfile(player).Data
     local SlotData = data.Garden.Slots[slotId]
     local UserId = PlayerToUserId(player)
@@ -186,20 +187,36 @@ function GardenServiceServer.PlacePlant(self: Module, player: Player, plant: Ite
         return
     end
 
-    self._InventoryServiceServer:RemoveItems(player, { plant })
+    local Plant = self._InventoryServiceServer:GetItem(player, itemId)
 
-    SlotData.Plant = plant
+    if not Plant then
+        return
+    end
+
+    if Plant.Category ~= "Plant" then
+        return
+    end
+
+    self._InventoryServiceServer:RemoveItems(player, { Plant })
+
+    SlotData.Plant = Plant
 
     self._GardenNetworkServer:PlantPlaced({
         GardenId = GardenId,
         SlotId = slotId,
-        Plant = plant
+        Plant = Plant
     })
 end
 
 function GardenServiceServer.RemovePlant(self: Module, player: Player, slotId: GardenTypesShared.SlotId)
     local data = self._DataServiceServer:GetProfile(player).Data
     local SlotData = data.Garden.Slots[slotId]
+    local UserId = PlayerToUserId(player)
+    local GardenId = self:_GetUserGarden(UserId)
+
+    if not GardenId then
+        return
+    end
 
     if not SlotData.Plant then
         return
@@ -208,6 +225,11 @@ function GardenServiceServer.RemovePlant(self: Module, player: Player, slotId: G
     self._InventoryServiceServer:AddItems(player, { SlotData.Plant })
 
     SlotData.Plant = nil
+
+    self._GardenNetworkServer:PlantRemoved({
+        GardenId = GardenId,
+        SlotId = slotId
+    })
 end
 
 function GardenServiceServer.ClaimGarden(self: Module, player: Player)
@@ -290,6 +312,14 @@ function GardenServiceServer.Start(self: Module)
         for _, player in Players:GetPlayers() do
             self:GrowthCycle(player, dt)
         end
+    end)
+
+    self._GardenNetworkServer.RemoteEvents.PlacePlant:Connect(function(player: Player, packet: GardenTypesShared.PlacePlantRemotePacket)
+        self:PlacePlant(player, packet.SlotId, packet.ItemId)
+    end)
+
+    self._GardenNetworkServer.RemoteEvents.RemovePlant:Connect(function(player: Player, packet: GardenTypesShared.RemovePlantRemotePacket)
+        self:RemovePlant(player, packet.SlotId)
     end)
 end
 
