@@ -4,10 +4,8 @@
 
 -- [ Roblox Services ] --
 
--- [ Imports ] --
-
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
@@ -34,6 +32,18 @@ export type Module = typeof(GardenNetworkServer) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
+function GardenNetworkServer.PlantPlaced(self: Module, packet: GardenTypesShared.PlantPlacedRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:FireAllClients("PlantPlaced", packet)
+end
+
+function GardenNetworkServer.PlantRemoved(self: Module, packet: GardenTypesShared.PlantRemovedRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:FireAllClients("PlantRemoved", packet)
+end
+
 function GardenNetworkServer.GardenClaimed(self: Module, packet: GardenTypesShared.GardenClaimedRemotePacket)
     local Channel = self._NetworkServiceShared:GetChannel("Garden")
 

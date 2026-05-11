@@ -5,7 +5,7 @@
 -- [ Roblox Services ] --
 
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ItemTypes = require("ItemTypes")
@@ -19,7 +19,7 @@ local GardenTypesShared = require("GardenTypesShared")
 local ProfileConfig = {
     Template = {
         Upgrades = {
-            Garden = 0
+            Garden = 1
         },
         Currencies = {
             Coins = 0,

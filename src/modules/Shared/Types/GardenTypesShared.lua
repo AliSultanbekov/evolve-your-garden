@@ -4,10 +4,8 @@
 
 -- [ Roblox Services ] --
 
--- [ Imports ] --
-
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ItemTypes = require("ItemTypes")
@@ -20,21 +18,36 @@ local ItemTypes = require("ItemTypes")
 export type GardenId = string
 export type SlotId = string
 
+export type Slot = {
+    Id: SlotId,
+    Plant: ItemTypes.PlantItem?,
+    Harvest: {
+        [ItemTypes.ItemId]: ItemTypes.Item
+    },
+}
+
+export type Slots = { [SlotId]: Slot }
+
 export type GardenClaimedRemotePacket = {
     GardenId: GardenId,
     UserId: string,
+    GardenLevel: number,
+    Slots: Slots
 }
 
 export type GardenAbandonedRemotePacket = {
     GardenId: GardenId,
 }
 
-export type SlotData = {
-    Id: SlotId,
-    Plant: ItemTypes.PlantItem?,
-    Harvest: {
-        [ItemTypes.ItemId]: ItemTypes.Item
-    },
+export type PlantRemovedRemotePacket = {
+    GardenId: GardenId,
+    SlotId: SlotId,
+}
+
+export type PlantPlacedRemotePacket = {
+    GardenId: GardenId,
+    SlotId: SlotId,
+    Plant: ItemTypes.PlantItem,
 }
 
 return nil

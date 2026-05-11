@@ -4,10 +4,8 @@
 
 -- [ Roblox Services ] --
 
--- [ Imports ] --
-
 -- [ Require ] --
-local _require = require(script.Parent.loader).load(script)
+local _require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 
@@ -19,25 +17,36 @@ local _require = require(script.Parent.loader).load(script)
 local GardenConfig = {
     MaxGardens = 1,
     UpgradeStats = {
-        [0] = {
-            Slots = 9,
-        },
         [1] = {
-            Slots = 12,
+            Slots = 9, Cols = 3, Spacing = 5
         },
         [2] = {
-            Slots = 15,
+            Slots = 12, Cols = 3, Spacing = 5
+        },
+        [3] = {
+            Slots = 15, Cols = 3, Spacing = 5
         }
     }
 } :: {
     GrowthCycle: number,
     MaxGardens: number,
     UpgradeStats: {
-        Slot: number
+        [number]: {
+            Slots: number,
+            Cols: number,
+            Spacing: number
+        }
     }
 }
 
 -- [ Types ] --
+export type UpgradeStats = {
+    [number]: {
+        Slots: number,
+        Cols: number,
+        Spacing: number
+    }
+}
 type ModuleData = {}
 
 export type Module = typeof(GardenConfig) & ModuleData

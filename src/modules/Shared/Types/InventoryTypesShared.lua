@@ -4,10 +4,8 @@
 
 -- [ Roblox Services ] --
 
--- [ Imports ] --
-
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ItemTypes = require("ItemTypes")
@@ -27,6 +25,9 @@ export type ItemsAddedRemotePacket = {
 export type ItemsUpdatedRemotePacket = {
     Items: { [any]: ItemTypes.Item },
     UpdateInfos: { [ItemTypes.ItemId]: ItemTypes.ItemUpdateInfo }
+}
+export type GetItemsRemotePacket = {
+    Items: { [any]: ItemTypes.Item },
 }
 
 return nil

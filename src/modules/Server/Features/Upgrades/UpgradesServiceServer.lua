@@ -4,10 +4,8 @@
 
 -- [ Roblox Services ] --
 
--- [ Imports ] --
-
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
@@ -32,39 +30,34 @@ export type Module = typeof(UpgradeServiceServer) & ModuleData
 
 -- [ Public Functions ] --
 function UpgradeServiceServer.GetUpgradeLevel(self: Module, player: Player, upgradeName: string): number
-    local Success, level = self._DataServiceServer:GetData(player, string.format("Upgrades/%s", upgradeName))
+    local Data = self._DataServiceServer:GetData(player)
 
-    if not Success then
-        error("Issue")
-    end
-
-    return level
+    return Data.Upgrades[upgradeName]
 end
 
 function UpgradeServiceServer.PurchaseUpgrade(self: Module, player: Player, upgradeName: string)
     local UpgradeConfig = UpgradesConfig[upgradeName]
     local CurrencyName = UpgradeConfig.Currency
+    local data = self._DataServiceServer:GetProfile(player).Data
 
-    self._DataServiceServer:UpdateData(player, function(data)
-        local CurrencyAmount = data.Currencies[CurrencyName]
+    local CurrencyAmount = data.Currencies[CurrencyName]
 
-        if not CurrencyAmount then
-            return
-        end
+    if not CurrencyAmount then
+        return
+    end
 
-        if not data.Upgrades[upgradeName] then
-            return
-        end
+    if not data.Upgrades[upgradeName] then
+        return
+    end
 
-        local UpgradePrice = UpgradeConfig.GetPrice(data.Upgrades[upgradeName])
-        
-        if CurrencyAmount < UpgradePrice then
-            return
-        end
+    local UpgradePrice = UpgradeConfig.GetPrice(data.Upgrades[upgradeName])
 
-        data.Currencies[CurrencyName] = CurrencyAmount - UpgradePrice
-        data.Upgrades[upgradeName] += 1
-    end)
+    if CurrencyAmount < UpgradePrice then
+        return
+    end
+
+    data.Currencies[CurrencyName] = CurrencyAmount - UpgradePrice
+    data.Upgrades[upgradeName] += 1
 end
 
 function UpgradeServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)

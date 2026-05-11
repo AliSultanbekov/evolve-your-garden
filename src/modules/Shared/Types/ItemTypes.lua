@@ -4,10 +4,8 @@
 
 -- [ Roblox Services ] --
 
--- [ Imports ] --
-
 -- [ Require ] --
-local _require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 
@@ -88,7 +86,7 @@ export type RawItem = RawPlantItem | RawMaterialItem
 -- ===== Other useful types =====
 
 export type ItemUpdateInfo = {
-    Category: "AmountChanged",
+    Attribute: string,
     Delta: number,
 }
 

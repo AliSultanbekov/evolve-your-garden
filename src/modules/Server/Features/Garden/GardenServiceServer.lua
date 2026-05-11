@@ -6,10 +6,8 @@ local RunService = game:GetService("RunService")
 
 -- [ Roblox Services ] --
 
--- [ Imports ] --
-
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
@@ -74,44 +72,42 @@ end
 
 function GardenServiceServer._CreateAllSlots(self: Module, player: Player)
     local GardenUpgrade = self:_GetGardenUpgrade(player)
+    local data = self._DataServiceServer:GetProfile(player).Data
 
-    self._DataServiceServer:UpdateData(player, function(data)
-        for i = 1, GardenConfig.UpgradeStats[GardenUpgrade].Slot do
-            local SlotId = tostring(i)
+    for i = 1, GardenConfig.UpgradeStats[GardenUpgrade].Slots do
+        local SlotId = tostring(i)
 
-            if not data.Garden.Slots[SlotId] then
-                data.Garden.Slots[SlotId] = {
-                    Id = SlotId,
-                    Plant = nil,
-                    Harvest = {},
-                }
-            end
+        if not data.Garden.Slots[SlotId] then
+            data.Garden.Slots[SlotId] = {
+                Id = SlotId,
+                Plant = nil,
+                Harvest = {},
+            }
         end
-    end)
+    end
 end
 
 -- [ Public Functions ] --
 function GardenServiceServer.GrowthCycle(self: Module, player: Player, dt: number)
+    local data = self._DataServiceServer:GetProfile(player).Data
 
-    self._DataServiceServer:UpdateData(player, function(data)
-        for _, slotData: GardenTypesShared.SlotData in data.Garden.Slots do
-            local RawItems: { ItemTypes.RawItem } = {}
+    for _, slotData: GardenTypesShared.Slot in data.Garden.Slots do
+        local RawItems: { ItemTypes.RawItem } = {}
 
-            if not slotData.Plant then
-                continue
-            end
-
-            Plant:AdvanceGrowth(slotData.Plant, dt)
-            local ProductionCycles = Plant:ClaimProductionCycles(slotData.Plant)
-
-            for _ = 1, ProductionCycles do
-                local CycleRawItems = Plant:Produce(slotData.Plant)
-                table.move(CycleRawItems, 1, #CycleRawItems, #RawItems + 1, RawItems)
-            end
-
-            self:AddRawHarvestItems(player, slotData.Id, RawItems)
+        if not slotData.Plant then
+            continue
         end
-    end)
+
+        Plant:AdvanceGrowth(slotData.Plant, dt)
+        local ProductionCycles = Plant:ClaimProductionCycles(slotData.Plant)
+
+        for _ = 1, ProductionCycles do
+            local CycleRawItems = Plant:Produce(slotData.Plant)
+            table.move(CycleRawItems, 1, #CycleRawItems, #RawItems + 1, RawItems)
+        end
+
+        self:AddRawHarvestItems(player, slotData.Id, RawItems)
+    end
 end
 
 function GardenServiceServer.AddRawHarvestItems(self: Module, player: Player, slotId: GardenTypesShared.SlotId, rawItems: { ItemTypes.RawItem })
@@ -129,77 +125,89 @@ function GardenServiceServer.AddHarvestItems(self: Module, player: Player, slotI
     local UpdatedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
     local UpdateInfos: { [ItemTypes.ItemId]: ItemTypes.ItemUpdateInfo } = {}
 
-    self._DataServiceServer:UpdateData(player, function(data)
-        for _, item in items do
-            local SlotData = data.Garden.Slots[slotId]
+    local data = self._DataServiceServer:GetProfile(player).Data
 
-            ItemUtil:OnStorageMode(item, {
-                ["Unique"] = function(item: ItemTypes.UniqueItem)
+    for _, item in items do
+        local SlotData = data.Garden.Slots[slotId]
+
+        ItemUtil:OnStorageMode(item, {
+            ["Unique"] = function(item: ItemTypes.UniqueItem)
+                SlotData.Harvest[item.Id] = item
+                AddedItems[item.Id] = item
+            end,
+            ["Stackable"] = function(item: ItemTypes.StackableItem)
+                local StoredItem = SlotData.Harvest[item.Id] :: ItemTypes.StackableItem
+
+                if StoredItem then
+                    StoredItem.Amount += item.Amount
+
+                    if not AddedItems[item.Id] then
+                        if not UpdatedItems[item.Id] then
+                            UpdatedItems[item.Id] = StoredItem
+                        end
+
+                        local Info = UpdateInfos[item.Id]
+                        if Info then
+                            Info.Delta += item.Amount
+                        else
+                            UpdateInfos[item.Id] = { Attribute = "Amount", Delta = item.Amount }
+                        end
+                    end
+                else
                     SlotData.Harvest[item.Id] = item
                     AddedItems[item.Id] = item
-                end,
-                ["Stackable"] = function(item: ItemTypes.StackableItem)
-                    local StoredItem = SlotData.Harvest[item.Id] :: ItemTypes.StackableItem
-
-                    if StoredItem then
-                        StoredItem.Amount += item.Amount
-
-                        if not AddedItems[item.Id] then
-                            if not UpdatedItems[item.Id] then
-                                UpdatedItems[item.Id] = StoredItem
-                            end
-
-                            local Info = UpdateInfos[item.Id]
-                            if Info then
-                                Info.Delta += item.Amount
-                            else
-                                UpdateInfos[item.Id] = { Category = "AmountChanged", Delta = item.Amount }
-                            end
-                        end
-                    else
-                        SlotData.Harvest[item.Id] = item
-                        AddedItems[item.Id] = item
-                    end
-                end,
-            })
-        end
-    end)
+                end
+            end,
+        })
+    end
 
     -- remote events for later
 end
 
 function GardenServiceServer.CollectHarvest(self: Module, player: Player, slotId: GardenTypesShared.SlotId)
-    self._DataServiceServer:UpdateData(player, function(data)
-        self._InventoryServiceServer:AddItems(player, data.Garden.Slots[slotId].Harvest)
-    end)
+    local data = self._DataServiceServer:GetProfile(player).Data
+    local SlotData = data.Garden.Slots[slotId]
+
+    self._InventoryServiceServer:AddItems(player, SlotData.Harvest)
+    SlotData.Harvest = {}
 end
 
-function GardenServiceServer.PlacePlant(self: Module, player: Player, item: ItemTypes.PlantItem, slotId: GardenTypesShared.SlotId)
-    self._DataServiceServer:UpdateData(player, function(data)
-        local SlotData = data.Garden.Slots[slotId]
+function GardenServiceServer.PlacePlant(self: Module, player: Player, plant: ItemTypes.PlantItem, slotId: GardenTypesShared.SlotId)
+    local data = self._DataServiceServer:GetProfile(player).Data
+    local SlotData = data.Garden.Slots[slotId]
+    local UserId = PlayerToUserId(player)
+    local GardenId = self:_GetUserGarden(UserId)
 
-        if SlotData.Plant then
-            return
-        end
+    if not GardenId then
+        return
+    end
 
-        self._InventoryServiceServer:RemoveItems(player, { item })
+    if SlotData.Plant then
+        return
+    end
 
-        SlotData.Plant = item
-    end)
+    self._InventoryServiceServer:RemoveItems(player, { plant })
+
+    SlotData.Plant = plant
+
+    self._GardenNetworkServer:PlantPlaced({
+        GardenId = GardenId,
+        SlotId = slotId,
+        Plant = plant
+    })
 end
 
 function GardenServiceServer.RemovePlant(self: Module, player: Player, slotId: GardenTypesShared.SlotId)
-    self._DataServiceServer:UpdateData(player, function(data)
-        local SlotData = data.Garden.Slots[slotId]
+    local data = self._DataServiceServer:GetProfile(player).Data
+    local SlotData = data.Garden.Slots[slotId]
 
-        if not SlotData.Plant then
-            return
-        end
+    if not SlotData.Plant then
+        return
+    end
 
-        self._InventoryServiceServer:AddItems(player, { SlotData.Plant })
+    self._InventoryServiceServer:AddItems(player, { SlotData.Plant })
 
-        SlotData.Plant = nil
-    end)
+    SlotData.Plant = nil
 end
 
 function GardenServiceServer.ClaimGarden(self: Module, player: Player)
@@ -215,12 +223,23 @@ function GardenServiceServer.ClaimGarden(self: Module, player: Player)
         return
     end
 
+    local GardenLevel = self._UpgradesServiceServer:GetUpgradeLevel(player, "Garden")
+
+    if not GardenLevel then
+        return
+    end
+
+    local Data = self._DataServiceServer:GetData(player)
+    local Slots = Data.Garden.Slots
+
     self._UserIdToGardenId[UserId] = freeGardenId
     self._GardenIdToUserId[freeGardenId] = UserId
 
     self._GardenNetworkServer:GardenClaimed({
         GardenId = freeGardenId,
-        UserId = UserId
+        UserId = UserId,
+        GardenLevel = GardenLevel,
+        Slots = Slots
     })
 end
 

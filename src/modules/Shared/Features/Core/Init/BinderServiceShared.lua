@@ -5,11 +5,8 @@
 -- [ Roblox Services ] --
 local RunService = game:GetService("RunService")
 
--- [ Imports ] --
-
 -- [ Require ] --
-local rbxrequire = require
-local require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
@@ -102,7 +99,7 @@ function BinderServiceShared.Init(self: Module, serviceBag: ServiceBag.ServiceBa
     self._Binders = {}
 
     for _, instance in self:_GetModules() do
-        local ComponentModule: ComponentModule = rbxrequire(instance)
+        local ComponentModule: ComponentModule = require(instance) :: any
 
         self._Components[ComponentModule.Tag] = ComponentModule
         self._Binders[ComponentModule.Tag] = self:_CreateBinder(ComponentModule, self._ServiceBag)

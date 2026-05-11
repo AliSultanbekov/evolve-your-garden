@@ -5,16 +5,14 @@
 -- [ Roblox Services ] --
 local Players = game:GetService("Players")
 
--- [ Imports ] --
-local ProfileStore = require("./_ProfileStore")
-local ProfileConfig = require("./_ProfileConfig")
-
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
+local ProfileConfig = require("_ProfileConfig")
+local ProfileStore = require("_ProfileStore")
+
 local ServiceBag = require("ServiceBag")
-local _Maid = require("Maid")
 local RxPlayerUtils = require("RxPlayerUtils")
 local Brio = require("Brio")
 
@@ -23,6 +21,7 @@ local Brio = require("Brio")
 -- [ Variables ] --
 local KEY = "V_1"
 local PROFILE_TEMPLATE = ProfileConfig.Template
+local PROFILE_WAIT_TIMEOUT = 60
 
 -- [ Module Table ] --
 local DataServiceServer = {}
@@ -34,33 +33,23 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _Profiles: { [Player]: Profile },
     _PlayerStore: ProfileStore.ProfileStore<ProfileConfig.ProfileTemplate>,
-    _Leaderstats: { [Player]: { [string]: any }}
+    _Leaderstats: { [Player]: { [string]: NumberValue } },
 }
 
 export type Module = typeof(DataServiceServer) & ModuleData
 
 -- [ Private Functions ] --
-function ProcessPath(initialSegment: any, path: string, hardSet: boolean?): (boolean, any, any, any)
-    local CurrentSegment = initialSegment
-    local ParentSegment
-    local LastSegment
+function ResolvePath(root: any, path: string): any?
+    local Current = root
 
     for _, segment in path:split("/") do
-        if CurrentSegment[segment] ~= nil then
-            ParentSegment = CurrentSegment
-            LastSegment = segment
-            CurrentSegment = CurrentSegment[segment]
-        elseif hardSet then
-            CurrentSegment[segment] = {}
-            ParentSegment = CurrentSegment
-            LastSegment = segment
-            CurrentSegment = CurrentSegment[segment]
-        else
-            return false
+        if Current == nil then
+            return nil
         end
+        Current = Current[segment]
     end
 
-    return true, CurrentSegment, ParentSegment, LastSegment
+    return Current
 end
 
 function DataServiceServer._SetupPlayerProfile(self: Module, player: Player)
@@ -70,27 +59,30 @@ function DataServiceServer._SetupPlayerProfile(self: Module, player: Player)
         end,
     })
 
-    if Profile then
-        Profile:AddUserId(player.UserId)
-        Profile:Reconcile()
-
-        Profile.OnSessionEnd:Connect(function()
-            self._Profiles[player] = nil
-            player:Kick("Profile seasion end - Please rejoin")
-        end)
-
-        if player.Parent == Players then
-            self._Profiles[player] = Profile
-            print(`Profile loaded for {player.DisplayName}!`)
-        else
-            Profile:EndSession()
-        end
-    else
+    if not Profile then
         player:Kick(`Profile load fail - Please rejoin`)
+        return
+    end
+
+    Profile:AddUserId(player.UserId)
+    Profile:Reconcile()
+
+    Profile.OnSessionEnd:Connect(function()
+        self._Profiles[player] = nil
+        player:Kick("Profile session end - Please rejoin")
+    end)
+
+    if player.Parent == Players then
+        self._Profiles[player] = Profile
+        print(`Profile loaded for {player.DisplayName}!`)
+    else
+        Profile:EndSession()
     end
 end
 
 function DataServiceServer._CreateLeaderstats(self: Module, player: Player)
+    local Data = self:GetData(player)
+
     local LeaderstatsFolder = Instance.new("Folder")
     LeaderstatsFolder.Name = "leaderstats"
     LeaderstatsFolder.Parent = player
@@ -101,94 +93,20 @@ function DataServiceServer._CreateLeaderstats(self: Module, player: Player)
 
         local Value = Instance.new(valueType) :: any
         Value.Name = StatName
+        Value.Value = ResolvePath(Data, statPath)
         Value.Parent = LeaderstatsFolder
-        Value.Value = select(2, self:GetData(player, statPath))
+
         self._Leaderstats[player][statPath] = Value
     end
 end
 
 -- [ Public Functions ] --
-function DataServiceServer.AddData(self: Module, player: Player, value: number, path: string): boolean
-    if type(value) == "number" and (value ~= value) then
-        warn("Invalid numeric value provided. Expected a number.")
-        return false
-    end
-
-    local Success1, Result1 = self:GetData(player, path)
-
-    if not Success1 then
-        return false
-    end
-
-    if type(Result1) ~= "number" then
-        return false
-    end
-
-    local Success2 = self:SetData(player, value + Result1, path)
-
-    if not Success2 then
-        return false
-    end
-
-    return true
-end
-
-function DataServiceServer.SetData(self: Module, player: Player, value: any, path: string, hardSet: boolean?): boolean
-    if type(value) == "number" and (value ~= value) then
-        warn("Invalid numeric value provided. Expected a number.")
-        return false
-    end
-
-    if typeof(value) == "number" and value < 0 then
-        warn("Attempted to set a negative value in DataServiceServer.SetData. Player:", player, "Path:", path, "Value:", value)
-        return false
-    end
-
-    local Profile = self:GetProfile(player)
-
-    local Success, _, ParentSegment, LastSegment = ProcessPath(Profile.Data, path, hardSet)
-
-    if not Success then
-        return false
-    end
-
-    ParentSegment[LastSegment] = value
-
-    if self._Leaderstats[player][path] then
-        self._Leaderstats[player][path].Value = value
-    end
-
-    return true
-end
-
-function DataServiceServer.UpdateData(self: Module, player: Player, cb: (data: ProfileConfig.ProfileTemplate) -> ()): boolean
-    local Profile = self:GetProfile(player)
-
-    local Success, _ = pcall(function()
-        cb(Profile.Data)
-    end)
-
-    if not Success then
-        return false
-    end
-
-    return true
-end
-
-function DataServiceServer.GetData(self: Module, player: Player, path: string): (boolean, any)
-    local Profile = self:GetProfile(player)
-    
-    local Success, CurrentSegment = ProcessPath(Profile.Data, path)
-
-    if not Success then
-        return false
-    end
-
-    return true, CurrentSegment
+function DataServiceServer.GetData(self: Module, player: Player): ProfileConfig.ProfileTemplate
+    return self:GetProfile(player).Data
 end
 
 function DataServiceServer.GetProfile(self: Module, player: Player): Profile
-    local Deadline = os.clock() + 60
+    local Deadline = os.clock() + PROFILE_WAIT_TIMEOUT
 
     while self._Profiles[player] == nil and os.clock() < Deadline do
         task.wait(0.05)
@@ -197,10 +115,27 @@ function DataServiceServer.GetProfile(self: Module, player: Player): Profile
     local Profile = self._Profiles[player]
 
     if not Profile then
-        error(("[DataServiceServer] Profile not ready for %s"):format(player.Name))
+        error(`[DataServiceServer] Profile not ready for {player.Name}`)
     end
 
     return Profile
+end
+
+function DataServiceServer.SyncLeaderstat(self: Module, player: Player, statPath: string)
+    local Stat = self._Leaderstats[player] and self._Leaderstats[player][statPath]
+
+    if not Stat then
+        return
+    end
+
+    local Data = self:GetData(player)
+    local Value = ResolvePath(Data, statPath)
+
+    if not Value then
+        return
+    end
+    
+    Stat.Value = Value
 end
 
 function DataServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
@@ -210,28 +145,27 @@ function DataServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._Leaderstats = {}
-
     self._Profiles = {}
 end
 
 function DataServiceServer.Start(self: Module)
     self._PlayerStore = ProfileStore.New(KEY, PROFILE_TEMPLATE) :: any
 
-    RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)  
-        local _maid, Player: Player = brio:ToMaidAndValue()
+    RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
+        local Maid, Player = brio:ToMaidAndValue()
 
         self._Leaderstats[Player] = {}
 
         self:_SetupPlayerProfile(Player)
         self:_CreateLeaderstats(Player)
 
-        _maid:Add(function()
+        Maid:Add(function()
             self._Leaderstats[Player] = nil
 
-            local profile = self._Profiles[Player]
+            local Profile = self._Profiles[Player]
 
-            if profile ~= nil then
-               profile:EndSession()
+            if Profile ~= nil then
+                Profile:EndSession()
             end
         end)
     end)

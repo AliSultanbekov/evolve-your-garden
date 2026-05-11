@@ -4,10 +4,8 @@
 
 -- [ Roblox Services ] --
 
--- [ Imports ] --
-
 -- [ Require ] --
-local _require = require(script.Parent.loader).load(script)
+local _require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 
@@ -46,6 +44,7 @@ local PlantConfig = {
         ["Snow Blossom"] = {
             Name = "Snow Blossom",
             Rarity = "Common",
+            Icon = "rbxassetid://175279732",
             Genetics = DEFAULT_GENETICS_CONFIG,
             Production = {
                 AmountPool = DEFAULT_AMOUNT_POOL,
@@ -83,6 +82,7 @@ type ModuleData = {
         [string]: {
             Name: string,
             Rarity: string,
+            Icon: string,
             Genertics: GeneticsConfig,
             Production: {
                 AmountPool: { [number]: number },

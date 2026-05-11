@@ -4,14 +4,13 @@
 
 -- [ Roblox Services ] --
 
--- [ Imports ] --
-
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ItemTypes = require("ItemTypes")
 local PlantsConfig = require("PlantsConfig")
+local MaterialsConfig = require("MaterialsConfig")
 
 -- [ Constants ] --
 
@@ -41,11 +40,23 @@ export type Module = typeof(ItemConfig) & ModuleData
 function ItemConfig.GetCategory(self: Module, itemName: string): ItemTypes.Category
     if PlantsConfig[itemName] then
         return "Plant"
+    elseif MaterialsConfig[itemName] then
+        return "Material"
+    else
+        error("Issue")
     end
-    -- TODO: check MaterialsConfig / CurrenciesConfig once those registries exist.
-    -- For now, anything not a known Plant is treated as a Material — drop pools
-    -- currently only contain materials, so this is safe in practice.
-    return "Material"
+end
+
+function ItemConfig.GetIcon(self: Module, itemName: string, itemCategory: ItemTypes.Category?): string
+    local Category = itemCategory or self:GetCategory(itemName)
+
+    if Category == "Plant" then
+        return PlantsConfig.Plants[itemName].Icon
+    elseif Category == "Material" then
+        return ""
+    end
+
+    error("Issue")
 end
 
 return ItemConfig :: Module

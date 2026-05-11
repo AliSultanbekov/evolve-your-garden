@@ -5,10 +5,8 @@ local RunService = game:GetService("RunService")
 
 -- [ Roblox Services ] --
 
--- [ Imports ] --
-
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
@@ -18,6 +16,8 @@ local SINGLETONS = {
     "service",
     "manager",
     "network",
+    "uiclient",
+    "worldclient",
 }
 
 -- [ Variables ] --

@@ -6,10 +6,8 @@
 -- [ Roblox Services ] --
 local HttpService = game:GetService("HttpService")
 
--- [ Imports ] --
-
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ItemConfig = require("ItemConfig")
