@@ -5,7 +5,7 @@
 -- [ Roblox Services ] --
 
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script) :: typeof(require)
+local _require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 
@@ -22,26 +22,32 @@ export type StorageMode = "Unique" | "Stackable"
 
 -- ===== Building blocks =====
 -- Common to every item, regardless of category or storage mode.
-type Common = {
+export type Common = {
     Id: ItemId,
     Name: string,
 }
 
 -- Added to any item whose StorageMode is "Stackable".
-type Stackable = {
+export type Stackable = {
     Amount: number,
+}
+
+export type LevelTreeChoices = {
+    [number]: number
 }
 
 -- ===== Category-specific data =====
 
-type PlantData = {
+export type PlantData = {
     GrowthTime: number,
+    Xp: number,
     LastProduction: number,
     GeneticNumber: number,
     Mutations: { string },
+    LevelTreeChoices: LevelTreeChoices,
 }
 
-type MaterialData = {}
+export type MaterialData = {}
 
 -- ===== Concrete items =====
 -- Composed: Common + (Stackable if applicable) + category data + Category tag.
@@ -70,9 +76,11 @@ export type RawPlantItem = {
     Name: string,
     Category: "Plant",
     GrowthTime: number?,
+    Xp: number?,
     LastProduction: number?,
     GeneticNumber: number?,
     Mutations: { string }?,
+    LevelTreeChoices: LevelTreeChoices?,
 }
 export type RawMaterialItem = {
     Id: ItemId?,
@@ -82,16 +90,5 @@ export type RawMaterialItem = {
 }
 
 export type RawItem = RawPlantItem | RawMaterialItem
-
--- ===== Other useful types =====
-
-export type ItemUpdateInfo = {
-    Attribute: string,
-    Delta: number,
-}
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return nil

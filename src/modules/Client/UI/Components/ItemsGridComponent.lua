@@ -9,10 +9,12 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
-local InventoryTypesClient = require("InventoryTypesClient")
-local RxBrioUtils = require("RxBrioUtils")
-local ItemTypes = require("ItemTypes")
 local ReactiveItemTypes = require("ReactiveItemTypes")
+local ObservableMap = require("ObservableMap")
+local ItemTypes = require("ItemTypes")
+local RxBrioUtils = require("RxBrioUtils")
+local Observable = require("Observable")
+local Rx = require("Rx")
 
 -- [ Components ] --
 local ItemCardComponent = require("ItemCardComponent")
@@ -24,34 +26,42 @@ local ItemCardComponent = require("ItemCardComponent")
 -- [ Module Table ] --
 local ItemsGridComponent = function(props: Props)
     local Items = props.Items
-    local ItemCategories = props.ItemCategories
-    local Cards = (Items:ObserveValuesBrio():Pipe({
-        RxBrioUtils.where(function(item) return ItemCategories[item.Category] == true end) :: any,
-        RxBrioUtils.map(function(item) return ItemCardComponent({ Item = item, OnPressed = props.OnItemPressed }) end) :: any,
-    })) :: any
+    local ItemCards = Items:ObserveValuesBrio():Pipe({
+        RxBrioUtils.map(function(item: ReactiveItemTypes.ReactiveItem)
+            return ItemCardComponent({
+                Visible = (props.Search :: any):Pipe({
+                    Rx.map(function(search: string)
+                        if search == "" then return true end
+                        return string.find(item.Name:lower(), search:lower(), 1, true) ~= nil
+                    end)
+                });
+                Item = item,
+                OnItemPressed = props.OnItemPressed,
+                OnItemHovered = props.OnItemHovered,
+                OnItemUnhovered = props.OnItemUnhovered,
+            })
+        end) :: any
+    })
 
     return Blend.New "ScrollingFrame" {
-        Size = props.Size or UDim2.new(1, 0, 1, -42.5),
-        Position = props.Position or UDim2.fromScale(0.5, 0.5),
-        AnchorPoint = props.AnchorPoint or Vector2.new(0.5, 0.5),
-        CanvasSize = UDim2.fromScale(0, 3),
-        ScrollBarImageTransparency = 0.5,
-        LayoutOrder = 1,
+        Size = props.Size;
+        Position = props.Position;
+        AnchorPoint = props.AnchorPoint;
+        ZIndex = props.ZIndex;
+        BackgroundTransparency = props.BackgroundTransparency,
+        AutomaticCanvasSize = props.AutomaticCanvasSize;
         [Blend.Children] = {
             Blend.New "UIPadding" {
-                PaddingTop = UDim.new(0, 8),
-                PaddingBottom = UDim.new(0, 8),
-                PaddingLeft = UDim.new(0, 8),
-                PaddingRight = UDim.new(0, 8),
-            },
-            Blend.New "UICorner" {
-                CornerRadius = UDim.new(0, 10)
-            },
+                PaddingTop = props.UIPaddingSizes.PaddingTop;
+                PaddingBottom = props.UIPaddingSizes.PaddingBottom;
+                PaddingLeft = props.UIPaddingSizes.PaddingLeft;
+                PaddingRight = props.UIPaddingSizes.PaddingRight;
+            };
             Blend.New "UIGridLayout" {
-                CellPadding = UDim2.fromOffset(15, 15),
-                CellSize = UDim2.fromOffset(110, 110)
-            },
-            Cards
+                CellPadding = props.UIGridLayoutSizes.CellPadding;
+                CellSize = props.UIGridLayoutSizes.CellSize;
+            };
+            ItemCards :: any;
         }
     }
 end
@@ -61,9 +71,25 @@ type Props = {
     Size: UDim2?,
     Position: UDim2?,
     AnchorPoint: Vector2?,
-    Items: InventoryTypesClient.Items,
-    ItemCategories: { [ItemTypes.Category]: boolean },
-    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem) -> (),
+    ZIndex: number?,
+    BackgroundTransparency: number?,
+    AutomaticCanvasSize: Enum.AutomaticSize?,
+    UIPaddingSizes: {
+        PaddingTop: UDim,
+        PaddingBottom: UDim,
+        PaddingLeft: UDim,
+        PaddingRight: UDim,
+    },
+    UIGridLayoutSizes: {
+        CellPadding: UDim2;
+        CellSize: UDim2;
+    },
+
+    Items: ObservableMap.ObservableMap<ItemTypes.ItemId, ReactiveItemTypes.ReactiveItem>,
+    Search: Observable.Observable<string>,
+    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    OnItemUnhovered: () -> (),
 }
 type ModuleData = {}
 

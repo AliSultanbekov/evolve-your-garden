@@ -21,6 +21,13 @@ local MaterialsConfig = {
             Rarity = "Common"
         }
     }
+} :: {
+    Materials: {
+        [string]: {
+            Name: string,
+            Rarity: string
+        }
+    }
 }
 
 -- [ Types ] --

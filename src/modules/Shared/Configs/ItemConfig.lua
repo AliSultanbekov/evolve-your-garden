@@ -22,7 +22,8 @@ local ItemConfig = {
         ["Plant"] = "Unique",
         ["Material"] = "Stackable",
         ["Currency"] = "Stackable",
-    }
+    },
+    Categories = {"Plant", "Material", "Currency"}
 }
 
 -- [ Types ] --
@@ -54,6 +55,18 @@ function ItemConfig.GetIcon(self: Module, itemName: string, itemCategory: ItemTy
         return PlantsConfig.Plants[itemName].Icon
     elseif Category == "Material" then
         return ""
+    end
+
+    error("Issue")
+end
+
+function ItemConfig.GetRarity(self: Module, itemName: string, itemCategory: ItemTypes.Category?): string
+    local Category = itemCategory or self:GetCategory(itemName)
+
+    if Category == "Plant" then
+        return PlantsConfig.Plants[itemName].Rarity
+    elseif Category == "Material" then
+        return MaterialsConfig.Materials[itemName].Rarity
     end
 
     error("Issue")

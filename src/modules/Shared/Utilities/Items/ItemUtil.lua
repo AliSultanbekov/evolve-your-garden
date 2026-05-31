@@ -44,9 +44,11 @@ function ItemUtil.ProcessRawItem(self: Module, rawItem: ItemTypes.RawItem): Item
             Name = rawItem.Name,
             Category = rawItem.Category,
             GrowthTime = rawItem.GrowthTime or 0,
+            Xp = rawItem.Xp or 0,
             LastProduction = rawItem.LastProduction or 0,
             GeneticNumber = rawItem.GeneticNumber or math.random(1, (2^31)-1),
             Mutations = rawItem.Mutations or {},
+            LevelTreeChoices = rawItem.LevelTreeChoices or {},
         }
     elseif rawItem.Category == "Material" then
         return {
@@ -126,6 +128,7 @@ end
 export type MakeRawOptions = {
     Amount: number?,
     GeneticNumber: number?,
+    Xp: number?,
     GrowthTime: number?,
     LastProduction: number?,
     Mutations: { string }?,
@@ -147,6 +150,7 @@ function ItemUtil.MakeRawFromName(self: Module, name: string, opts: MakeRawOptio
             Category = "Plant",
             GeneticNumber = o.GeneticNumber,
             GrowthTime = o.GrowthTime,
+            Xp = o.Xp,
             LastProduction = o.LastProduction,
             Mutations = o.Mutations,
         }

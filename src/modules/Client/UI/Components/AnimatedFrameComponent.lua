@@ -33,32 +33,34 @@ local AnimatedFrameComponent = function(props: Props)
     )
 
     return Blend.New "Frame" {
-        Name = props.Name,
-        Size = props.Size,
-        Position = props.Position or UDim2.fromScale(0.5,0.5),
-        AnchorPoint = props.AnchorPoint or Vector2.new(0.5, 0.5),
-        BackgroundColor3 = props.BackgroundColor3,
-        BackgroundTransparency = props.BackgroundTransparency or 1,
+        Name = props.Name;
+        Size = props.Size;
+        Position = props.Position;
+        AnchorPoint = props.AnchorPoint;
+        BackgroundColor3 = props.BackgroundColor3;
+        BackgroundTransparency = props.BackgroundTransparency;
+        AutomaticSize = props.AutomaticSize;
         Visible = Blend.Computed(Scale, function(scale: number)
             return if scale < 0.01 then false else true
-        end),
+        end);
         [Blend.Children] = {
-            ScalerComponent({ Scale = Scale, ApplyDeviceScale = true }),
-            props.Children :: any,
+            ScalerComponent({ Scale = Scale, ApplyDeviceScale = true });
+            props.Children :: any;
         }
     }
 end
 
 -- [ Types ] --
 type Props = {
-    Name: string,
-    Size: UDim2,
-    Position: UDim2?,
+    Name: string?,
+    Size: UDim2?,
+    Position: UDim2? | any,
     AnchorPoint: Vector2?,
     BackgroundColor3: Color3?,
     BackgroundTransparency: number?,
-    IsOpen: Observable.Observable<boolean>,
+    AutomaticSize: Enum.AutomaticSize?,
     Children: { Observable.Observable<Instance> }?,
+    IsOpen: Observable.Observable<boolean>,
 }
 type ModuleData = {}
 

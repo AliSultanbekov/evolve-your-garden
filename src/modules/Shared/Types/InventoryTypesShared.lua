@@ -24,7 +24,6 @@ export type ItemsAddedRemotePacket = {
 }
 export type ItemsUpdatedRemotePacket = {
     Items: { [any]: ItemTypes.Item },
-    UpdateInfos: { [ItemTypes.ItemId]: ItemTypes.ItemUpdateInfo }
 }
 export type GetItemsRemotePacket = {
     Items: { [any]: ItemTypes.Item },

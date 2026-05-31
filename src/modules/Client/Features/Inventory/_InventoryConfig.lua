@@ -9,6 +9,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local InventoryTypesClient = require("InventoryTypesClient")
+local ItemTypes = require("ItemTypes")
 
 -- [ Constants ] --
 
@@ -23,9 +24,16 @@ local InventoryConstants = {
         ["Materials"] = {
             ["Material"] = true
         }
+    },
+    CategoryToTab = {
+        ["Plant"] = "Garden",
+        ["Material"] = "Materials",
     }
 } :: {
-    TabsConfig: InventoryTypesClient.TabsConfig
+    TabsConfig: InventoryTypesClient.TabsConfig,
+    CategoryToTab: {
+        [ItemTypes.Category]: string
+    }
 }
 
 -- [ Types ] --

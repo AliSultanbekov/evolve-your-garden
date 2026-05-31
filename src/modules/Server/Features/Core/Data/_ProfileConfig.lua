@@ -47,9 +47,7 @@ export type ProfileTemplate = {
         [ItemTypes.ItemId]: ItemTypes.Item
     },
     Garden: {
-        Slots: {
-            [GardenTypesShared.SlotId]: GardenTypesShared.SlotData
-        }
+        Slots: GardenTypesShared.Slots
     }
 }
 

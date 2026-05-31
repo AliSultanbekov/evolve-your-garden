@@ -31,23 +31,30 @@ local GenericButtonComponent = function(props: Props)
         ),
         35
     )
+    local ButtonInstance: GuiButton
 
     return Blend.New "ImageButton" {
-        Position = props.Position or UDim2.fromScale(0.5, 0.5);
-        Size = props.Size or UDim2.fromOffset(100, 100);
-        AnchorPoint = props.AnchorPoint or Vector2.new(0.5, 0.5);
-        BackgroundColor3 = props.BackgroundColor3 or Color3.new(1, 1, 1),
-        BackgroundTransparency = props.BackgroundTransparency or 1,
+        Name = props.Name,
+        Position = props.Position;
+        Size = props.Size;
+        AnchorPoint = props.AnchorPoint;
+        ZIndex = props.ZIndex,
+        BackgroundColor3 = props.BackgroundColor3;
+        BackgroundTransparency = props.BackgroundTransparency;
+        Visible = props.Visible;
         Image = props.Image or "";
+        [Blend.Instance] = function(inst: GuiButton)
+            ButtonInstance = inst
+        end;
         [Blend.OnEvent "Activated"] = function()
-            if props.OnPressed then props.OnPressed() end
-        end,
+            if props.OnPressed then props.OnPressed(ButtonInstance) end
+        end;
         [Blend.OnEvent "InputBegan"] = function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1
                or input.UserInputType == Enum.UserInputType.Touch then
                 IsPressed.Value = true
             end
-        end,
+        end;
         [Blend.OnEvent "InputBegan"] = function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1
                or input.UserInputType == Enum.UserInputType.Touch then
@@ -61,26 +68,46 @@ local GenericButtonComponent = function(props: Props)
                     end
                 end)
             end
-        end,
+        end;
+        [Blend.OnEvent "MouseEnter"] = function()
+            if props.OnHovered then
+                props.OnHovered(ButtonInstance)
+            end
+        end;
         [Blend.OnEvent "MouseLeave"] = function()
             IsPressed.Value = false
-        end,
+
+            if props.OnUnhovered then
+                props.OnUnhovered(ButtonInstance)
+            end
+        end;
+        [Blend.OnEvent "Destroying"] = function()
+            if props.OnDestroyed then
+                props.OnDestroyed()
+            end
+        end;
         [Blend.Children] = {
-            ScalerComponent({ Scale = Scale }),
+            ScalerComponent({ Scale = Scale });
             props.Children :: any
-        }
+        };
     }
 end
 
 -- [ Types ] --
 type Props = {
+    Name: string?,
     Position: UDim2?,
     Size: UDim2?,
     AnchorPoint: Vector2?,
+    ZIndex: number?,
     BackgroundColor3: Color3?,
     BackgroundTransparency: number?,
+    Visible: (boolean | Observable.Observable<boolean>)?,
     Image: string?,
-    OnPressed: (() -> ())?,
+    OnPressed: ((buttonInstance: GuiButton) -> ())?,
+    OnHovered: ((buttonInstance: GuiButton) -> ())?,
+    OnUnhovered: ((buttonInstance: GuiButton) -> ())?,
+    OnDestroyed: (() -> ())?,
     Children: { Observable.Observable<Instance> }?,
 }
 type ModuleData = {}

@@ -1,0 +1,69 @@
+--[=[
+    @class Tooltip
+]=]
+
+-- [ Roblox Services ] --
+
+-- [ Require ] --
+local require = (require :: any)(game:GetService("ServerScriptService"):FindFirstChild("LoaderUtils", true).Parent).bootstrapStory(script) :: typeof(require)
+
+-- [ Imports ] --
+local Maid = require("Maid")
+local Blend = require("Blend")
+local ValueObject = require("ValueObject")
+local ItemUtil = require("ItemUtil")
+local ReactiveItemUtil = require("ReactiveItemUtil")
+
+-- [ Components ] --
+local TooltipWindow = require(script.Parent.Parent.Components.Tooltip._Window)
+
+-- [ Constants ] --
+
+-- [ Variables ] --
+local controls = {
+    IsOpen = true,
+}
+
+-- [ Module Table ] --
+local Tooltip = {
+    summary = "Tooltip window showing item name, rarity, and icon",
+    controls = controls,
+    render = function(props: { target: Instance, controls: typeof(controls), subscribe: any })
+        local MaidObject = Maid.new()
+
+        local Item = ReactiveItemUtil:ToReactive(ItemUtil:ProcessRawItem({
+            Name = "Snow Blossom",
+            Category = "Plant"
+        }))
+
+        local SelectedItem = ValueObject.new(if props.controls.IsOpen then Item else nil)
+
+        MaidObject:Add(props.subscribe(controls, function(newControls)
+            SelectedItem.Value = if newControls.IsOpen then Item else nil
+        end))
+
+        local SelectedPosition = ValueObject.new(nil)
+
+        MaidObject:Add(Blend.mount(props.target, {
+            TooltipWindow({
+                Item = SelectedItem:Observe(),
+                Position = SelectedPosition:Observe(),
+            })
+        }))
+
+        return function()
+            MaidObject:Destroy()
+        end
+    end
+}
+
+-- [ Types ] --
+type ModuleData = {}
+
+export type Module = typeof(Tooltip) & ModuleData
+
+-- [ Private Functions ] --
+
+-- [ Public Functions ] --
+
+return Tooltip :: Module

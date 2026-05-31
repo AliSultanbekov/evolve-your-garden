@@ -28,7 +28,9 @@ type ModuleData = {
         PlacePlant: Signal.Signal<Player, GardenTypesShared.PlacePlantRemotePacket>,
         RemovePlant: Signal.Signal<Player, GardenTypesShared.RemovePlantRemotePacket>
     },
-    RemoteFunctions: {}
+    RemoteFunctions: {
+        GetGardens: () -> GardenTypesShared.GetGardensRemotePacket
+    }
 }
 
 export type Module = typeof(GardenNetworkServer) & ModuleData
@@ -36,6 +38,30 @@ export type Module = typeof(GardenNetworkServer) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
+function GardenNetworkServer.GrowthCycle(self: Module, packet: GardenTypesShared.GrowthCycleRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:FireAllClients("GrowthCycle", packet)
+end
+
+function GardenNetworkServer.HarvestCollected(self: Module, packet: GardenTypesShared.HarvestCollectedRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:FireAllClients("HarvestCollected", packet)
+end
+
+function GardenNetworkServer.HarvestItemsUpdated(self: Module, player: Player, packet: GardenTypesShared.HarvestItemsUpdatedRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:FireAllClients("HarvestItemsUpdated", packet)
+end
+
+function GardenNetworkServer.HarvestItemsAdded(self: Module, player: Player, packet: GardenTypesShared.HarvestItemsAddedRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:FireAllClients("HarvestItemsAdded", packet)
+end
+
 function GardenNetworkServer.PlantPlaced(self: Module, packet: GardenTypesShared.PlantPlacedRemotePacket)
     local Channel = self._NetworkServiceShared:GetChannel("Garden")
 
@@ -74,7 +100,7 @@ function GardenNetworkServer.Init(self: Module, serviceBag: ServiceBag.ServiceBa
     } :: any
 
     self.RemoteFunctions = {
-
+        
     } :: any
 end
 
@@ -85,6 +111,7 @@ function GardenNetworkServer.Start(self: Module)
     Channel:DeclareEvent("PlantRemoved")
     Channel:DeclareEvent("GardenClaimed")
     Channel:DeclareEvent("GardenAbandoned")
+    Channel:DeclareMethod("GetGardens")
 
     Channel:Connect("PlacePlant", function(player: Player, packet: GardenTypesShared.PlacePlantRemotePacket)
         self.RemoteEvents.PlacePlant:Fire(player, packet)

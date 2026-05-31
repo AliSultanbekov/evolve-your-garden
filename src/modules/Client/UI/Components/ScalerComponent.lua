@@ -23,14 +23,14 @@ local ScalerComponent = function(props: Props)
     local DeviceScale = ScreenSizeUtils.ComputeScale()
 
     return Blend.New "UIScale" {
-        Name = "Scaler",
+        Name = "Scaler";
         Scale = Blend.Computed(
             props.Scale,
             DeviceScale,
             function(scale: number, device: number)
                 return scale * (if props.ApplyDeviceScale and props.ApplyDeviceScale == true then device else 1)
             end
-        ),
+        );
     }
 end
 

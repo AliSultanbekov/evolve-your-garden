@@ -18,6 +18,9 @@ local ObservableMap = require("ObservableMap")
 
 -- [ Types ] --
 export type Items = ObservableMap.ObservableMap<ItemTypes.ItemId, ReactiveItemTypes.ReactiveItem>
+export type FilteredItems = {
+    [string]: Items
+}
 export type TabsConfig = {
     [string]: {
         [ItemTypes.Category]: boolean

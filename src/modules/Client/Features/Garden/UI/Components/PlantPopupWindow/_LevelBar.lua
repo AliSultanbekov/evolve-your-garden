@@ -1,5 +1,5 @@
 --[=[
-    @class GardenConstants
+    @class LevelBar
 ]=]
 
 -- [ Roblox Services ] --
@@ -8,23 +8,31 @@
 local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
+local Blend = require("Blend")
+
+-- [ Components ] --
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local GardenConstants = {
-    MaxGardens = 8
-}
+local LevelBar = function(props: Props)
+    return Blend.New "Frame" {
+        
+    }
+end
 
 -- [ Types ] --
+type Props = {
+    
+}
 type ModuleData = {}
 
-export type Module = typeof(GardenConstants) & ModuleData
+export type Module = typeof(LevelBar) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return GardenConstants :: Module
+return LevelBar :: Module

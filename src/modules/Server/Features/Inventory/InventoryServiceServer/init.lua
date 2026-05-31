@@ -61,7 +61,6 @@ end
 function InventoryServiceServer.AddItems(self: Module, player: Player, items: { [any]: ItemTypes.Item })
     local AddedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
     local UpdatedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
-    local UpdateInfos: { [ItemTypes.ItemId]: ItemTypes.ItemUpdateInfo } = {}
 
     local Data = self._DataServiceServer:GetProfile(player).Data
 
@@ -78,16 +77,7 @@ function InventoryServiceServer.AddItems(self: Module, player: Player, items: { 
                     StoredItem.Amount += item.Amount
 
                     if not AddedItems[item.Id] then
-                        if not UpdatedItems[item.Id] then
-                            UpdatedItems[item.Id] = StoredItem
-                        end
-
-                        local Info = UpdateInfos[item.Id]
-                        if Info then
-                            Info.Delta += item.Amount
-                        else
-                            UpdateInfos[item.Id] = { Attribute = "Amount", Delta = item.Amount }
-                        end
+                        UpdatedItems[item.Id] = StoredItem
                     end
                 else
                     Data.Inventory[item.Id] = item
@@ -102,14 +92,13 @@ function InventoryServiceServer.AddItems(self: Module, player: Player, items: { 
     end
 
     if next(UpdatedItems) then
-        self._InventoryNetworkServer:ItemsUpdated(player, { Items = UpdatedItems, UpdateInfos = UpdateInfos })
+        self._InventoryNetworkServer:ItemsUpdated(player, { Items = UpdatedItems })
     end
 end
 
 function InventoryServiceServer.RemoveItems(self: Module, player: Player, items: { ItemTypes.Item })
     local RemovedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
     local UpdatedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
-    local UpdateInfos: { [ItemTypes.ItemId]: ItemTypes.ItemUpdateInfo } = {}
 
     local Data = self._DataServiceServer:GetProfile(player).Data
 
@@ -134,20 +123,9 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
                     Data.Inventory[item.Id] = nil
                     RemovedItems[item.Id] = StoredItem
                     UpdatedItems[item.Id] = nil
-                    UpdateInfos[item.Id] = nil
                 else
                     StoredItem.Amount -= item.Amount
-
-                    if not UpdatedItems[item.Id] then
-                        UpdatedItems[item.Id] = StoredItem
-                    end
-
-                    local Info = UpdateInfos[item.Id]
-                    if Info then
-                        Info.Delta -= item.Amount
-                    else
-                        UpdateInfos[item.Id] = { Attribute = "Amount", Delta = -item.Amount }
-                    end
+                    UpdatedItems[item.Id] = StoredItem
                 end
             end,
         })
@@ -158,7 +136,7 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
     end
 
     if next(UpdatedItems) then
-        self._InventoryNetworkServer:ItemsUpdated(player, { Items = UpdatedItems, UpdateInfos = UpdateInfos })
+        self._InventoryNetworkServer:ItemsUpdated(player, { Items = UpdatedItems })
     end
 end
 
@@ -180,21 +158,14 @@ function InventoryServiceServer.Start(self: Module)
     end
 
     RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
-        local Maid, Player = brio:ToMaidAndValue()
+        local Maid, _Player = brio:ToMaidAndValue()
 
-        local Plants: { ItemTypes.Item } = {}
-
-        for _ = 1, 10 do
-            table.insert(Plants, ItemUtil:ProcessRawItem({
-                Name = "Snow Blossom",
-                Category = "Plant",
-            }))
-        end
-
-        self:AddItems(Player, Plants)
+        --[[self:AddRawItems(Player, {
+            ItemUtil:MakeRawFromName("Snow Blossom")
+        })]]
 
         Maid:Add(function()
-
+            
         end)
     end)
 end

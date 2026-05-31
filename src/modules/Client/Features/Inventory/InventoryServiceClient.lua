@@ -14,6 +14,9 @@ local InventoryTypesShared = require("InventoryTypesShared")
 local ReactiveItemUtil = require("ReactiveItemUtil")
 local ObservableMap = require("ObservableMap")
 local InventoryTypesClient = require("InventoryTypesClient")
+local InventoryConfig = require(script.Parent._InventoryConfig)
+local ReactiveItemTypes = require("ReactiveItemTypes")
+local ValueObject = require("ValueObject")
 
 -- [ Constants ] --
 
@@ -26,23 +29,56 @@ local InventoryServiceClient = {}
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _InventoryNetworkClient: typeof(require("InventoryNetworkClient")),
-    _Items: InventoryTypesClient.Items
+    _Items: InventoryTypesClient.Items,
+    _FilteredItems: InventoryTypesClient.FilteredItems,
+    _HoveredItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>,
+    _SelectedItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>
 }
 
 export type Module = typeof(InventoryServiceClient) & ModuleData
 
 -- [ Private Functions ] --
-function InventoryServiceClient._ProcessItems(self: Module, items: { [any]: ItemTypes.Item })
-    for _, item in items do
-        self._Items:Set(item.Id, ReactiveItemUtil:ToReactive(item))
+function InventoryServiceClient._SetupFilteredItems(self: Module)
+    for tabName, _ in InventoryConfig.TabsConfig do
+        self._FilteredItems[tabName] = ObservableMap.new()
     end
 end
 
-function InventoryServiceClient.GetItems(self: Module)
-    return self._Items
+function InventoryServiceClient._ProcessItems(self: Module, items: { [any]: ItemTypes.Item })
+    for _, item in items do
+        local ReactiveItem = ReactiveItemUtil:ToReactive(item)
+        local TabName = InventoryConfig.CategoryToTab[item.Category]
+
+        self._Items:Set(item.Id, ReactiveItem)
+        self._FilteredItems[TabName]:Set(item.Id, ReactiveItem)
+    end
 end
 
 -- [ Public Functions ] --
+function InventoryServiceClient.SelectItem(self: Module, item: ReactiveItemTypes.ReactiveItem?)
+    self._SelectedItem.Value = item
+end
+
+function InventoryServiceClient.HoverItem(self: Module, item: ReactiveItemTypes.ReactiveItem?)
+    self._HoveredItem.Value = item
+end
+
+function InventoryServiceClient.GetSelectedItem(self: Module)
+    return self._SelectedItem:Observe()
+end
+
+function InventoryServiceClient.GetHoveredItem(self: Module)
+    return self._HoveredItem:Observe()
+end
+
+function InventoryServiceClient.GetItems(self: Module, tabFilter: string?)
+    if tabFilter then
+        return self._FilteredItems[tabFilter]
+    else
+        return self._Items
+    end
+end
+
 function InventoryServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     if self._ServiceBag ~= nil then
         error("Service already initialized")
@@ -51,6 +87,11 @@ function InventoryServiceClient.Init(self: Module, serviceBag: ServiceBag.Servic
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._InventoryNetworkClient = self._ServiceBag:GetService(require("InventoryNetworkClient"))
     self._Items = ObservableMap.new()
+    self._FilteredItems = {}
+    self._SelectedItem = ValueObject.new(nil)
+    self._HoveredItem = ValueObject.new(nil)
+
+    self:_SetupFilteredItems()
 end
 
 function InventoryServiceClient.Start(self: Module)
@@ -77,6 +118,10 @@ function InventoryServiceClient.Start(self: Module)
     self._InventoryNetworkClient.RemoteEvents.ItemsRemoved:Connect(function(packet: InventoryTypesShared.ItemsRemovedRemotePacket)
         for _, item in packet.Items do
             self._Items:Remove(item.Id)
+
+            local TabName = InventoryConfig.CategoryToTab[item.Category]
+
+            self._FilteredItems[TabName]:Remove(item.Id)
         end
     end)
 end

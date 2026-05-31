@@ -10,7 +10,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
-local GardenConstants = require("GardenConstants")
+local GardenConfig = require("GardenConfig")
 local ValueObject = require("ValueObject")
 local GardenTypesShared = require("GardenTypesShared")
 local GardenTypesClient = require("GardenTypesClient")
@@ -36,6 +36,8 @@ type ModuleData = {
     _UserIdToGardenId: { [string]: GardenTypesShared.GardenId },
     _LocalGarden: ValueObject.ValueObject<GardenTypesClient.ReactiveGarden?>,
     _SelectedSlot: ValueObject.ValueObject<GardenTypesShared.SlotId?>,
+    _SlotModels: {[GardenTypesShared.SlotId]: GardenTypesClient.SlotModel},
+    _ClosestSlotModel: ValueObject.ValueObject<GardenTypesClient.SlotModel?>,
 }
 
 export type Module = typeof(GardenServiceClient) & ModuleData
@@ -58,7 +60,7 @@ end
 function GardenServiceClient._SetupGardens(self: Module): GardenTypesClient.ReactiveGardens
     local Gardens = {}
 
-    for i = 1, GardenConstants.MaxGardens do
+    for i = 1, GardenConfig.MaxGardens do
         local GardenId = tostring(i)
 
         Gardens[GardenId] = {
@@ -73,6 +75,30 @@ function GardenServiceClient._SetupGardens(self: Module): GardenTypesClient.Reac
 end
 
 -- [ Public Functions ] --
+function GardenServiceClient.SetClosestSlotModel(self: Module, slotModel: GardenTypesClient.SlotModel)
+    self._ClosestSlotModel.Value = slotModel
+end
+
+function GardenServiceClient.GetClosestSlotModel(self: Module)
+    return self._ClosestSlotModel
+end
+
+function GardenServiceClient.RegisterSlotModel(self: Module, slotId, slotModel: GardenTypesClient.SlotModel)
+    self._SlotModels[slotId] = slotModel
+end
+
+function GardenServiceClient.UnregisterSlotModel(self: Module, slotId)
+    self._SlotModels[slotId] = nil
+end
+
+function GardenServiceClient.GetSlotModel(self: Module, slotId)
+    return self._SlotModels[slotId]
+end
+
+function GardenServiceClient.GetSlotModels(self: Module)
+    return self._SlotModels
+end
+
 function GardenServiceClient.GetGardens(self: Module): GardenTypesClient.ReactiveGardens
     return self._Gardens
 end
@@ -143,10 +169,21 @@ function GardenServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBa
     self._UserIdToGardenId = {}
     self._LocalGarden = ValueObject.new(nil)
     self._SelectedSlot = ValueObject.new(nil)
+    self._SlotModels = {}
+    self._ClosestSlotModel = ValueObject.new(nil)
 end
 
 function GardenServiceClient.Start(self: Module)
     local LocalUserId = PlayerToUserId(LocalPlayer)
+    
+    self._GardenNetworkClient:GetGardens():Then(function(packet: GardenTypesShared.GetGardensRemotePacket)
+        for _, gardenData in packet do
+            local Garden = self._Gardens[gardenData.GardenId]
+            Garden.Owner.Value = gardenData.UserId
+            Garden.Level.Value = gardenData.GardenLevel
+            self:_AddSlotsToMap(Garden.Slots, gardenData.Slots)
+        end
+    end)
 
     self._GardenNetworkClient.RemoteEvents.GardenClaimed:Connect(function(packet: GardenTypesShared.GardenClaimedRemotePacket)
         local Garden = self._Gardens[packet.GardenId]

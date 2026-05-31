@@ -53,7 +53,7 @@ end
 function ScreenSizeUtils.ComputeScale(designSize: Vector2?)
     local reference = designSize or DEFAULT_DESIGN_SIZE
     return Blend.Computed(viewportSize, function(viewport: Vector2)
-        return math.min(viewport.X / reference.X, viewport.Y / reference.Y)
+        return math.min(0.9, math.min(viewport.X / reference.X, viewport.Y / reference.Y))
     end)
 end
 

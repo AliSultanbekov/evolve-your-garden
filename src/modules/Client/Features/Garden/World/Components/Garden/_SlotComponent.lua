@@ -39,14 +39,20 @@ local SlotComponent = function(props: Props)
     end
 
     local SlotModel = MaidObject:Add(SetupSlot(AssetProvider:Get("Objects/Garden/Slot")))
+    
+    props.OnSlotCreated(SlotID, SlotModel)
+
+    MaidObject:Add(function()
+        props.OnSlotDestroyed(SlotID)
+    end)
 
     MaidObject:Add(HighlightComponent({
-        Enabled = MouseServiceClient:ObserveIsHovering(SlotModel),
-        Adornee = SlotModel,
-        FillColor = Color3.fromRGB(245, 245, 245),
-        FillTransparency = 0.8,
-        OutlineColor = Color3.fromRGB(255, 255, 255),
-        OutlineTransparency = 0.8,
+        Enabled = MouseServiceClient:ObserveIsHovering(SlotModel);
+        Adornee = SlotModel;
+        FillColor = Color3.fromRGB(245, 245, 245);
+        FillTransparency = 0.8;
+        OutlineColor = Color3.fromRGB(255, 255, 255);
+        OutlineTransparency = 0.8;
     }))
 
     MaidObject:Add(MouseServiceClient:ObserveOnClick(SlotModel):Subscribe(function()
@@ -61,7 +67,7 @@ local SlotComponent = function(props: Props)
         end
 
         PlantMaid:Add(PlantComponent({
-            Plant = plant,
+            Plant = plant;
             SlotModel = SlotModel
         }))
     end))
@@ -79,6 +85,8 @@ type Props = {
     SlotCFrame: CFrame,
 
     OnSlotSelected: (slotId: GardenTypesShared.SlotId) -> (),
+    OnSlotCreated: (slotId: GardenTypesShared.SlotId, slotModel: GardenTypesClient.SlotModel) -> (),
+    OnSlotDestroyed: (slotId: GardenTypesShared.SlotId) -> (),
 }
 type ModuleData = {}
 

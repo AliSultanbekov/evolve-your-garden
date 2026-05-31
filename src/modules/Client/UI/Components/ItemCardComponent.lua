@@ -1,8 +1,10 @@
+
 --[=[
     @class ItemCard
 ]=]
 
 -- [ Roblox Services ] --
+local RunService = game:GetService("RunService")
 
 -- [ Require ] --
 local require = require(script.Parent.loader).load(script) :: typeof(require)
@@ -11,63 +13,190 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local Blend = require("Blend")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local ItemConfig = require("ItemConfig")
+local ItemUtil = require("ItemUtil")
+local ValueObject = require("ValueObject")
+local Rx = require("Rx")
+local Maid = require("Maid")
+local GradientUtil = require("GradientUtil")
+local Observable = require("Observable")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
 local GenericTextComponent = require("GenericTextComponent")
 
 -- [ Constants ] --
+local WIGGLE_COLORS = {
+    Common = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
+    }),
+
+    Uncommon = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 158, 62)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 171, 97)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(197, 137, 54)),
+    }),
+
+    Rare = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 200, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(30, 90, 230)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(140, 230, 255)),
+    }),
+
+    Epic = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(210, 110, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(120, 30, 200)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(240, 130, 255)),
+    }),
+
+    Legendary = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 230, 80)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 110, 0)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 200, 60)),
+    }),
+
+    Mythic = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 90)),
+        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(120, 0, 30)),
+        ColorSequenceKeypoint.new(0.67, Color3.fromRGB(255, 90, 130)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(160, 0, 40)),
+    }),
+
+    Celestial = ColorSequence.new({
+        ColorSequenceKeypoint.new(0,    Color3.fromRGB(255, 82, 206)),
+        ColorSequenceKeypoint.new(0.14, Color3.fromRGB(152, 83, 255)),
+        ColorSequenceKeypoint.new(0.28, Color3.fromRGB(83, 129, 255)),
+        ColorSequenceKeypoint.new(0.43, Color3.fromRGB(85, 232, 255)),
+        ColorSequenceKeypoint.new(0.57, Color3.fromRGB(88, 255, 158)),
+        ColorSequenceKeypoint.new(0.71, Color3.fromRGB(255, 212, 85)),
+        ColorSequenceKeypoint.new(0.85, Color3.fromRGB(255, 83, 94)),
+        ColorSequenceKeypoint.new(1,    Color3.fromRGB(255, 78, 205)),
+    }),
+}
+
+local WIGGLE_ANIMATIONS = {
+    Legendary = function(time: number)
+        return GradientUtil:GetColorSequence({
+            BaseColorSequence = WIGGLE_COLORS["Legendary"],
+            Resolution = 18,
+            Width = 2,
+            Speed = 1,
+            Seed = 0,
+        }, time)
+    end,
+    Mythic = function(time: number)
+        return GradientUtil:GetColorSequence({
+            BaseColorSequence = WIGGLE_COLORS["Mythic"],
+            Resolution = 18,
+            Width = 2.5,
+            Speed = 0.8,
+            Seed = 0,
+        }, time)
+    end,
+    Celestial = function(time: number)
+        return GradientUtil:GetColorSequence({
+            BaseColorSequence = WIGGLE_COLORS["Celestial"],
+            Resolution = 18,
+            Width = 1,
+            Speed = 0.8,
+            Seed = 0,
+        }, time)
+    end
+} :: {
+    [string]: (time: number) -> ()
+}
 
 -- [ Variables ] --
+local RenderStepped = Rx.fromSignal(RunService.RenderStepped):Pipe({
+    Rx.share() :: any
+})
 
 -- [ Module Table ] --
 local ItemCardComponent = function(props: Props)
+    local MaidObject = Maid.new()
     local Item = props.Item
+    local ItemRarity = ItemConfig:GetRarity(Item.Name, Item.Category)
+    local WiggleColor = ValueObject.new(WIGGLE_COLORS[ItemRarity])
+
+    local WiggleAnimation = WIGGLE_ANIMATIONS[ItemRarity]
+
+    if WiggleAnimation then
+        MaidObject:Add((RenderStepped :: any):Pipe({
+            Rx.scan(function(acc, dt: number) return (acc or 0) + dt end, 0),
+        }):Subscribe(function(elapsed: number)
+            WiggleColor.Value = WiggleAnimation(elapsed)
+        end))
+    end
 
     return GenericButtonComponent({
-        OnPressed = function() props.OnPressed(Item) end,
+        Name = "ItemCard";
+        AnchorPoint = Vector2.new(0.5, 0.5);
+        Size = UDim2.fromOffset(100, 100);
+        BackgroundTransparency = 1;
+        Visible = props.Visible;
         Children = {
             Blend.New "ImageLabel" {
-                Name = "Wiggle",
-                Position = UDim2.fromScale(0.5, 0.5),
-                Size = UDim2.fromScale(1, 1),
-                AnchorPoint = Vector2.new(0.5, 0.5),
-                Image = "rbxassetid://114302431590952",
-                ScaleType = Enum.ScaleType.Fit,
-                BackgroundTransparency = 1,
-                ImageColor3 = Color3.fromRGB(64, 179, 255),
-                ZIndex = 1,
-            },
+                Name = "Wiggle";
+                Position = UDim2.fromScale(0.5, 0.5);
+                AnchorPoint = Vector2.new(0.5, 0.5);
+                Size = UDim2.fromScale(1, 1);
+                BackgroundTransparency = 1;
+                Image = "rbxassetid://104856123058042";
+                ScaleType = Enum.ScaleType.Fit;
+                [Blend.Children] = {
+                    Blend.New "UIGradient" {
+                        Color = WiggleColor;
+                        Rotation = 125;
+                    }
+                }
+            };
             Blend.New "ImageLabel" {
-                Name = "Icon",
-                Position = UDim2.fromScale(0.5, 0.5),
-                Size = UDim2.fromScale(0.9, 0.9),
-                AnchorPoint = Vector2.new(0.5, 0.5),
-                Image = ItemConfig:GetIcon(Item.Name, Item.Category),
-                ScaleType = Enum.ScaleType.Fit,
-                BackgroundTransparency = 1,
-                ZIndex = 2,
-            },
+                Name = "Icon";
+                Position = UDim2.fromScale(0.5, 0.5);
+                AnchorPoint = Vector2.new(0.5, 0.5);
+                Size = UDim2.fromScale(0.88, 0.88);
+                BackgroundTransparency = 1;
+                ScaleType = Enum.ScaleType.Fit;
+                Image = ItemConfig:GetIcon(Item.Name, Item.Category);
+            };
 
-            if Item.Category == "Material" then
+            if ItemUtil:CategoryToStorageMode(Item.Category) == "Stackable" then
                 GenericTextComponent({
-                    Name = "Amount",
-                    TextSize = 30,
-                    Position = UDim2.new(1, -19, 1, -19),
-                    Text = Blend.Computed(Item.Amount, function(amount: number)
-                        return "x" .. amount
-                    end),
-                    StrokeColor = Color3.fromRGB(50, 87, 122),
+                    Name = "Amount";
+                    Position = UDim2.fromOffset(58, 82);
+                    Size = UDim2.fromOffset(54, 30);
+                    Text = "0";
+                    TextColor3 = Color3.fromRGB(255, 255, 255);
+                    TextSize = 25;
+                    StrokeColor = Color3.fromRGB(0, 71, 97);
+                    StrokeThickness = 3;
                 }) :: any
-            else nil,
-        }
+            else nil 
+        },
+        OnPressed = function(buttonInstance: GuiButton)
+            local pos = buttonInstance.AbsolutePosition
+            props.OnItemPressed(Item, UDim2.fromOffset(pos.X, pos.Y))
+        end,
+        OnHovered = function(buttonInstance: GuiButton)
+            local pos = buttonInstance.AbsolutePosition
+            props.OnItemHovered(Item, UDim2.fromOffset(pos.X, pos.Y))
+        end,
+        OnUnhovered = function()
+            props.OnItemUnhovered()
+        end,
+        OnDestroyed = function()
+            MaidObject:DoCleaning()
+        end
     })
 end
 
 -- [ Types ] --
 type Props = {
     Item: ReactiveItemTypes.ReactiveItem,
-    OnPressed: (item: ReactiveItemTypes.ReactiveItem) -> (),
+    Visible: Observable.Observable<boolean>,
+    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    OnItemUnhovered: () -> (),
 }
 type ModuleData = {}
 

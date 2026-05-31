@@ -19,7 +19,7 @@ local Brio = require("Brio")
 -- [ Constants ] --
 
 -- [ Variables ] --
-local KEY = "V_1"
+local KEY = "V_3"
 local PROFILE_TEMPLATE = ProfileConfig.Template
 local PROFILE_WAIT_TIMEOUT = 60
 
@@ -149,24 +149,26 @@ function DataServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 end
 
 function DataServiceServer.Start(self: Module)
-    self._PlayerStore = ProfileStore.New(KEY, PROFILE_TEMPLATE) :: any
+    task.spawn(function()
+        self._PlayerStore = ProfileStore.New(KEY, PROFILE_TEMPLATE) :: any
 
-    RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
-        local Maid, Player = brio:ToMaidAndValue()
-
-        self._Leaderstats[Player] = {}
-
-        self:_SetupPlayerProfile(Player)
-        self:_CreateLeaderstats(Player)
-
-        Maid:Add(function()
-            self._Leaderstats[Player] = nil
-
-            local Profile = self._Profiles[Player]
-
-            if Profile ~= nil then
-                Profile:EndSession()
-            end
+        RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
+            local Maid, Player = brio:ToMaidAndValue()
+    
+            self._Leaderstats[Player] = {}
+    
+            self:_SetupPlayerProfile(Player)
+            self:_CreateLeaderstats(Player)
+    
+            Maid:Add(function()
+                self._Leaderstats[Player] = nil
+    
+                local Profile = self._Profiles[Player]
+    
+                if Profile ~= nil then
+                    Profile:EndSession()
+                end
+            end)
         end)
     end)
 end

@@ -23,26 +23,12 @@ export type ObjectData<K> = {
     _Luck: number,
     _LuckAffectedChances: number,
     _ChancePool: ChancePool<K>,
-    _WeightPool: {[K]: number},
-    _TotalWeight: number,
+    _TotalChance: number,
 }
 export type Object<K> = typeof(setmetatable({} :: ObjectData<K>, ChanceClass))
 export type Module = typeof(ChanceClass)
 
 -- [ Private Functions ] --
-function ChanceClass._UpdateWeights<K>(self: Object<K>, chancePool: ChancePool<K>)
-    local TotalWeight = 0
-    local WeightPool = {}
-
-    for key, chance in chancePool do
-        WeightPool[key] = chance
-        TotalWeight += chance
-    end
-
-    self._WeightPool = WeightPool
-    self._TotalWeight = TotalWeight
-end
-
 function ChanceClass._UpdateChances<K>(self: Object<K>, chancePool: ChancePool<K>)
     local UpdatedChances = {}
     local DynamicChances = {}
@@ -73,6 +59,7 @@ function ChanceClass._UpdateChances<K>(self: Object<K>, chancePool: ChancePool<K
     end
 
     self._ChancePool = UpdatedChances
+    self._TotalChance = TotalChance
 end
 
 -- [ Public Functions ] --
@@ -82,11 +69,9 @@ function ChanceClass.new<K>(chancePool: { [K]: number }, _luck: number?, luckAff
     self._Luck = 1
     self._LuckAffectedChances = luckAffectedChances or 10
     self._ChancePool = {}
-    self._WeightPool = {}
-    self._TotalWeight = 0
+    self._TotalChance = 0
 
     self:_UpdateChances(chancePool)
-    self:_UpdateWeights(self._ChancePool)
 
     return self
 end
@@ -96,13 +81,13 @@ function ChanceClass.GetChance<K>(self: Object<K>, key: K)
 end
 
 function ChanceClass.Choose<K>(self: Object<K>): K
-    local RandomNumber = math.random() * self._TotalWeight
-    local WeightProgress = 0
+    local RandomNumber = math.random() * self._TotalChance
+    local ChanceProgress = 0
+    
+    for key, chance in self._ChancePool do
+        ChanceProgress += chance
 
-    for key, weight in self._WeightPool do
-        WeightProgress += weight
-
-        if RandomNumber < WeightProgress then
+        if RandomNumber < ChanceProgress then
             return key
         end
     end

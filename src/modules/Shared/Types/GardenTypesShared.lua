@@ -24,6 +24,7 @@ export type Slot = {
     Harvest: {
         [ItemTypes.ItemId]: ItemTypes.Item
     },
+    HarvestCount: number,
 }
 
 export type Slots = { [SlotId]: Slot }
@@ -57,6 +58,36 @@ export type PlacePlantRemotePacket = {
 
 export type RemovePlantRemotePacket = {
     SlotId: SlotId,
+}
+
+export type GrowthCycleRemotePacket = {
+    Growth: {
+        [GardenId]: {
+            [SlotId]: ItemTypes.PlantItem
+        }
+    }
+}
+
+export type HarvestItemsAddedRemotePacket = {
+    Items: { [any]: ItemTypes.Item }
+}
+
+export type HarvestItemsUpdatedRemotePacket = {
+    Items: { [any]: ItemTypes.Item }
+}
+
+export type HarvestCollectedRemotePacket = {
+    GardenId: GardenId,
+    SlotId: SlotId,
+}
+
+export type GetGardensRemotePacket = {
+    [GardenId]: {
+        GardenId: GardenId,
+        UserId: string,
+        GardenLevel: number,
+        Slots: Slots
+    }
 }
 
 return nil

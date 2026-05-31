@@ -1,5 +1,5 @@
 --[=[
-    @class PlantPickerWindow
+    @class ButtonsStory
 ]=]
 
 -- [ Roblox Services ] --
@@ -11,11 +11,9 @@ local require = (require :: any)(game:GetService("ServerScriptService"):FindFirs
 local Maid = require("Maid")
 local Blend = require("Blend")
 local ValueObject = require("ValueObject")
-local ObservableMap = require("ObservableMap")
-local ItemUtil = require("ItemUtil")
 
 -- [ Components ] --
-local PlantPicketWindow = require(script.Parent.Parent.Components.PlantPickerWindow.PlantPickerWindowComponent)
+local ButtonsWindow = require(script.Parent.Parent.Components.Buttons._ButtonsWindow)
 
 -- [ Constants ] --
 
@@ -25,28 +23,18 @@ local controls = {
 }
 
 -- [ Module Table ] --
-local PlantPickerWindow = {
+local ButtonsStory = {
     summary = "Summary",
     controls = controls,
     render = function(props: { target: Instance, controls: typeof(controls), subscribe: any })
         local MaidObject = Maid.new()
         local IsOpen = ValueObject.new(true)
-        local Items = ObservableMap.new()
-
-        for i = 1, 50 do
-            Items:Set(tostring(i), ItemUtil:ProcessRawItem({
-                Name = "Snow Blossom",
-                Category = "Plant",
-            }))
-        end
 
         MaidObject:Add(Blend.mount(props.target, {
-            PlantPicketWindow({
+            ButtonsWindow({
                 IsOpen = IsOpen:Observe(),
-                Items = Items,
-                
-                OnClose = function()
-                    IsOpen.Value = false
+                OnToggleUI = function()
+                    print("hi")
                 end
             })
         }))
@@ -60,10 +48,10 @@ local PlantPickerWindow = {
 -- [ Types ] --
 type ModuleData = {}
 
-export type Module = typeof(PlantPickerWindow) & ModuleData
+export type Module = typeof(ButtonsStory) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return PlantPickerWindow :: Module
+return ButtonsStory :: Module

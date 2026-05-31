@@ -3,6 +3,8 @@
 ]=]
 
 -- [ Roblox Services ] --
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 -- [ Require ] --
 local require = require(script.Parent.loader).load(script) :: typeof(require)
@@ -11,12 +13,14 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local ServiceBag = require("ServiceBag")
 local Maid = require("Maid")
 local GardenTypesShared = require("GardenTypesShared")
+local GardenTypesClient = require("GardenTypesClient")
 
 local GardenComponent = require(script.Parent.Garden._GardenComponent)
 
 -- [ Constants ] --
 
 -- [ Variables ] --
+local LocalPlayer = Players.LocalPlayer
 
 -- [ Module Table ] --
 local GardenWorldClient = {}
@@ -50,23 +54,53 @@ function GardenWorldClient.Start(self: Module)
 
     for _, garden in pairs(Gardens) do
         self._Maid:Add(GardenComponent({
-            Garden = garden,
-            MouseServiceClient = self._MouseServiceClient,
+            MouseServiceClient = self._MouseServiceClient;
+
+            Garden = garden;
+            
             OnSlotSelected = function(slotId: GardenTypesShared.SlotId)
-                local Slot = self._GardenServiceClient:GetLocalSlot(slotId)
-
-                if not Slot then
-                    return
-                end
-
                 self._GardenServiceClient:SelectSlot(slotId)
-
-                if Slot.Plant.Value then
-                    self._GardenServiceClient:RemovePlant()
-                end
+            end,
+            OnSlotCreated = function(slotId: GardenTypesShared.SlotId, slotModel: GardenTypesClient.SlotModel)
+                self._GardenServiceClient:RegisterSlotModel(slotId, slotModel)
+            end,
+            OnSlotDestroyed = function(slotId: GardenTypesShared.SlotId)
+                self._GardenServiceClient:UnregisterSlotModel(slotId)
             end
         }))
     end
+
+    self._Maid:Add(RunService.Heartbeat:Connect(function(dt: number)
+        local SlotModels = self._GardenServiceClient:GetSlotModels()
+        local Character = LocalPlayer.Character
+
+        if not Character then
+            return
+        end
+
+        local CharacterCFrame = Character:GetPivot()
+        
+        local ClosestModel
+        local ClosestDistance
+
+        for slotId, slotModel in SlotModels do
+            local SlotModelCFrame = slotModel:GetPivot()
+            local Distance = (CharacterCFrame.Position - SlotModelCFrame.Position).Magnitude
+            
+            if Distance > 8 then
+                continue
+            end
+
+            if ClosestDistance and  ClosestDistance < Distance then
+                continue
+            end
+
+            ClosestModel = slotModel
+            ClosestDistance = Distance
+        end
+
+        self._GardenServiceClient:SetClosestSlotModel(ClosestModel)
+    end))
 end
 
 return GardenWorldClient :: Module

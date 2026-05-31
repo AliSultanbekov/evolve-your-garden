@@ -50,6 +50,12 @@ function GardenNetworkClient.PlacePlant(self: Module, packet: GardenTypesShared.
     Channel:FireServer("PlacePlant", packet)
 end
 
+function GardenNetworkClient.GetGardens(self: Module)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    return Channel:PromiseInvokeServer("GetGardens")
+end
+
 function GardenNetworkClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     if self._ServiceBag ~= nil then
         error("Service already initialized")

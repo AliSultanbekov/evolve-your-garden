@@ -12,9 +12,12 @@ local ServiceBag = require("ServiceBag")
 local Maid = require("Maid")
 local Blend = require("Blend")
 local ValueObject = require("ValueObject")
+local ReactiveItemTypes = require("ReactiveItemTypes")
+local Rx = require("Rx")
 
-local WindowComponent = require(script.Parent.Components.InventoryWindow._WindowComponent)
-local InventoryConfig = require(script.Parent.Parent._InventoryConfig)
+-- [ Components ] --
+local InventoryWindow = require(script.Parent.Components.Inventory._Window)
+local TooltipWindow = require(script.Parent.Components.Tooltip._Window)
 
 -- [ Constants ] --
 
@@ -29,12 +32,78 @@ type ModuleData = {
     _UIServiceClient: typeof(require("UIServiceClient")),
     _InventoryServiceClient: typeof(require("InventoryServiceClient")),
     _Maid: Maid.Maid,
-    _ActiveTab: ValueObject.ValueObject<string>
+    _ActiveTab: ValueObject.ValueObject<string>,
+    _SelectedItemPosition: ValueObject.ValueObject<UDim2?>,
+    _HoveredItemPosition: ValueObject.ValueObject<UDim2?>,
+    _Search: ValueObject.ValueObject<string>
 }
 
 export type Module = typeof(InventoryUIClient) & ModuleData
 
 -- [ Private Functions ] --
+function InventoryUIClient._SetupTooltip(self: Module)
+    local Item = ValueObject.new(nil) :: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>
+
+    self._Maid:Add(Rx.combineLatest({
+        SelectedItem = self._InventoryServiceClient:GetSelectedItem(),
+        HoveredItem = self._InventoryServiceClient:GetHoveredItem(),
+    }):Subscribe(function(data)
+        if data.SelectedItem then
+            Item.Value = nil
+        else
+            Item.Value = data.HoveredItem
+        end
+    end))
+
+    self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("Misc"), {
+        TooltipWindow({
+            Item = Item:Observe(),
+            Position = self._HoveredItemPosition:Observe(),
+        })
+    }))
+end
+
+function InventoryUIClient._SetupInventory(self: Module)
+    self._UIServiceClient:RegisterUI({
+        UIName = "Inventory",
+        Category = "Main",
+        Conflicts = {
+            ["Main"] = true
+        },
+    })
+
+    self._UIServiceClient:CloseUI("Inventory")
+
+    self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("Main"), {
+        InventoryWindow({
+            IsOpen = self._UIServiceClient:ObserveUI("Inventory"),
+            ActiveTab = self._ActiveTab:Observe(),
+            Search = self._Search:Observe(),
+            GetItems = function(filter: string?)
+                return self._InventoryServiceClient:GetItems(filter)
+            end,
+            OnItemPressed = function(item: ReactiveItemTypes.ReactiveItem, position: UDim2)
+                self._InventoryServiceClient:SelectItem(item)
+                self._SelectedItemPosition.Value = position
+            end,
+            OnItemHovered = function(item: ReactiveItemTypes.ReactiveItem, position: UDim2)
+                self._InventoryServiceClient:HoverItem(item)
+                self._HoveredItemPosition.Value = position
+            end,
+            OnItemUnhovered = function()
+                self._InventoryServiceClient:HoverItem()
+                --self._HoveredItemPosition.Value = nil
+            end,
+            OnClose = function()
+                self._UIServiceClient:CloseUI("Inventory")
+            end,
+            OnSearch = function(text: string)
+                print(text)
+                self._Search.Value = text
+            end
+        })
+    }))
+end
 
 -- [ Public Functions ] --
 function InventoryUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
@@ -47,43 +116,14 @@ function InventoryUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._InventoryServiceClient = self._ServiceBag:GetService(require("InventoryServiceClient"))
     self._Maid = Maid.new()
     self._ActiveTab = ValueObject.new("Garden")
+    self._SelectedItemPosition = ValueObject.new(nil)
+    self._HoveredItemPosition = ValueObject.new(nil)
+    self._Search = ValueObject.new("")
 end
 
 function InventoryUIClient.Start(self: Module)
-    self._UIServiceClient:RegisterUI({
-        UIName = "Inventory",
-        Category = "Main",
-        Conflicts = {
-            ["Main"] = true
-        },
-    })
-
-    local IsOpen = self._UIServiceClient:ObserveUI("Inventory")
-    local Items = self._InventoryServiceClient:GetItems()
-    local TabsConfig = InventoryConfig.TabsConfig
-
-    self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("Main"), {
-        WindowComponent({
-            -- Vars
-            IsOpen = IsOpen,
-
-            Items = Items,
-            TabsConfig = TabsConfig,
-            ActiveTab = self._ActiveTab:Observe(),
-
-            OnTabSwitched = function(tabName: string)
-                if tabName == self._ActiveTab.Value then
-                    return
-                end
-
-                self._ActiveTab.Value = tabName
-            end,
-            -- Functions
-            OnClose = function()
-                self._UIServiceClient:CloseUI("Inventory")
-            end,
-        })
-    }))
+    self:_SetupInventory()
+    self:_SetupTooltip()
 end
 
 return InventoryUIClient :: Module

@@ -4,6 +4,7 @@
 ]=]
 
 -- [ Roblox Services ] --
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- [ Require ] --
@@ -17,6 +18,7 @@ local Rx = require("Rx")
 local AssetProvider = require("AssetProvider")
 local GardenConfig = require("GardenConfig")
 local Brio = require("Brio")
+local PlayerToUserId = require("PlayerToUserId")
 
 -- [ Components ] --
 local SlotComponent = require(script.Parent._SlotComponent)
@@ -24,6 +26,8 @@ local SlotComponent = require(script.Parent._SlotComponent)
 -- [ Constants ] --
 
 -- [ Variables ] --
+local LocalPlayer = Players.LocalPlayer
+local LocalUserId = PlayerToUserId(LocalPlayer)
 
 -- [ Module Table ] --
 local GardenComponent = function(props: Props)
@@ -61,8 +65,8 @@ local GardenComponent = function(props: Props)
     end
     
     MaidObject:Add(Rx.combineLatest({
-        Owner = Garden.Owner:Observe(),
-        Level = Garden.Level:Observe(),
+        Owner = Garden.Owner:Observe();
+        Level = Garden.Level:Observe();
     }):Subscribe(function(state)
         GardenMaid:DoCleaning()
         
@@ -71,6 +75,7 @@ local GardenComponent = function(props: Props)
         end
 
         local GardenModel = AssetProvider:Get(string.format("Objects/Garden/Upgrades/%s", tostring(state.Level))) :: GardenModel
+        local IsLocal = state.Owner == LocalUserId
 
         GardenMaid:Add(GardenModel)
 
@@ -91,14 +96,34 @@ local GardenComponent = function(props: Props)
 
             SlotMaid:Add(
                 SlotComponent({
-                    MouseServiceClient = props.MouseServiceClient,
+                    MouseServiceClient = props.MouseServiceClient;
 
-                    Garden = Garden,
-                    GardenModel = GardenModel,
-                    Slot = Slot,
-                    SlotCFrame = GetSlotCFrame(GardenModel, state.Level, SlotNumber),
+                    Garden = Garden;
+                    GardenModel = GardenModel;
+                    Slot = Slot;
+                    SlotCFrame = GetSlotCFrame(GardenModel, state.Level, SlotNumber);
 
-                    OnSlotSelected = props.OnSlotSelected
+                    OnSlotSelected = function(slotId: GardenTypesShared.SlotId)
+                        if not IsLocal then
+                            return
+                        end
+                        
+                        props.OnSlotSelected(slotId)
+                    end,
+                    OnSlotCreated = function(slotId: GardenTypesShared.SlotId, slotModel: GardenTypesClient.SlotModel)
+                        if not IsLocal then
+                            return
+                        end
+
+                        props.OnSlotCreated(slotId, slotModel)
+                    end,
+                    OnSlotDestroyed = function(slotId: GardenTypesShared.SlotId)
+                        if not IsLocal then
+                            return
+                        end
+
+                        props.OnSlotDestroyed(slotId)
+                    end
                 })
             )
         end))
@@ -114,6 +139,8 @@ type Props = {
     Garden: GardenTypesClient.ReactiveGarden,
     
     OnSlotSelected: (slotId: GardenTypesShared.SlotId) -> (),
+    OnSlotCreated: (slotId: GardenTypesShared.SlotId, slotModel: GardenTypesClient.SlotModel) -> (),
+    OnSlotDestroyed: (slotId: GardenTypesShared.SlotId) -> (),
 }
 
 type ModuleData = {}

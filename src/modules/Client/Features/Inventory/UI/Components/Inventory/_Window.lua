@@ -1,0 +1,85 @@
+--[=[
+    @class Window
+]=]
+
+-- [ Roblox Services ] --
+
+-- [ Require ] --
+local require = require(script.Parent.loader).load(script) :: typeof(require)
+
+-- [ Imports ] --
+local _Blend = require("Blend")
+local Observable = require("Observable")
+local InventoryTypesClient = require("InventoryTypesClient")
+local ReactiveItemTypes = require("ReactiveItemTypes")
+
+-- [ Components ] --
+local Title = require(script.Parent._Title)
+local SearchBar = require(script.Parent._SeachBar)
+local Background = require(script.Parent._Background)
+local Tabs = require(script.Parent._Tabs)
+
+local AnimatedFrameComponent = require("AnimatedFrameComponent")
+local CloseButtonComponent = require("CloseButtonComponent")
+
+-- [ Constants ] --
+
+-- [ Variables ] --
+
+-- [ Module Table ] --
+local Window = function(props: Props)
+    return AnimatedFrameComponent({
+        Name = "Inventory",
+        Size = UDim2.fromOffset(1115, 754);
+        Position = UDim2.fromScale(0.5, 0.5);
+        AnchorPoint = Vector2.new(0.5, 0.5);
+        BackgroundTransparency = 1;
+        IsOpen = props.IsOpen;
+        Children = {
+            Tabs({
+                ActiveTab = props.ActiveTab;
+                Search = props.Search;
+                GetItems = props.GetItems;
+                OnItemPressed = props.OnItemPressed;
+                OnItemHovered = props.OnItemHovered;
+                OnItemUnhovered = props.OnItemUnhovered;
+            });
+            SearchBar({
+                OnSearch = props.OnSearch;
+            });
+            Title();
+            Background() :: any;
+            CloseButtonComponent({
+                Position = UDim2.fromOffset(1067, 79);
+                Size = UDim2.fromOffset(66, 69);
+                AnchorPoint = Vector2.new(0.5,0.5);
+                BackgroundTransparency = 1;
+                OnClose = function()
+                    props.OnClose()
+                end;
+            });
+        }
+    })
+end
+
+-- [ Types ] --
+type Props = {
+    IsOpen: Observable.Observable<boolean>,
+    ActiveTab: Observable.Observable<string>,
+    Search: Observable.Observable<string>,
+    GetItems: (filter: string?) -> InventoryTypesClient.Items,
+    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    OnItemUnhovered: () -> (),
+    OnClose: () -> (),
+    OnSearch: (text: string) -> (),
+}
+type ModuleData = {}
+
+export type Module = typeof(Window) & ModuleData
+
+-- [ Private Functions ] --
+
+-- [ Public Functions ] --
+
+return Window :: Module
