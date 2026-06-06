@@ -16,6 +16,8 @@ local Blend = require("Blend")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local GenericTextComponent = function(props: Props)
     return Blend.New "TextLabel" {
@@ -53,9 +55,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(GenericTextComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return GenericTextComponent :: Module

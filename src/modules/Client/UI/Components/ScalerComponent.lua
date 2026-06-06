@@ -18,6 +18,8 @@ local ScreenSizeUtils = require("ScreenSizeUtils")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local ScalerComponent = function(props: Props)
     local DeviceScale = ScreenSizeUtils.ComputeScale()
@@ -42,9 +44,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(ScalerComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return ScalerComponent :: Module

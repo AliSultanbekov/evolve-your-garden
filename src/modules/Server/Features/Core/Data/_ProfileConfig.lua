@@ -10,6 +10,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local ItemTypes = require("ItemTypes")
 local GardenTypesShared = require("GardenTypesShared")
+local PackStoreTypesShared = require("PackStoreTypesShared")
 
 -- [ Constants ] --
 
@@ -21,16 +22,29 @@ local ProfileConfig = {
         Upgrades = {
             Garden = 1
         },
-        Currencies = {
-            Coins = 0,
-            Gems = 0,
+        Inventory = {
+            ["Coins"] = {
+                Id = "Coins",
+                Name = "Coins",
+                Category = "Currency" :: "Currency",
+                Amount = 5000,
+            },
+            ["Gems"] = {
+                Id = "Gems",
+                Name = "Gems",
+                Category = "Currency" :: "Currency",
+                Amount = 5000,
+            },
         },
-        Inventory = {},
         Garden = {
             Slots = {},
         },
+        PackStore = {
+            SaleId = "",
+            Packs = {}
+        }
     },
-    Leaderstats = {["Currencies/Coins"] = "IntValue"}
+    Leaderstats = {}
 } :: { Template: ProfileTemplate, Leaderstats: { [string]: string }}
 
 -- [ Types ] --
@@ -48,7 +62,8 @@ export type ProfileTemplate = {
     },
     Garden: {
         Slots: GardenTypesShared.Slots
-    }
+    },
+    PackStore: PackStoreTypesShared.PackStore
 }
 
 return ProfileConfig

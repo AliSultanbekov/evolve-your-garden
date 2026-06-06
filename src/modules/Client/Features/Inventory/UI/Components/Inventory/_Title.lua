@@ -16,6 +16,8 @@ local Blend = require("Blend")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local Title = function()
     return Blend.New "Frame" {
@@ -62,9 +64,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(Title) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return Title :: Module

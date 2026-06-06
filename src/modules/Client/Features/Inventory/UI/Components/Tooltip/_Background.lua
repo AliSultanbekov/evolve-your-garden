@@ -16,6 +16,8 @@ local Blend = require("Blend")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local Background = function()
     return Blend.New "ImageLabel" {
@@ -38,9 +40,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(Background) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return Background :: Module

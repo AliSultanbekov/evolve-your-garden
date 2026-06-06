@@ -26,6 +26,8 @@ local RenderStepped = Rx.fromSignal(RunService.RenderStepped):Pipe({
     Rx.share() :: any
 })
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local Top = function(props: Props)
     local ItemName = Blend.Computed(props.Item, function(item)
@@ -33,16 +35,16 @@ local Top = function(props: Props)
     end)
 
     local RarityImage = Blend.Computed(props.Item, function(item)
-        return ImageConfig.RarityImages[ItemConfig:GetRarity(item.Name, item.Category)]
+        return ImageConfig.Inventory.RarityImages[ItemConfig:GetRarity(item.Name, item.Category)]
     end)
 
     local ItemIcon = Blend.Computed(props.Item, function(item)
         return ItemConfig:GetIcon(item.Name, item.Category)
     end)
 
-    local Rotation = (props.IsOpen :: any):Pipe({
-        Rx.switchMap(function(isOpen: boolean)
-            if not isOpen then
+    local Rotation = (props.AnimateEffects :: any):Pipe({
+        Rx.switchMap(function(shouldAnimate: boolean)
+            if not shouldAnimate then
                 return Rx.of(0) :: any
             end
     
@@ -111,14 +113,10 @@ end
 -- [ Types ] --
 type Props = {
     Item: Observable.Observable<ReactiveItemTypes.ReactiveItem>,
-    IsOpen: Observable.Observable<boolean>,
+    AnimateEffects: Observable.Observable<boolean>,
 }
 type ModuleData = {}
 
 export type Module = typeof(Top) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return Top :: Module

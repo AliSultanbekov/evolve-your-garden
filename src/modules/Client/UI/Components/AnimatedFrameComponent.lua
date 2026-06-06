@@ -18,6 +18,8 @@ local ScalerComponent = require("ScalerComponent")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local AnimatedFrameComponent = function(props: Props)
     local Scale = Blend.Spring(
@@ -65,9 +67,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(AnimatedFrameComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return AnimatedFrameComponent :: Module

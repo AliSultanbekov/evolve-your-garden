@@ -32,10 +32,15 @@ type ModuleData = {
 export type Module = typeof(InventoryServiceServer) & ModuleData
 
 -- [ Private Functions ] --
+function InventoryServiceServer._GetItem(self: Module, player: Player, itemId: ItemTypes.ItemId): ItemTypes.Item?
+    local Data = self._DataServiceServer:GetData(player)
+
+    return Data.Inventory[itemId]
+end
 
 -- [ Public Functions ] --
 function InventoryServiceServer.CheckItemExists(self: Module, player: Player, itemId: ItemTypes.ItemId): boolean
-    if not self:GetItem(player, itemId) then
+    if not self:_GetItem(player, itemId) then
         return false
     else
         return true
@@ -45,7 +50,7 @@ end
 function InventoryServiceServer.GetItem(self: Module, player: Player, itemId: ItemTypes.ItemId): ItemTypes.Item?
     local Data = self._DataServiceServer:GetData(player)
 
-    return Data.Inventory[itemId]
+    return table.clone(Data.Inventory[itemId])
 end
 
 function InventoryServiceServer.AddRawItems(self: Module, player: Player, rawItems: { [any]: ItemTypes.RawItem })

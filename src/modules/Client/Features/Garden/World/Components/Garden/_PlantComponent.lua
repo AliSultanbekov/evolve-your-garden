@@ -19,6 +19,8 @@ local AssetProvider = require("AssetProvider")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local PlantComponent = function(props: Props)
     local MaidObject = Maid.new()
@@ -46,9 +48,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(PlantComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return PlantComponent :: Module

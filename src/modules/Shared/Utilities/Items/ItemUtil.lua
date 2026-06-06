@@ -57,6 +57,20 @@ function ItemUtil.ProcessRawItem(self: Module, rawItem: ItemTypes.RawItem): Item
             Category = rawItem.Category,
             Amount = rawItem.Amount or 1,
         }
+    elseif rawItem.Category == "Pack" then
+        return {
+            Id = id,
+            Name = rawItem.Name,
+            Category = rawItem.Category,
+            Amount = rawItem.Amount or 1,
+        }
+    elseif rawItem.Category == "Currency" then
+        return {
+            Id = id,
+            Name = rawItem.Name,
+            Category = rawItem.Category,
+            Amount = rawItem.Amount or 1,
+        }
     end
 
     error("Unknown item category: " .. tostring(rawItem.Category))

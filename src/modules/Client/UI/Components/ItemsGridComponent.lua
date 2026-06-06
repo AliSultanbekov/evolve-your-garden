@@ -23,6 +23,8 @@ local ItemCardComponent = require("ItemCardComponent")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local ItemsGridComponent = function(props: Props)
     local Items = props.Items
@@ -94,9 +96,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(ItemsGridComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return ItemsGridComponent :: Module

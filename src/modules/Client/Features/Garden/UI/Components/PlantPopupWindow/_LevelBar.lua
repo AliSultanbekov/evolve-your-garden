@@ -16,6 +16,8 @@ local Blend = require("Blend")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local LevelBar = function(props: Props)
     return Blend.New "Frame" {
@@ -30,9 +32,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(LevelBar) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return LevelBar :: Module

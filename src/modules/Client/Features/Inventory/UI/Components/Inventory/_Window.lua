@@ -18,6 +18,7 @@ local Title = require(script.Parent._Title)
 local SearchBar = require(script.Parent._SeachBar)
 local Background = require(script.Parent._Background)
 local Tabs = require(script.Parent._Tabs)
+local TabButtons = require(script.Parent._TabButtons)
 
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local CloseButtonComponent = require("CloseButtonComponent")
@@ -26,16 +27,22 @@ local CloseButtonComponent = require("CloseButtonComponent")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local Window = function(props: Props)
     return AnimatedFrameComponent({
         Name = "Inventory",
-        Size = UDim2.fromOffset(1115, 754);
+        Size = UDim2.fromOffset(1262, 754);
         Position = UDim2.fromScale(0.5, 0.5);
         AnchorPoint = Vector2.new(0.5, 0.5);
         BackgroundTransparency = 1;
         IsOpen = props.IsOpen;
         Children = {
+            TabButtons({
+                ActiveTab = props.ActiveTab;
+                SwitchTab = props.SwitchTab;
+            });
             Tabs({
                 ActiveTab = props.ActiveTab;
                 Search = props.Search;
@@ -68,6 +75,7 @@ type Props = {
     ActiveTab: Observable.Observable<string>,
     Search: Observable.Observable<string>,
     GetItems: (filter: string?) -> InventoryTypesClient.Items,
+    SwitchTab: (tabName: string) -> (),
     OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
     OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
     OnItemUnhovered: () -> (),
@@ -77,9 +85,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(Window) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return Window :: Module

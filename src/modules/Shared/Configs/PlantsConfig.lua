@@ -74,7 +74,7 @@ function PlantConfig._Init(self: Module)
     self.Plants = {
         ["Snow Blossom"] = {
             Name = "Snow Blossom",
-            Rarity = "Mythic",
+            Rarity = "Celestial",
             Icon = "rbxassetid://175279732",
             BaseCycleTime = 5,
             Level = DEFAULT_LEVEL,

@@ -19,13 +19,15 @@ local ItemTypes = require("ItemTypes")
 local InventoryConstants = {
     TabsConfig = {
         ["Garden"] = {
-            ["Plant"] = true
+            ["Plant"] = true,
+            ["Currency"] = true
         },
         ["Materials"] = {
             ["Material"] = true
         }
     },
     CategoryToTab = {
+        ["Currency"] = "Garden",
         ["Plant"] = "Garden",
         ["Material"] = "Materials",
     }

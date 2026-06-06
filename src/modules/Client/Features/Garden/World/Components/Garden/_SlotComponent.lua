@@ -22,6 +22,8 @@ local PlantComponent = require(script.Parent._PlantComponent)
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local SlotComponent = function(props: Props)
     local MaidObject = Maid.new()
@@ -91,9 +93,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(SlotComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return SlotComponent :: Module

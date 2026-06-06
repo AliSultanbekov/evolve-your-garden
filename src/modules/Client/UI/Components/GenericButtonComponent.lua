@@ -19,6 +19,8 @@ local ScalerComponent = require("ScalerComponent")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local GenericButtonComponent = function(props: Props)
     local IsPressed = ValueObject.new(false)
@@ -113,9 +115,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(GenericButtonComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return GenericButtonComponent :: Module

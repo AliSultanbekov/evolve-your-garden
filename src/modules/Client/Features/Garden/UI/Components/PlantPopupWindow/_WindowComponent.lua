@@ -21,6 +21,8 @@ local GenericTextComponent = require("GenericTextComponent")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local WindowComponent = function(props: Props)
     
@@ -34,9 +36,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(WindowComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return WindowComponent :: Module

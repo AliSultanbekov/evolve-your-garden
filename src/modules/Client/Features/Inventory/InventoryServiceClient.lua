@@ -49,6 +49,10 @@ function InventoryServiceClient._ProcessItems(self: Module, items: { [any]: Item
         local ReactiveItem = ReactiveItemUtil:ToReactive(item)
         local TabName = InventoryConfig.CategoryToTab[item.Category]
 
+        if not self._FilteredItems[TabName] then
+            continue
+        end
+
         self._Items:Set(item.Id, ReactiveItem)
         self._FilteredItems[TabName]:Set(item.Id, ReactiveItem)
     end
@@ -96,6 +100,7 @@ end
 
 function InventoryServiceClient.Start(self: Module)
     self._InventoryNetworkClient:GetItems():Then(function(packet: InventoryTypesShared.GetItemsRemotePacket)
+        print(packet.Items)
         self:_ProcessItems(packet.Items)
     end)
 

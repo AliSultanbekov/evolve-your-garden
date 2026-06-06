@@ -24,6 +24,7 @@ local WeatherServiceServer = {}
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _WeatherNetworkServer: typeof(require("WeatherNetworkServer")),
+    _JavaBackendServiceServer: typeof(require("JavaBackendServiceServer")),
     _CurrentWeather: WeatherTypesShared.Weather,
 }
 
@@ -47,6 +48,7 @@ function WeatherServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceB
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._WeatherNetworkServer = self._ServiceBag:GetService(require("WeatherNetworkServer"))
+    self._JavaBackendServiceServer = self._ServiceBag:GetService(require("JavaBackendServiceServer"))
     self._CurrentWeather = {
         Name = "None",
         Duration = 0,
@@ -56,12 +58,10 @@ end
 
 function WeatherServiceServer.Start(self: Module)
     task.spawn(function()
-        self:SelectWeather(self._WeatherNetworkServer:GetWeather())
+        self:SelectWeather(self._JavaBackendServiceServer:GetWeather())
 
-        self._WeatherNetworkServer:SubsribeToWeather(function(message)
-            local Packet = HttpService:JSONDecode(message.Data)
-
-            self:SelectWeather(Packet)
+        self._JavaBackendServiceServer:SubsribeToWeather(function(packet)
+            self:SelectWeather(packet)
         end)
 
         self._WeatherNetworkServer.RemoteFunctions["GetCurrentWeather"] = function()

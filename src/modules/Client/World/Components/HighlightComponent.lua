@@ -17,6 +17,8 @@ local Observable = require("Observable")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local HighlightComponent = function(props: Props)
     local MaidObject = Maid.new()
@@ -49,9 +51,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(HighlightComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return HighlightComponent :: Module

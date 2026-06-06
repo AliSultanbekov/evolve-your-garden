@@ -20,6 +20,8 @@ local ItemsGridComponent = require("ItemsGridComponent")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local Tabs = function(props: Props)
     return Blend.New "Frame" {
@@ -83,9 +85,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(Tabs) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return Tabs :: Module

@@ -58,6 +58,7 @@ function UIServiceClient.GetScreen(self: Module, screenName: string)
         local NewScreen = Instance.new("ScreenGui")
         NewScreen.Name = screenName
         NewScreen.Parent = PlayerGui
+        NewScreen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
         self._Screens[screenName] = NewScreen
         Screen = NewScreen
     end

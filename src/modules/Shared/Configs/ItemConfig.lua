@@ -11,6 +11,8 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local ItemTypes = require("ItemTypes")
 local PlantsConfig = require("PlantsConfig")
 local MaterialsConfig = require("MaterialsConfig")
+local CurrenciesConfig = require("CurrenciesConfig")
+local PacksConfig = require("PacksConfig")
 
 -- [ Constants ] --
 
@@ -21,9 +23,10 @@ local ItemConfig = {
     CategoryToStorageMode = {
         ["Plant"] = "Unique",
         ["Material"] = "Stackable",
+        ["Pack"] = "Stackable",
         ["Currency"] = "Stackable",
     },
-    Categories = {"Plant", "Material", "Currency"}
+    Categories = {"Plant", "Material", "Pack", "Currency"}
 }
 
 -- [ Types ] --
@@ -43,8 +46,12 @@ function ItemConfig.GetCategory(self: Module, itemName: string): ItemTypes.Categ
         return "Plant"
     elseif MaterialsConfig.Materials[itemName] then
         return "Material"
+    elseif PacksConfig.Packs[itemName] then
+        return "Pack"
+    elseif CurrenciesConfig.Currencies[itemName] then
+        return "Currency"
     else
-        error("Issue")
+        error("No category found for item: " .. tostring(itemName))
     end
 end
 
@@ -55,9 +62,13 @@ function ItemConfig.GetIcon(self: Module, itemName: string, itemCategory: ItemTy
         return PlantsConfig.Plants[itemName].Icon
     elseif Category == "Material" then
         return ""
+    elseif Category == "Pack" then
+        return ""
+    elseif Category == "Currency" then
+        return CurrenciesConfig.Currencies[itemName].Icon
     end
 
-    error("Issue")
+    error("No icon found for item: " .. tostring(itemName) .. " (" .. tostring(Category) .. ")")
 end
 
 function ItemConfig.GetRarity(self: Module, itemName: string, itemCategory: ItemTypes.Category?): string
@@ -67,9 +78,13 @@ function ItemConfig.GetRarity(self: Module, itemName: string, itemCategory: Item
         return PlantsConfig.Plants[itemName].Rarity
     elseif Category == "Material" then
         return MaterialsConfig.Materials[itemName].Rarity
+    elseif Category == "Pack" then
+        return PacksConfig.Packs[itemName].Rarity
+    elseif Category == "Currency" then
+        return CurrenciesConfig.Currencies[itemName].Rarity
     end
 
-    error("Issue")
+    error("No rarity found for item: " .. tostring(itemName) .. " (" .. tostring(Category) .. ")")
 end
 
 return ItemConfig :: Module

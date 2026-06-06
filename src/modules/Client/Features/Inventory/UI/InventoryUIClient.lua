@@ -79,6 +79,9 @@ function InventoryUIClient._SetupInventory(self: Module)
             IsOpen = self._UIServiceClient:ObserveUI("Inventory"),
             ActiveTab = self._ActiveTab:Observe(),
             Search = self._Search:Observe(),
+            SwitchTab = function(tabName: string)
+                self._ActiveTab.Value = tabName
+            end,
             GetItems = function(filter: string?)
                 return self._InventoryServiceClient:GetItems(filter)
             end,

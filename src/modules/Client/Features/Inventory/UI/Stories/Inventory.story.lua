@@ -32,37 +32,52 @@ local InventoryStory = {
     render = function(props: { target: Instance, controls: typeof(controls), subscribe: any })
         local MaidObject = Maid.new()
         local IsOpen = ValueObject.new(true)
+        local ActiveTab = ValueObject.new("Garden")
+        local Search = ValueObject.new("")
         local Items = ObservableMap.new()
 
-        -- Test plant items (Snow Blossom with varying mutations/genetics)
-        Items:Set("plant_001", ReactiveItemUtil:ToReactive(ItemUtil:ProcessRawItem({
-            Name = "Snow Blossom",
-            Category = "Plant"
-        })))
-        Items:Set("plant_002", ReactiveItemUtil:ToReactive(ItemUtil:ProcessRawItem({
-            Name = "Snow Blossom",
-            Category = "Plant"
-        })))
-        Items:Set("plant_003", ReactiveItemUtil:ToReactive(ItemUtil:ProcessRawItem({
-            Name = "Snow Blossom",
-            Category = "Plant"
-        })))
-        Items:Set("material_001", ReactiveItemUtil:ToReactive(ItemUtil:ProcessRawItem({
-            Name = "Snow Blossom Fruit",
-            Category = "Material"
-        })))
+        -- Build a reactive item from a raw item and key it by its generated Id.
+        local function addItem(raw: any)
+            local item = ReactiveItemUtil:ToReactive(ItemUtil:ProcessRawItem(raw))
+            Items:Set(item.Id, item)
+        end
 
-        --[[MaidObject:Add(Blend.mount(props.target, {
+        -- Plants with varying mutations
+        addItem({ Name = "Snow Blossom", Category = "Plant" })
+        addItem({ Name = "Snow Blossom", Category = "Plant", Mutations = { "Juicy" } })
+        addItem({ Name = "Snow Blossom", Category = "Plant", Mutations = { "Golden", "Hardy" } })
+
+        -- Material with a stack amount
+        addItem({ Name = "Snow Blossom Fruit", Category = "Material", Amount = 42 })
+
+        MaidObject:Add(Blend.mount(props.target, {
             InventoryWindow({
                 IsOpen = IsOpen:Observe(),
-                GetItems = function(filter: string?)
-                    return Items
+                ActiveTab = ActiveTab:Observe(),
+                Search = Search:Observe(),
+                GetItems = function(_filter: string?)
+                    return Items :: any
                 end,
-                OnItemPressed = function()
-                    print("Hi")
-                end
+                SwitchTab = function(tabName: string)
+                    ActiveTab.Value = tabName
+                end,
+                OnItemPressed = function(item, position)
+                    print("Pressed:", item.Name, position)
+                end,
+                OnItemHovered = function(item, position)
+                    print("Hovered:", item.Name, position)
+                end,
+                OnItemUnhovered = function()
+                    print("Unhovered")
+                end,
+                OnClose = function()
+                    IsOpen.Value = false
+                end,
+                OnSearch = function(text: string)
+                    Search.Value = text
+                end,
             })
-        }))]]
+        }))
 
         return function()
             MaidObject:Destroy()

@@ -19,6 +19,8 @@ local GenericButtonComponent = require("GenericButtonComponent")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local ButtonsWindow = function(props: Props)
     return AnimatedFrameComponent({
@@ -46,6 +48,16 @@ local ButtonsWindow = function(props: Props)
                     props.OnToggleUI("Inventory")
                 end
             });
+            GenericButtonComponent({
+                Name = "PackStore";
+                Size = UDim2.fromOffset(98, 102);
+                AnchorPoint = Vector2.new(0.5, 0.5);
+                BackgroundTransparency = 1;
+                Image = "rbxassetid://92761967690607";
+                OnPressed = function()
+                    props.OnToggleUI("PackStore")
+                end
+            });
         };
         IsOpen = props.IsOpen
     })
@@ -59,9 +71,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(ButtonsWindow) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return ButtonsWindow :: Module

@@ -23,6 +23,8 @@ local Top = require(script.Parent._Top)
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local Window = function(props: Props)
     local Item = props.Item
@@ -63,7 +65,7 @@ local Window = function(props: Props)
                     Blend.New "UIListLayout" {};
                     Top({
                         Item = DisplayItem,
-                        IsOpen = IsOpen,
+                        AnimateEffects = IsOpen,
                     })
                 }
             }
@@ -80,9 +82,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(Window) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return Window :: Module

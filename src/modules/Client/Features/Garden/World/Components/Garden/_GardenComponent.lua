@@ -29,6 +29,8 @@ local SlotComponent = require(script.Parent._SlotComponent)
 local LocalPlayer = Players.LocalPlayer
 local LocalUserId = PlayerToUserId(LocalPlayer)
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local GardenComponent = function(props: Props)
     local MaidObject = Maid.new()

@@ -36,14 +36,10 @@ type Props = {
     AnchorPoint: Vector2?,
     BackgroundTransparency: number?,
     ZIndex: number?,
-    OnClose: () -> (),
+    OnClose: () -> ()?,
 }
 type ModuleData = {}
 
 export type Module = typeof(CloseButtonComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return CloseButtonComponent :: Module

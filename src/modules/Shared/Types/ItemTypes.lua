@@ -17,7 +17,7 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Types ] --
 export type ItemId = string
-export type Category = "Plant" | "Material"
+export type Category = "Plant" | "Material" | "Pack" | "Currency"
 export type StorageMode = "Unique" | "Stackable"
 
 -- ===== Building blocks =====
@@ -58,8 +58,14 @@ export type PlantItem = Common & PlantData & {
 export type MaterialItem = Common & Stackable & MaterialData & {
     Category: "Material",
 }
+export type PackItem = Common & Stackable & {
+    Category: "Pack",
+}
+export type CurrencyItem = Common & Stackable & {
+    Category: "Currency"
+}
 
-export type Item = PlantItem | MaterialItem
+export type Item = PlantItem | MaterialItem | PackItem | CurrencyItem
 
 -- ===== Storage-mode groupings =====
 -- Unions of concrete items that share a storage mode.
@@ -88,7 +94,19 @@ export type RawMaterialItem = {
     Category: "Material",
     Amount: number?,
 }
+export type RawPackItem = {
+    Id: ItemId?,
+    Name: string,
+    Category: "Pack",
+    Amount: number?,
+}
+export type RawCurrencyItem = {
+    Id: ItemId?,
+    Name: string,
+    Category: "Currency",
+    Amount: number?,
+}
 
-export type RawItem = RawPlantItem | RawMaterialItem
+export type RawItem = RawPlantItem | RawMaterialItem | RawPackItem | RawCurrencyItem
 
 return nil

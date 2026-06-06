@@ -19,6 +19,8 @@ local Rx = require("Rx")
 local Maid = require("Maid")
 local GradientUtil = require("GradientUtil")
 local Observable = require("Observable")
+local NumberLocalizationUtils = require("NumberLocalizationUtils")
+local RoundingBehaviourTypes = require("RoundingBehaviourTypes")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
@@ -63,14 +65,13 @@ local WIGGLE_COLORS = {
     }),
 
     Celestial = ColorSequence.new({
-        ColorSequenceKeypoint.new(0,    Color3.fromRGB(255, 82, 206)),
-        ColorSequenceKeypoint.new(0.14, Color3.fromRGB(152, 83, 255)),
-        ColorSequenceKeypoint.new(0.28, Color3.fromRGB(83, 129, 255)),
-        ColorSequenceKeypoint.new(0.43, Color3.fromRGB(85, 232, 255)),
-        ColorSequenceKeypoint.new(0.57, Color3.fromRGB(88, 255, 158)),
-        ColorSequenceKeypoint.new(0.71, Color3.fromRGB(255, 212, 85)),
-        ColorSequenceKeypoint.new(0.85, Color3.fromRGB(255, 83, 94)),
-        ColorSequenceKeypoint.new(1,    Color3.fromRGB(255, 78, 205)),
+        ColorSequenceKeypoint.new(0,    Color3.fromHex("#D62C2C")),
+        ColorSequenceKeypoint.new(0.17, Color3.fromHex("#FFAE3D")),
+        ColorSequenceKeypoint.new(0.34, Color3.fromHex("#FFE943")),
+        ColorSequenceKeypoint.new(0.51, Color3.fromHex("#6AFF6D")),
+        ColorSequenceKeypoint.new(0.68, Color3.fromHex("#51F3FF")),
+        ColorSequenceKeypoint.new(0.85, Color3.fromHex("#3741FF")),
+        ColorSequenceKeypoint.new(1, Color3.fromHex("#FF45C7")),
     }),
 }
 
@@ -97,8 +98,8 @@ local WIGGLE_ANIMATIONS = {
         return GradientUtil:GetColorSequence({
             BaseColorSequence = WIGGLE_COLORS["Celestial"],
             Resolution = 18,
-            Width = 1,
-            Speed = 0.8,
+            Width = 2,
+            Speed = 0.5,
             Seed = 0,
         }, time)
     end
@@ -110,6 +111,8 @@ local WIGGLE_ANIMATIONS = {
 local RenderStepped = Rx.fromSignal(RunService.RenderStepped):Pipe({
     Rx.share() :: any
 })
+
+-- [ Functions ] --
 
 -- [ Module Table ] --
 local ItemCardComponent = function(props: Props)
@@ -165,7 +168,9 @@ local ItemCardComponent = function(props: Props)
                     Name = "Amount";
                     Position = UDim2.fromOffset(58, 82);
                     Size = UDim2.fromOffset(54, 30);
-                    Text = "0";
+                    Text = Blend.Computed((Item  :: ReactiveItemTypes.ReactiveStackableItem).Amount, function(amount: number)
+                        return NumberLocalizationUtils.abbreviate(amount, "en-us", RoundingBehaviourTypes.ROUND_TO_CLOSEST, 3);
+                    end);
                     TextColor3 = Color3.fromRGB(255, 255, 255);
                     TextSize = 25;
                     StrokeColor = Color3.fromRGB(0, 71, 97);
@@ -201,9 +206,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(ItemCardComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return ItemCardComponent :: Module

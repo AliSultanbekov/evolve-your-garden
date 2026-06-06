@@ -30,35 +30,47 @@ type ReactiveCommon = {
     Name: string,
 }
 
+-- Added to any reactive item whose StorageMode is "Stackable" (mirror of ItemTypes.Stackable).
+type ReactiveStackable = {
+    Amount: ValueObject.ValueObject<number>,
+}
+
 -- ===== Category-specific reactive data =====
 
 type ReactivePlantData = {
     GeneticNumber: number,
 
     GrowthTime: ValueObject.ValueObject<number>,
+    Xp: ValueObject.ValueObject<number>,
     LastProduction: ValueObject.ValueObject<number>,
     Mutations: ValueObject.ValueObject<{ string }>,
+    LevelTreeChoices: ValueObject.ValueObject<ItemTypes.LevelTreeChoices>,
 }
 
-type ReactiveMaterialData = {
-    -- Reactive
-    Amount: ValueObject.ValueObject<number>,
-}
+type ReactiveMaterialData = {}
 
 -- ===== Concrete reactive items =====
 export type ReactivePlantItem = ReactiveCommon & ReactivePlantData & {
     Category: "Plant",
 }
 
-export type ReactiveMaterialItem = ReactiveCommon & ReactiveMaterialData & {
+export type ReactiveMaterialItem = ReactiveCommon & ReactiveStackable & ReactiveMaterialData & {
     Category: "Material",
 }
 
-export type ReactiveItem = ReactivePlantItem | ReactiveMaterialItem
+export type ReactivePackItem = ReactiveCommon & ReactiveStackable & {
+    Category: "Pack",
+}
+
+export type ReactiveCurrencyItem = ReactiveCommon & ReactiveStackable & {
+    Category: "Currency",
+}
+
+export type ReactiveItem = ReactivePlantItem | ReactiveMaterialItem | ReactivePackItem | ReactiveCurrencyItem
 
 -- ===== Storage-mode groupings (parallel to ItemTypes.UniqueItem / StackableItem) =====
 export type ReactiveUniqueItem = ReactivePlantItem
-export type ReactiveStackableItem = ReactiveMaterialItem
+export type ReactiveStackableItem = ReactiveMaterialItem | ReactivePackItem | ReactiveCurrencyItem
 export type ReactiveStorageItem = ReactiveItem
 
 -- ===== The inventory shape on the client =====

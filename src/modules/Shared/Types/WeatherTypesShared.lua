@@ -14,8 +14,6 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Variables ] --
 
 -- [ Types ] --
-export type WeatherMessagePacket = Weather
-
 export type Weather = {
     Name: string,
     Duration: number,

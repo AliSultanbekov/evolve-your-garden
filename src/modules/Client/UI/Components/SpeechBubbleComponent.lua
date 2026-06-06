@@ -16,6 +16,8 @@ local Blend = require("Blend")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local SpeechBubbleComponent = function(props: Props)
     return Blend.New "Frame" {
@@ -79,9 +81,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(SpeechBubbleComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return SpeechBubbleComponent :: Module

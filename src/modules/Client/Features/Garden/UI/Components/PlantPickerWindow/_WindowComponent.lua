@@ -21,6 +21,8 @@ local ReactiveItemTypes = require("ReactiveItemTypes")
 
 -- [ Variables ] --
 
+-- [ Functions ] --
+
 -- [ Module Table ] --
 local WindowComponent = function(props: Props)
 end
@@ -35,9 +37,5 @@ type Props = {
 type ModuleData = {}
 
 export type Module = typeof(WindowComponent) & ModuleData
-
--- [ Private Functions ] --
-
--- [ Public Functions ] --
 
 return WindowComponent :: Module
