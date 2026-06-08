@@ -18,6 +18,7 @@ local Rx = require("Rx")
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local Background = require(script.Parent._Background)
 local Top = require(script.Parent._Top)
+local Buttons = require(script.Parent._Buttons)
 
 -- [ Constants ] --
 
@@ -63,9 +64,16 @@ local Window = function(props: Props)
                 BackgroundTransparency = 1;
                 [Blend.Children] = {
                     Blend.New "UIListLayout" {};
+                    Blend.New "UIPadding" {
+                        PaddingBottom = UDim.new(0, 2)
+                    },
                     Top({
                         Item = DisplayItem,
                         AnimateEffects = IsOpen,
+                    }),
+                    Buttons({
+                        Item = DisplayItem,
+                        IsSelected = props.IsSelected,
                     })
                 }
             }
@@ -76,6 +84,7 @@ end
 -- [ Types ] --
 type Props = {
     Item: Observable.Observable<ReactiveItemTypes.ReactiveItem?>,
+    IsSelected: Observable.Observable<boolean>,
     Position: Observable.Observable<UDim2?>,
 }
 

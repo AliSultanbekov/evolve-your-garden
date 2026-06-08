@@ -57,7 +57,7 @@ local Window = function(props: Props)
             Title();
             Background() :: any;
             CloseButtonComponent({
-                Position = UDim2.fromOffset(1067, 79);
+                Position = UDim2.fromOffset(1214, 79);
                 Size = UDim2.fromOffset(66, 69);
                 AnchorPoint = Vector2.new(0.5,0.5);
                 BackgroundTransparency = 1;

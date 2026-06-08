@@ -22,7 +22,7 @@ local Blend = require("Blend")
 local SearchBar = function(props: Props)
     return Blend.New "Frame" {
         Name = "SearchBar";
-        Position = UDim2.fromOffset(669, 48);
+        Position = UDim2.fromOffset(816, 48);
         Size = UDim2.fromOffset(350, 60);
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
         BackgroundTransparency = 1;

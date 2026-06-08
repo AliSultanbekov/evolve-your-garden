@@ -43,22 +43,31 @@ export type Module = typeof(InventoryUIClient) & ModuleData
 -- [ Private Functions ] --
 function InventoryUIClient._SetupTooltip(self: Module)
     local Item = ValueObject.new(nil) :: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>
+    local IsSelected = ValueObject.new(false) :: ValueObject.ValueObject<boolean>
+    local Position = ValueObject.new(nil) :: ValueObject.ValueObject<UDim2?>
 
     self._Maid:Add(Rx.combineLatest({
-        SelectedItem = self._InventoryServiceClient:GetSelectedItem(),
-        HoveredItem = self._InventoryServiceClient:GetHoveredItem(),
-    }):Subscribe(function(data)
+        SelectedItem = self._InventoryServiceClient:ObserveSelectedItem(),
+        SelectedPosition = self._SelectedItemPosition:Observe(),
+        HoveredItem = self._InventoryServiceClient:ObserveHoveredItem(),
+        HoveredPosition = self._HoveredItemPosition:Observe()
+    }):Subscribe(function(data: any)
         if data.SelectedItem then
-            Item.Value = nil
+            IsSelected.Value = true
+            Item.Value = data.SelectedItem
+            Position.Value = data.SelectedPosition
         else
+            IsSelected.Value = false
             Item.Value = data.HoveredItem
+            Position.Value = data.HoveredPosition
         end
     end))
 
     self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("Misc"), {
         TooltipWindow({
             Item = Item:Observe(),
-            Position = self._HoveredItemPosition:Observe(),
+            IsSelected = IsSelected:Observe(),
+            Position = Position:Observe(),
         })
     }))
 end
@@ -90,12 +99,15 @@ function InventoryUIClient._SetupInventory(self: Module)
                 self._SelectedItemPosition.Value = position
             end,
             OnItemHovered = function(item: ReactiveItemTypes.ReactiveItem, position: UDim2)
-                self._InventoryServiceClient:HoverItem(item)
-                self._HoveredItemPosition.Value = position
+                if not self._InventoryServiceClient:GetSelectedItem() then
+                    self._InventoryServiceClient:HoverItem(item)
+                    self._HoveredItemPosition.Value = position
+                end
             end,
             OnItemUnhovered = function()
-                self._InventoryServiceClient:HoverItem()
-                --self._HoveredItemPosition.Value = nil
+                if not self._InventoryServiceClient:GetSelectedItem() then
+                    self._InventoryServiceClient:HoverItem()
+                end
             end,
             OnClose = function()
                 self._UIServiceClient:CloseUI("Inventory")

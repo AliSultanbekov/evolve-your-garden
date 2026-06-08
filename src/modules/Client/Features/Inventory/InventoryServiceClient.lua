@@ -14,7 +14,7 @@ local InventoryTypesShared = require("InventoryTypesShared")
 local ReactiveItemUtil = require("ReactiveItemUtil")
 local ObservableMap = require("ObservableMap")
 local InventoryTypesClient = require("InventoryTypesClient")
-local InventoryConfig = require(script.Parent._InventoryConfig)
+local InventoryConfig = require("InventoryConfig")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local ValueObject = require("ValueObject")
 
@@ -68,10 +68,18 @@ function InventoryServiceClient.HoverItem(self: Module, item: ReactiveItemTypes.
 end
 
 function InventoryServiceClient.GetSelectedItem(self: Module)
-    return self._SelectedItem:Observe()
+    return self._SelectedItem.Value
 end
 
 function InventoryServiceClient.GetHoveredItem(self: Module)
+    return self._HoveredItem.Value
+end
+
+function InventoryServiceClient.ObserveSelectedItem(self: Module)
+    return self._SelectedItem:Observe()
+end
+
+function InventoryServiceClient.ObserveHoveredItem(self: Module)
     return self._HoveredItem:Observe()
 end
 

@@ -5,7 +5,7 @@
 -- [ Roblox Services ] --
 
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script) :: typeof(require)
+local _require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 
@@ -22,12 +22,12 @@ function CurrenciesConfig._Init(self: Module)
         ["Coins"] = {
             Name = "Coins",
             Rarity = "Common",
-            Icon = "rbxassetid://83218620453911",
+            Icon = "rbxassetid://137822539684508",
         },
         ["Gems"] = {
             Name = "Gems",
-            Rarity = "Rare",
-            Icon = "",
+            Rarity = "Common",
+            Icon = "rbxassetid://83087975713139",
         }
     }
 end

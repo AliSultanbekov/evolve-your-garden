@@ -23,7 +23,7 @@ local Background = function()
     return {
         Blend.New "ImageLabel" {
             Name = "Header";
-            Position = UDim2.fromOffset(-4, 29);
+            Position = UDim2.fromOffset(143, 29);
             Size = UDim2.fromOffset(1123, 98);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
@@ -33,7 +33,7 @@ local Background = function()
         };
         Blend.New "ImageLabel" {
             Name = "Body";
-            Position = UDim2.fromOffset(13, 108);
+            Position = UDim2.fromOffset(160, 108);
             Size = UDim2.fromOffset(1088, 650);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;

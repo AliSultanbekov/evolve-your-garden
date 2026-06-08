@@ -42,7 +42,7 @@ local Tooltip = {
             SelectedItem.Value = if newControls.IsOpen then Item else nil
         end))
 
-        local SelectedPosition = ValueObject.new(nil)
+        local SelectedPosition = ValueObject.new(UDim2.fromScale(0.5,0.5) :: UDim2?)
 
         MaidObject:Add(Blend.mount(props.target, {
             TooltipWindow({

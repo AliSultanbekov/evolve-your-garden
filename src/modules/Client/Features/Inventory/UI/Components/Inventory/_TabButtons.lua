@@ -27,7 +27,6 @@ local function Button(props: ButtonProps)
         Name = "Normal";
         Position = UDim2.fromOffset(0, 160);
         Size = UDim2.fromOffset(210, 75);
-        AnchorPoint = Vector2.new(0.5, 0.5);
         BackgroundTransparency = 1;
         OnPressed = function()
             props.SwitchTab(TabName)
@@ -60,6 +59,7 @@ local function Button(props: ButtonProps)
                 TextColor3 = Color3.fromRGB(255, 255, 255);
                 TextSize = 35;
                 TextWrapped = true;
+                TextScaled = true;
                 Blend.New "UIStroke" {
                     Color = Color3.fromRGB(0, 71, 97);
                     LineJoinMode = Enum.LineJoinMode.Miter;
@@ -109,7 +109,7 @@ local TabButtons = function(props: Props)
         Name = "TabButtons";
         Position = UDim2.fromOffset(-5, 128);
         Size = UDim2.fromOffset(165, 200);
-        BackgroundTransparency = 0;
+        BackgroundTransparency = 1;
         ZIndex = -3;
         Blend.New "UIListLayout" {
             Padding = UDim.new(0, 15);

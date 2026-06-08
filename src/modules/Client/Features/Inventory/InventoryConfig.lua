@@ -20,16 +20,22 @@ local InventoryConstants = {
     TabsConfig = {
         ["Garden"] = {
             ["Plant"] = true,
-            ["Currency"] = true
         },
         ["Materials"] = {
             ["Material"] = true
-        }
+        },
+        ["Items"] = {
+            ["Pack"] = true
+        },
+        ["Currencies"] = {
+            ["Currency"] = true
+        },
     },
     CategoryToTab = {
-        ["Currency"] = "Garden",
         ["Plant"] = "Garden",
         ["Material"] = "Materials",
+        ["Pack"] = "Items",
+        ["Currency"] = "Currencies"
     }
 } :: {
     TabsConfig: InventoryTypesClient.TabsConfig,

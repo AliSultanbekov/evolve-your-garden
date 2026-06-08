@@ -61,9 +61,9 @@ function ItemConfig.GetIcon(self: Module, itemName: string, itemCategory: ItemTy
     if Category == "Plant" then
         return PlantsConfig.Plants[itemName].Icon
     elseif Category == "Material" then
-        return ""
+        return MaterialsConfig.Materials[itemName].Icon
     elseif Category == "Pack" then
-        return ""
+        return PacksConfig.Packs[itemName].Icon
     elseif Category == "Currency" then
         return CurrenciesConfig.Currencies[itemName].Icon
     end

@@ -52,6 +52,7 @@ local Tab = function(props: TabProps)
                 Name = "Grid";
                 Size = UDim2.fromScale(1, 1);
                 Active = true;
+                BackgroundTransparency = 1;
                 AutomaticCanvasSize = Enum.AutomaticSize.Y;
                 ScrollBarImageColor3 = Color3.fromRGB(191, 191, 191);
                 ScrollingDirection = Enum.ScrollingDirection.Y;

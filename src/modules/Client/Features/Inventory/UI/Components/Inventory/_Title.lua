@@ -23,7 +23,7 @@ local Title = function()
     return Blend.New "Frame" {
         Name = "Title";
         LayoutOrder = 4;
-        Position = UDim2.fromOffset(6, 0);
+        Position = UDim2.fromOffset(153, 0);
         Size = UDim2.fromOffset(338, 115);
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
         BackgroundTransparency = 1;

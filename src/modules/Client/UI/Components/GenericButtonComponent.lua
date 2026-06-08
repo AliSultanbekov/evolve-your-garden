@@ -41,6 +41,7 @@ local GenericButtonComponent = function(props: Props)
         Size = props.Size;
         AnchorPoint = props.AnchorPoint;
         ZIndex = props.ZIndex,
+        LayoutOrder = props.LayoutOrder;
         BackgroundColor3 = props.BackgroundColor3;
         BackgroundTransparency = props.BackgroundTransparency;
         Visible = props.Visible;
@@ -102,6 +103,7 @@ type Props = {
     Size: UDim2?,
     AnchorPoint: Vector2?,
     ZIndex: number?,
+    LayoutOrder: number?,
     BackgroundColor3: Color3?,
     BackgroundTransparency: number?,
     Visible: (boolean | Observable.Observable<boolean>)?,

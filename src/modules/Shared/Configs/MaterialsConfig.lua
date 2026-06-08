@@ -18,6 +18,7 @@ local MaterialsConfig = {
     Materials = {
         ["Snow Blossom Fruit"] = {
             Name = "Snow Blossom Fruit",
+            Icon = "rbxassetid://115748294366089",
             Rarity = "Common"
         }
     }
@@ -25,6 +26,7 @@ local MaterialsConfig = {
     Materials: {
         [string]: {
             Name: string,
+            Icon: string,
             Rarity: string
         }
     }
