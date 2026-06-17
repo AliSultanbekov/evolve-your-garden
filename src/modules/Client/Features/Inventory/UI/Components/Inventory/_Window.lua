@@ -12,6 +12,7 @@ local _Blend = require("Blend")
 local Observable = require("Observable")
 local InventoryTypesClient = require("InventoryTypesClient")
 local ReactiveItemTypes = require("ReactiveItemTypes")
+local ComponentTypes = require("ComponentTypes")
 
 -- [ Components ] --
 local Title = require(script.Parent._Title)
@@ -19,6 +20,7 @@ local SearchBar = require(script.Parent._SeachBar)
 local Background = require(script.Parent._Background)
 local Tabs = require(script.Parent._Tabs)
 local TabButtons = require(script.Parent._TabButtons)
+local Buttons = require(script.Parent._Buttons)
 
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local CloseButtonComponent = require("CloseButtonComponent")
@@ -33,12 +35,13 @@ local CloseButtonComponent = require("CloseButtonComponent")
 local Window = function(props: Props)
     return AnimatedFrameComponent({
         Name = "Inventory",
-        Size = UDim2.fromOffset(1262, 754);
+        Size = UDim2.fromOffset(1223, 729);
         Position = UDim2.fromScale(0.5, 0.5);
         AnchorPoint = Vector2.new(0.5, 0.5);
         BackgroundTransparency = 1;
         IsOpen = props.IsOpen;
         Children = {
+            Background() :: any;
             TabButtons({
                 ActiveTab = props.ActiveTab;
                 SwitchTab = props.SwitchTab;
@@ -54,13 +57,17 @@ local Window = function(props: Props)
             SearchBar({
                 OnSearch = props.OnSearch;
             });
+            Buttons({
+                OnDeleteMode = props.OnDeleteMode;
+            });
             Title();
-            Background() :: any;
             CloseButtonComponent({
-                Position = UDim2.fromOffset(1214, 79);
-                Size = UDim2.fromOffset(66, 69);
-                AnchorPoint = Vector2.new(0.5,0.5);
+                Position = UDim2.fromOffset(1148+61/2, 9+61/2);
+                Size = UDim2.fromOffset(61, 64);
+                AnchorPoint = Vector2.new(0.5, 0.5);
                 BackgroundTransparency = 1;
+                Image = "rbxassetid://131155686671413";
+                ZIndex = 3;
                 OnClose = function()
                     props.OnClose()
                 end;
@@ -71,9 +78,10 @@ end
 
 -- [ Types ] --
 type Props = {
-    IsOpen: Observable.Observable<boolean>,
-    ActiveTab: Observable.Observable<string>,
+    IsOpen: ComponentTypes.Prop<boolean>,
+    ActiveTab: ComponentTypes.Prop<string>,
     Search: Observable.Observable<string>,
+    
     GetItems: (filter: string?) -> InventoryTypesClient.Items,
     SwitchTab: (tabName: string) -> (),
     OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
@@ -81,6 +89,7 @@ type Props = {
     OnItemUnhovered: () -> (),
     OnClose: () -> (),
     OnSearch: (text: string) -> (),
+    OnDeleteMode: () -> (),
 }
 type ModuleData = {}
 

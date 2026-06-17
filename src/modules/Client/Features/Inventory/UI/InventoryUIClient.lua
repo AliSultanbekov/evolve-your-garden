@@ -14,6 +14,7 @@ local Blend = require("Blend")
 local ValueObject = require("ValueObject")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local Rx = require("Rx")
+local InventoryEnums = require("InventoryEnums")
 
 -- [ Components ] --
 local InventoryWindow = require(script.Parent.Components.Inventory._Window)
@@ -34,6 +35,7 @@ type ModuleData = {
     _Maid: Maid.Maid,
     _ActiveTab: ValueObject.ValueObject<string>,
     _SelectedItemPosition: ValueObject.ValueObject<UDim2?>,
+    _HoveredItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>,
     _HoveredItemPosition: ValueObject.ValueObject<UDim2?>,
     _Search: ValueObject.ValueObject<string>
 }
@@ -49,7 +51,7 @@ function InventoryUIClient._SetupTooltip(self: Module)
     self._Maid:Add(Rx.combineLatest({
         SelectedItem = self._InventoryServiceClient:ObserveSelectedItem(),
         SelectedPosition = self._SelectedItemPosition:Observe(),
-        HoveredItem = self._InventoryServiceClient:ObserveHoveredItem(),
+        HoveredItem = self._HoveredItem:Observe(),
         HoveredPosition = self._HoveredItemPosition:Observe()
     }):Subscribe(function(data: any)
         if data.SelectedItem then
@@ -68,6 +70,18 @@ function InventoryUIClient._SetupTooltip(self: Module)
             Item = Item:Observe(),
             IsSelected = IsSelected:Observe(),
             Position = Position:Observe(),
+            
+            Actions = {
+                Open = function(amount: number)
+                    self._InventoryServiceClient:UseAction(InventoryEnums.Actions.Open, {
+                        Amount = amount
+                    })
+                end
+            },
+
+            OnClose = function()
+                self._InventoryServiceClient:SelectItem(nil)
+            end,
         })
     }))
 end
@@ -82,14 +96,24 @@ function InventoryUIClient._SetupInventory(self: Module)
     })
 
     self._UIServiceClient:CloseUI("Inventory")
+    
+    self._Maid:Add(self._UIServiceClient:ObserveUI("Inventory"):Subscribe(function(open: boolean)
+        if open == false then
+            self._HoveredItem.Value = nil
+            self._InventoryServiceClient:SelectItem(nil)
+        end
+    end))
 
     self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("Main"), {
         InventoryWindow({
             IsOpen = self._UIServiceClient:ObserveUI("Inventory"),
             ActiveTab = self._ActiveTab:Observe(),
             Search = self._Search:Observe(),
+
             SwitchTab = function(tabName: string)
                 self._ActiveTab.Value = tabName
+                self._HoveredItem.Value = nil
+                self._InventoryServiceClient:SelectItem(nil)
             end,
             GetItems = function(filter: string?)
                 return self._InventoryServiceClient:GetItems(filter)
@@ -100,21 +124,21 @@ function InventoryUIClient._SetupInventory(self: Module)
             end,
             OnItemHovered = function(item: ReactiveItemTypes.ReactiveItem, position: UDim2)
                 if not self._InventoryServiceClient:GetSelectedItem() then
-                    self._InventoryServiceClient:HoverItem(item)
+                    self._HoveredItem.Value = item
                     self._HoveredItemPosition.Value = position
                 end
             end,
             OnItemUnhovered = function()
-                if not self._InventoryServiceClient:GetSelectedItem() then
-                    self._InventoryServiceClient:HoverItem()
-                end
+                self._HoveredItem.Value = nil
             end,
             OnClose = function()
                 self._UIServiceClient:CloseUI("Inventory")
             end,
             OnSearch = function(text: string)
-                print(text)
                 self._Search.Value = text
+            end,
+            OnDeleteMode = function()
+                -- TODO: wire delete mode (toggle a ValueObject, drive item delete affordance)
             end
         })
     }))
@@ -132,6 +156,7 @@ function InventoryUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._Maid = Maid.new()
     self._ActiveTab = ValueObject.new("Garden")
     self._SelectedItemPosition = ValueObject.new(nil)
+    self._HoveredItem = ValueObject.new(nil)
     self._HoveredItemPosition = ValueObject.new(nil)
     self._Search = ValueObject.new("")
 end

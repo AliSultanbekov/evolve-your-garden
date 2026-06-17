@@ -37,6 +37,12 @@ export type Module = typeof(InventoryNetworkClient) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
+function InventoryNetworkClient.UseAction(self: Module, packet: InventoryTypesShared.UseActionRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Inventory")
+
+    Channel:FireServer("UseAction", packet)
+end
+
 function InventoryNetworkClient.GetItems(self: Module)
     local Channel = self._NetworkServiceShared:GetChannel("Inventory")
 

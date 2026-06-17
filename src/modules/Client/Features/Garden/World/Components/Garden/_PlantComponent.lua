@@ -12,6 +12,11 @@ local Maid = require("Maid")
 local GardenTypesClient = require("GardenTypesClient")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local AssetProvider = require("AssetProvider")
+local ValueObject = require("ValueObject")
+local Rx = require("Rx")
+local PlantsConfig = require("PlantsConfig")
+local VFXClass = require("VFXClass")
+local VFXContainer = require("VFXContainer")
 
 -- [ Components ] --
 
@@ -25,17 +30,35 @@ local AssetProvider = require("AssetProvider")
 local PlantComponent = function(props: Props)
     local MaidObject = Maid.new()
     local Plant = props.Plant
-    local SlotModel = props.SlotModel
+    local GrowthStage = ValueObject.new(0)
 
-    local function SetupPlantModel(plantModel: Model)
-        plantModel.Name = Plant.Name
-        plantModel.Parent = SlotModel
-        plantModel:PivotTo(SlotModel.PlantSpawnPoint.WorldCFrame)
+    MaidObject:Add(Plant.GrowthTime:Observe():Subscribe(function(growthTime: number)
+        GrowthStage.Value = PlantsConfig:GetCurrentGrowthStage(Plant.Name, growthTime)
+    end))
 
-        return plantModel
-    end
+    local StageMaid = MaidObject:Add(Maid.new())
+    local IsFirstStage = true
 
-    local _PlantModel = MaidObject:Add(SetupPlantModel(AssetProvider:Get("Objects/Items/Snow Blossom")))
+    MaidObject:Add(GrowthStage:Observe():Subscribe(function(growthStage: number)
+        StageMaid:DoCleaning()
+
+        local IsGrowthChange = not IsFirstStage
+        IsFirstStage = false
+
+        local PlantModel = StageMaid:Add(AssetProvider:Get("Objects/Plants/" .. Plant.Name .. "/" .. tostring(growthStage))) :: Model
+        PlantModel.Parent = workspace
+        PlantModel:PivotTo(props.SlotModel.PlantSpawnPoint.WorldCFrame)
+
+        if IsGrowthChange then
+            local VFXObject = StageMaid:Add(VFXClass.new({"VFX/PlantStage"}, props.SlotModel.PlantSpawnPoint))
+
+            VFXObject:SetEnabled(true)
+
+            StageMaid:Add(task.delay(3, function()
+                VFXObject:SetEnabled(false)
+            end))
+        end
+    end))
 
     return MaidObject
 end

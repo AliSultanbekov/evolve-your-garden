@@ -18,7 +18,7 @@ local ValueObject = require("ValueObject")
 local Rx = require("Rx")
 local Maid = require("Maid")
 local GradientUtil = require("GradientUtil")
-local Observable = require("Observable")
+local ComponentTypes = require("ComponentTypes")
 local NumberLocalizationUtils = require("NumberLocalizationUtils")
 local RoundingBehaviourTypes = require("RoundingBehaviourTypes")
 
@@ -29,26 +29,31 @@ local GenericTextComponent = require("GenericTextComponent")
 -- [ Constants ] --
 local WIGGLE_COLORS = {
     Common = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(172, 175, 186)),
+        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(255, 255, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(190, 192, 202)),
     }),
 
     Uncommon = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 158, 62)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 171, 97)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(197, 137, 54)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(225, 135, 65)),
+        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(255, 224, 188)),
+        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(255, 224, 188)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(235, 155, 90)),
     }),
 
     Rare = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 200, 255)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(30, 90, 230)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(140, 230, 255)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(215, 85, 75)),
+        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(255, 195, 185)),
+        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(255, 195, 185)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(230, 100, 90)),
     }),
 
     Epic = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(210, 110, 255)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(120, 30, 200)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(240, 130, 255)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(225, 65, 160)),
+        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(255, 185, 228)),
+        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(255, 185, 228)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(240, 85, 175)),
     }),
 
     Legendary = ColorSequence.new({
@@ -58,20 +63,22 @@ local WIGGLE_COLORS = {
     }),
 
     Mythic = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 90)),
-        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(120, 0, 30)),
-        ColorSequenceKeypoint.new(0.67, Color3.fromRGB(255, 90, 130)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(160, 0, 40)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 0, 25)),
+        ColorSequenceKeypoint.new(0.3, Color3.fromRGB(255, 45, 60)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 175, 160)),
+        ColorSequenceKeypoint.new(0.7, Color3.fromRGB(255, 45, 60)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(160, 10, 35)),
     }),
 
     Celestial = ColorSequence.new({
-        ColorSequenceKeypoint.new(0,    Color3.fromHex("#D62C2C")),
-        ColorSequenceKeypoint.new(0.17, Color3.fromHex("#FFAE3D")),
-        ColorSequenceKeypoint.new(0.34, Color3.fromHex("#FFE943")),
-        ColorSequenceKeypoint.new(0.51, Color3.fromHex("#6AFF6D")),
-        ColorSequenceKeypoint.new(0.68, Color3.fromHex("#51F3FF")),
-        ColorSequenceKeypoint.new(0.85, Color3.fromHex("#3741FF")),
-        ColorSequenceKeypoint.new(1, Color3.fromHex("#FF45C7")),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 50, 110)),
+        ColorSequenceKeypoint.new(0.14, Color3.fromRGB(255, 155, 50)),
+        ColorSequenceKeypoint.new(0.28, Color3.fromRGB(255, 235, 65)),
+        ColorSequenceKeypoint.new(0.42, Color3.fromRGB(60, 235, 150)),
+        ColorSequenceKeypoint.new(0.57, Color3.fromRGB(60, 210, 255)),
+        ColorSequenceKeypoint.new(0.71, Color3.fromRGB(120, 105, 255)),
+        ColorSequenceKeypoint.new(0.85, Color3.fromRGB(210, 60, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 95, 170)),
     }),
 }
 
@@ -89,8 +96,8 @@ local WIGGLE_ANIMATIONS = {
         return GradientUtil:GetColorSequence({
             BaseColorSequence = WIGGLE_COLORS["Mythic"],
             Resolution = 18,
-            Width = 2.5,
-            Speed = 0.8,
+            Width = 2,
+            Speed = 1.2,
             Seed = 0,
         }, time)
     end,
@@ -98,13 +105,13 @@ local WIGGLE_ANIMATIONS = {
         return GradientUtil:GetColorSequence({
             BaseColorSequence = WIGGLE_COLORS["Celestial"],
             Resolution = 18,
-            Width = 2,
-            Speed = 0.5,
+            Width = 1.2,
+            Speed = 0.45,
             Seed = 0,
         }, time)
     end
 } :: {
-    [string]: (time: number) -> ()
+    [string]: (time: number) -> ColorSequence
 }
 
 -- [ Variables ] --
@@ -134,9 +141,11 @@ local ItemCardComponent = function(props: Props)
     return GenericButtonComponent({
         Name = "ItemCard";
         AnchorPoint = Vector2.new(0.5, 0.5);
-        Size = UDim2.fromOffset(100, 100);
+        Position = UDim2.fromScale(0.5, 0.5);
+        Size = UDim2.fromScale(1, 1);
         BackgroundTransparency = 1;
         Visible = props.Visible;
+        Parent = props.Parent;
         Children = {
             Blend.New "ImageLabel" {
                 Name = "Wiggle";
@@ -179,11 +188,25 @@ local ItemCardComponent = function(props: Props)
             else nil 
         },
         OnPressed = function(buttonInstance: GuiButton)
-            local pos = buttonInstance.AbsolutePosition
+            local backing = buttonInstance.Parent :: GuiButton
+
+            if not backing then
+                return
+            end
+
+            local pos = backing.AbsolutePosition
+
             props.OnItemPressed(Item, UDim2.fromOffset(pos.X, pos.Y))
         end,
         OnHovered = function(buttonInstance: GuiButton)
-            local pos = buttonInstance.AbsolutePosition
+            local backing = buttonInstance.Parent :: GuiButton
+
+            if not backing then
+                return
+            end
+
+            local pos = backing.AbsolutePosition
+
             props.OnItemHovered(Item, UDim2.fromOffset(pos.X, pos.Y))
         end,
         OnUnhovered = function()
@@ -198,7 +221,8 @@ end
 -- [ Types ] --
 type Props = {
     Item: ReactiveItemTypes.ReactiveItem,
-    Visible: Observable.Observable<boolean>,
+    Visible: ComponentTypes.Prop<boolean>?,
+    Parent: ComponentTypes.Prop<Instance>?,
     OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
     OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
     OnItemUnhovered: () -> (),

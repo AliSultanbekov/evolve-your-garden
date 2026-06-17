@@ -27,9 +27,10 @@ local Background = function()
         Size = UDim2.fromScale(1, 1);
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
         BackgroundTransparency = 1;
-        Image = "rbxassetid://88190543344636";
+        Image = "rbxassetid://126179151125521";
         ScaleType = Enum.ScaleType.Slice;
-        SliceCenter = Rect.new(Vector2.new(261, 190), Vector2.new(261, 712));
+        SliceCenter = Rect.new(Vector2.new(256, 161), Vector2.new(256, 634));
+        SliceScale = 0.5;
     };
 end
 

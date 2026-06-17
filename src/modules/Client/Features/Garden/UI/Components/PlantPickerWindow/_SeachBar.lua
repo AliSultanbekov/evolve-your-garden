@@ -22,40 +22,36 @@ local Blend = require("Blend")
 local SearchBar = function(props: Props)
     return Blend.New "Frame" {
         Name = "SearchBar";
-        LayoutOrder = 3;
-        Position = UDim2.fromOffset(831, 9);
-        Size = UDim2.fromOffset(306, 64);
+        LayoutOrder = 5;
+        Position = UDim2.fromOffset(675, 61);
+        Size = UDim2.fromOffset(350, 60);
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
         BackgroundTransparency = 1;
         ZIndex = 4;
         Blend.New "ImageLabel" {
-            Name = "Background";
-            Size = UDim2.fromOffset(306, 64);
+            Name = "SearchBarBackground";
+            Position = UDim2.fromOffset(-3, -3);
+            Size = UDim2.fromOffset(356, 66);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
-            Image = "rbxassetid://129977395166820";
+            Image = "rbxassetid://106903151714909";
             ScaleType = Enum.ScaleType.Fit;
         };
         Blend.New "TextBox" {
-            Name = "SearchText";
+            Name = "Text";
             LayoutOrder = 1;
-            Size = UDim2.fromOffset(306, 64);
+            Position = UDim2.fromOffset(10, 9);
+            Size = UDim2.fromOffset(330, 42);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             CursorPosition = -1;
             Text = "";
-            PlaceholderText = "Search...";
-            PlaceholderColor3 = Color3.fromRGB(255, 255, 255);
-            FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
+            FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json");
             TextColor3 = Color3.fromRGB(255, 255, 255);
-            TextSize = 25;
+            TextSize = 32;
             TextWrapped = true;
+            TextXAlignment = Enum.TextXAlignment.Left;
             ZIndex = 2;
-            Blend.New "UIStroke" {
-                Color = Color3.fromRGB(32, 83, 118);
-                LineJoinMode = Enum.LineJoinMode.Miter;
-                Thickness = 3;
-            };
             [Blend.OnChange "Text"] = function(text: string)
                 props.OnSearch(text)
             end

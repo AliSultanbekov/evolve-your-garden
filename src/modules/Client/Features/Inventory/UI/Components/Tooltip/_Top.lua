@@ -13,7 +13,8 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local Blend = require("Blend")
 local Observable = require("Observable")
 local ReactiveItemTypes = require("ReactiveItemTypes")
-local ImageConfig = require("ImageConfig")
+local ComponentTypes = require("ComponentTypes")
+local ImagesConfig = require("ImagesConfig")
 local ItemConfig = require("ItemConfig")
 local Rx = require("Rx")
 
@@ -35,7 +36,7 @@ local Top = function(props: Props)
     end)
 
     local RarityImage = Blend.Computed(props.Item, function(item)
-        return ImageConfig.Inventory.RarityImages[ItemConfig:GetRarity(item.Name, item.Category)]
+        return ImagesConfig.Inventory.RarityImages[ItemConfig:GetRarity(item.Name, item.Category)]
     end)
 
     local ItemIcon = Blend.Computed(props.Item, function(item)
@@ -58,61 +59,64 @@ local Top = function(props: Props)
     return Blend.New "Frame" {
         Name = "Top";
         LayoutOrder = 0;
-        Position = UDim2.fromScale(0.5, 0.5);
-        AnchorPoint = Vector2.new(0.5, 0.5);
-        Size = UDim2.fromOffset(255, 85);
+        Size = UDim2.new(1, 0, 0, 81);
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
         BackgroundTransparency = 1;
-        Blend.New "TextLabel" {
-            Name = "Name";
-            Position = UDim2.fromOffset(110, 8);
-            Size = UDim2.fromOffset(135, 30);
-            BackgroundColor3 = Color3.fromRGB(163, 162, 165);
+        Blend.New "ImageLabel" {
+            Name = "Rays";
+            Position = UDim2.fromOffset(-28 + 142 / 2, -71 + 142 / 2);
+            AnchorPoint = Vector2.new(0.5, 0.5);
+            Size = UDim2.fromOffset(142, 142);
             BackgroundTransparency = 1;
-            FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json");
-            Text = ItemName;
-            TextColor3 = Color3.fromRGB(255, 255, 255);
-            TextSize = 20;
-            TextWrapped = true;
-            Blend.New "UIStroke" {
-                Color = Color3.fromRGB(0, 71, 97);
-                LineJoinMode = Enum.LineJoinMode.Miter;
-                Thickness = 2;
-            };
+            ClipsDescendants = true;
+            Image = "rbxassetid://77591497948171";
+            ZIndex = 1;
+            Rotation = Rotation;
         };
         Blend.New "ImageLabel" {
             Name = "Rarity";
-            Position = UDim2.fromOffset(130, 45);
-            Size = UDim2.fromOffset(97, 27);
+            Position = UDim2.fromOffset(106, 37);
+            Size = UDim2.fromOffset(84, 24);
             BackgroundTransparency = 1;
             Image = RarityImage;
             ScaleType = Enum.ScaleType.Fit;
         };
         Blend.New "ImageLabel" {
-            Name = "Rays";
-            Position = UDim2.fromOffset(-21+(142.2/2), -61+(142.2/2));
-            AnchorPoint = Vector2.new(0.5, 0.5);
-            Size = UDim2.fromOffset(160, 160);
-            BackgroundTransparency = 1;
-            Image = "rbxassetid://77591497948171";
-            ZIndex = 2;
-            Rotation = Rotation;
-        };
-        Blend.New "ImageLabel" {
             Name = "Icon";
-            Position = UDim2.fromOffset(-17, -56);
+            Position = UDim2.fromOffset(-24, -66);
             Size = UDim2.fromOffset(133, 133);
             BackgroundTransparency = 1;
+            ClipsDescendants = true;
             Image = ItemIcon;
             ScaleType = Enum.ScaleType.Fit;
+            ZIndex = 2;
+        };
+        Blend.New "TextLabel" {
+            Name = "Name";
+            Position = UDim2.fromOffset(109, 15);
+            Size = UDim2.fromOffset(127, 15);
+            BackgroundColor3 = Color3.fromRGB(163, 162, 165);
+            BackgroundTransparency = 1;
+            FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
+            Text = ItemName;
+            TextColor3 = Color3.fromRGB(255, 255, 255);
+            TextScaled = true;
+            TextSize = 16;
+            TextWrapped = true;
+            TextXAlignment = Enum.TextXAlignment.Left;
             ZIndex = 3;
+            Blend.New "UIStroke" {
+                Color = Color3.fromRGB(32, 83, 118);
+                LineJoinMode = Enum.LineJoinMode.Miter;
+                Thickness = 2;
+            };
         };
     };
 end
 
 -- [ Types ] --
 type Props = {
-    Item: Observable.Observable<ReactiveItemTypes.ReactiveItem>,
+    Item: ComponentTypes.Prop<ReactiveItemTypes.ReactiveItem>,
     AnimateEffects: Observable.Observable<boolean>,
 }
 type ModuleData = {}

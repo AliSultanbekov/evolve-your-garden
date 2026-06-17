@@ -14,7 +14,7 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local ImageConfig = {
+local ImagesConfig = {
     Inventory = {
         RarityImages = {
             Celestial = "rbxassetid://114970135748413",
@@ -27,6 +27,10 @@ local ImageConfig = {
         }
     },
     PackStore = {
+        Banner = {
+            Normal = "rbxassetid://127317920073362",
+            Special = "rbxassetid://122673110673281"
+        },
         RarityImages = {
             Celestial = "rbxassetid://108558146289194",
             Mythic = "rbxassetid://81360572848461",
@@ -51,10 +55,10 @@ local ImageConfig = {
 -- [ Types ] --
 type ModuleData = {}
 
-export type Module = typeof(ImageConfig) & ModuleData
+export type Module = typeof(ImagesConfig) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return ImageConfig :: Module
+return ImagesConfig :: Module

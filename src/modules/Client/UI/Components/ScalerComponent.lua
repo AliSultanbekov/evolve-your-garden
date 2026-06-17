@@ -9,7 +9,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
-local Observable = require("Observable")
+local ComponentTypes = require("ComponentTypes")
 local ScreenSizeUtils = require("ScreenSizeUtils")
 
 -- [ Components ] --
@@ -38,7 +38,7 @@ end
 
 -- [ Types ] --
 type Props = {
-    Scale: Observable.Observable<number>,
+    Scale: ComponentTypes.Prop<number>,
     ApplyDeviceScale: boolean?,
 }
 type ModuleData = {}

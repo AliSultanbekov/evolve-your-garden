@@ -28,5 +28,12 @@ export type ItemsUpdatedRemotePacket = {
 export type GetItemsRemotePacket = {
     Items: { [any]: ItemTypes.Item },
 }
+export type UseActionRemotePacket = {
+    Action: string,
+    ItemId: ItemTypes.ItemId,
+    Params: { [string]: any }?
+}
+
+export type Action = "Open" | "Delete"
 
 return nil

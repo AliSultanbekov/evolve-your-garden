@@ -28,7 +28,7 @@ local Rainy = function(props: Props)
     local RainEffect = MaidObject:Add(AssetProvider:Get("Weathers/Rainy/RainEffect")) :: Model
     
     RainEffect.Parent = workspace
-    RainEffect:PivotTo(workspace.World.Map.Floor.Baseplate:GetPivot())
+    RainEffect:PivotTo(workspace.World.Map.Props.Island.Grass:GetPivot())
 
     for _, instance in Folder:GetChildren() do
         MaidObject:Add(instance)

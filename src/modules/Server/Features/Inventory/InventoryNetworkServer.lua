@@ -10,6 +10,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
 local InventoryTypesShared = require("InventoryTypesShared")
+local Signal = require("Signal")
 
 -- [ Constants ] --
 
@@ -23,7 +24,9 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _NetworkServiceShared: typeof(require("NetworkServiceShared")),
 
-    RemoteEvents: {},
+    RemoteEvents: {
+        UseAction: Signal.Signal<Player, InventoryTypesShared.UseActionRemotePacket>
+    },
     RemoteFunctions: {
         GetItems: (player: Player) -> InventoryTypesShared.GetItemsRemotePacket
     }
@@ -61,7 +64,7 @@ function InventoryNetworkServer.Init(self: Module, serviceBag: ServiceBag.Servic
     self._NetworkServiceShared = self._ServiceBag:GetService(require("NetworkServiceShared"))
 
     self.RemoteEvents = {
-
+        UseAction = Signal.new()
     } :: any
 
     self.RemoteFunctions = {
@@ -72,13 +75,19 @@ end
 function InventoryNetworkServer.Start(self: Module)
     local Channel = self._NetworkServiceShared:GetChannel("Inventory")
 
+    Channel:DeclareEvent("UseAction")
+    Channel:DeclareMethod("GetItems")
+
     Channel:DeclareEvent("ItemsUpdated")
     Channel:DeclareEvent("ItemsAdded")
     Channel:DeclareEvent("ItemsRemoved")
-    Channel:DeclareMethod("GetItems")
 
     Channel:Bind("GetItems", function(player: Player)
         return self.RemoteFunctions.GetItems(player)
+    end)
+
+    Channel:Connect("UseAction", function(player: Player, packet: InventoryTypesShared.UseActionRemotePacket)  
+        self.RemoteEvents.UseAction:Fire(player, packet)
     end)
 end
 

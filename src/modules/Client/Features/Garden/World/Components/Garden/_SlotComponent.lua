@@ -13,12 +13,20 @@ local GardenTypesShared = require("GardenTypesShared")
 local GardenTypesClient = require("GardenTypesClient")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local AssetProvider = require("AssetProvider")
+local Observable = require("Observable")
+local Rx = require("Rx")
+local ValueObject = require("ValueObject")
 
 -- [ Components ] --
 local HighlightComponent = require("HighlightComponent")
 local PlantComponent = require(script.Parent._PlantComponent)
 
 -- [ Constants ] --
+local HOVER_FILL_COLOR = Color3.new(1, 1, 1)
+local HOVER_OUTLINE_COLOR = Color3.new(1, 1, 1)
+
+local SELECTED_FILL_COLOR = Color3.new(1, 0.694118, 0.207843)
+local SELECTED_OUTLINE_COLOR = Color3.new(1, 0.694118, 0.207843)
 
 -- [ Variables ] --
 
@@ -48,14 +56,37 @@ local SlotComponent = function(props: Props)
         props.OnSlotDestroyed(SlotID)
     end)
 
+    MaidObject:Add(MouseServiceClient:ObserveIsHovering(SlotModel):Subscribe(function(isHovering: boolean)
+        if isHovering then
+            props.OnSlotHovered(SlotID)
+        else
+            props.OnSlotUnhovered(SlotID)
+        end
+    end))
+
+    local HighlightEnabled = ValueObject.new(false)
+    local HighlightFillColor = ValueObject.new(HOVER_FILL_COLOR)
+    local HighlightOutlineColor = ValueObject.new(HOVER_OUTLINE_COLOR)
+
+    MaidObject:Add(Rx.combineLatest({
+        IsHovering = MouseServiceClient:ObserveIsHovering(SlotModel),
+        SelectedSlot = props.SelectedSlot
+    }):Subscribe(function(data)
+        local IsSelected = data.SelectedSlot == SlotID
+
+        HighlightEnabled.Value = IsSelected or data.IsHovering
+        HighlightFillColor.Value = if IsSelected then SELECTED_FILL_COLOR else HOVER_FILL_COLOR
+        HighlightOutlineColor.Value = if IsSelected then SELECTED_OUTLINE_COLOR else HOVER_OUTLINE_COLOR
+    end))
+
     MaidObject:Add(HighlightComponent({
-        Enabled = MouseServiceClient:ObserveIsHovering(SlotModel);
+        Enabled = HighlightEnabled:Observe();
         Adornee = SlotModel;
-        FillColor = Color3.fromRGB(245, 245, 245);
+        FillColor = HighlightFillColor:Observe();
         FillTransparency = 0.8;
-        OutlineColor = Color3.fromRGB(255, 255, 255);
+        OutlineColor = HighlightOutlineColor:Observe();
         OutlineTransparency = 0.8;
-    }))
+    }):Subscribe())
 
     MaidObject:Add(MouseServiceClient:ObserveOnClick(SlotModel):Subscribe(function()
         props.OnSlotSelected(SlotID)
@@ -85,7 +116,10 @@ type Props = {
     GardenModel: GardenTypesClient.GardenModel,
     Slot: GardenTypesClient.ReactiveSlot,
     SlotCFrame: CFrame,
+    SelectedSlot: Observable.Observable<GardenTypesShared.SlotId?>,
 
+    OnSlotHovered: (slotId: GardenTypesShared.SlotId) -> (),
+    OnSlotUnhovered: (slotId: GardenTypesShared.SlotId) -> (),
     OnSlotSelected: (slotId: GardenTypesShared.SlotId) -> (),
     OnSlotCreated: (slotId: GardenTypesShared.SlotId, slotModel: GardenTypesClient.SlotModel) -> (),
     OnSlotDestroyed: (slotId: GardenTypesShared.SlotId) -> (),

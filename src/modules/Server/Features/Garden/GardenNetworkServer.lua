@@ -112,6 +112,7 @@ function GardenNetworkServer.Start(self: Module)
     Channel:DeclareEvent("GardenClaimed")
     Channel:DeclareEvent("GardenAbandoned")
     Channel:DeclareMethod("GetGardens")
+    Channel:DeclareEvent("GrowthCycle")
 
     Channel:Connect("PlacePlant", function(player: Player, packet: GardenTypesShared.PlacePlantRemotePacket)
         self.RemoteEvents.PlacePlant:Fire(player, packet)

@@ -19,6 +19,7 @@ local AssetProvider = require("AssetProvider")
 local GardenConfig = require("GardenConfig")
 local Brio = require("Brio")
 local PlayerToUserId = require("PlayerToUserId")
+local Observable = require("Observable")
 
 -- [ Components ] --
 local SlotComponent = require(script.Parent._SlotComponent)
@@ -104,12 +105,27 @@ local GardenComponent = function(props: Props)
                     GardenModel = GardenModel;
                     Slot = Slot;
                     SlotCFrame = GetSlotCFrame(GardenModel, state.Level, SlotNumber);
+                    SelectedSlot = props.SelectedSlot;
 
+                    OnSlotHovered = function(slotId: GardenTypesShared.SlotId)
+                        if not IsLocal then
+                            return
+                        end
+
+                        props.OnSlotHovered(slotId)
+                    end,
+                    OnSlotUnhovered = function(slotId: GardenTypesShared.SlotId)
+                        if not IsLocal then
+                            return
+                        end
+
+                        props.OnSlotUnhovered(slotId)
+                    end,
                     OnSlotSelected = function(slotId: GardenTypesShared.SlotId)
                         if not IsLocal then
                             return
                         end
-                        
+
                         props.OnSlotSelected(slotId)
                     end,
                     OnSlotCreated = function(slotId: GardenTypesShared.SlotId, slotModel: GardenTypesClient.SlotModel)
@@ -138,8 +154,12 @@ end
 type GardenModel = typeof(ReplicatedStorage.Assets.Objects.Garden.Upgrades["1"])
 type Props = {
     MouseServiceClient: typeof(require("MouseServiceClient")),
+
     Garden: GardenTypesClient.ReactiveGarden,
+    SelectedSlot: Observable.Observable<GardenTypesShared.SlotId?>,
     
+    OnSlotHovered: (slotId: GardenTypesShared.SlotId) -> (),
+    OnSlotUnhovered: (slotId: GardenTypesShared.SlotId) -> (),
     OnSlotSelected: (slotId: GardenTypesShared.SlotId) -> (),
     OnSlotCreated: (slotId: GardenTypesShared.SlotId, slotModel: GardenTypesClient.SlotModel) -> (),
     OnSlotDestroyed: (slotId: GardenTypesShared.SlotId) -> (),

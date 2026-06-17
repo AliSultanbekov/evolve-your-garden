@@ -26,5 +26,8 @@ export type TabsConfig = {
         [ItemTypes.Category]: boolean
     }
 }
+export type Actions = {
+    ["Open"]: (amount: number) -> ()
+}
 
 return nil

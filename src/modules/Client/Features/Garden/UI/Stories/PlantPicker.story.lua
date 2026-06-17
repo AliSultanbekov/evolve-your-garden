@@ -1,5 +1,5 @@
 --[=[
-    @class InventoryStory
+    @class PlantPickerStory
 ]=]
 
 -- [ Roblox Services ] --
@@ -16,23 +16,22 @@ local ItemUtil = require("ItemUtil")
 local ReactiveItemUtil = require("ReactiveItemUtil")
 
 -- [ Components ] --
-local InventoryWindow = require(script.Parent.Parent.Components.Inventory._Window)
+local PlantPickerWindow = require(script.Parent.Parent.Components.PlantPickerWindow._Window)
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 local controls = {
-    
+    IsOpen = true,
 }
 
 -- [ Module Table ] --
-local InventoryStory = {
-    summary = "Summary",
+local PlantPickerStory = {
+    summary = "Plant picker window for choosing a plant to place in the garden",
     controls = controls,
     render = function(props: { target: Instance, controls: typeof(controls), subscribe: any })
         local MaidObject = Maid.new()
-        local IsOpen = ValueObject.new(true)
-        local ActiveTab = ValueObject.new("Garden")
+        local IsOpen = ValueObject.new(props.controls.IsOpen)
         local Search = ValueObject.new("")
         local Items = ObservableMap.new()
 
@@ -46,20 +45,18 @@ local InventoryStory = {
         addItem({ Name = "Snow Blossom", Category = "Plant" })
         addItem({ Name = "Snow Blossom", Category = "Plant", Mutations = { "Juicy" } })
         addItem({ Name = "Snow Blossom", Category = "Plant", Mutations = { "Golden", "Hardy" } })
+        addItem({ Name = "Snow Blossom", Category = "Plant", Mutations = { "Juicy", "Golden", "Hardy" } })
 
-        -- Material with a stack amount
-        addItem({ Name = "Snow Blossom Fruit", Category = "Material", Amount = 42 })
+        MaidObject:Add(props.subscribe(controls, function(newControls)
+            IsOpen.Value = newControls.IsOpen
+        end))
 
         MaidObject:Add(Blend.mount(props.target, {
-            InventoryWindow({
+            PlantPickerWindow({
                 IsOpen = IsOpen:Observe(),
-                ActiveTab = ActiveTab:Observe(),
                 Search = Search:Observe(),
-                GetItems = function(_filter: string?)
+                GetItems = function()
                     return Items :: any
-                end,
-                SwitchTab = function(tabName: string)
-                    ActiveTab.Value = tabName
                 end,
                 OnItemPressed = function(item, position)
                     print("Pressed:", item.Name, position)
@@ -70,14 +67,11 @@ local InventoryStory = {
                 OnItemUnhovered = function()
                     print("Unhovered")
                 end,
-                OnClose = function()
-                    IsOpen.Value = false
-                end,
                 OnSearch = function(text: string)
                     Search.Value = text
                 end,
-                OnDeleteMode = function()
-                    print("Delete mode toggled")
+                OnClose = function()
+                    IsOpen.Value = false
                 end,
             })
         }))
@@ -91,10 +85,10 @@ local InventoryStory = {
 -- [ Types ] --
 type ModuleData = {}
 
-export type Module = typeof(InventoryStory) & ModuleData
+export type Module = typeof(PlantPickerStory) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return InventoryStory :: Module
+return PlantPickerStory :: Module

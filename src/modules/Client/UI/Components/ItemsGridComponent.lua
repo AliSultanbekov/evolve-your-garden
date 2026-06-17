@@ -12,9 +12,12 @@ local Blend = require("Blend")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local ObservableMap = require("ObservableMap")
 local ItemTypes = require("ItemTypes")
-local RxBrioUtils = require("RxBrioUtils")
 local Observable = require("Observable")
+local ComponentTypes = require("ComponentTypes")
 local Rx = require("Rx")
+local BackingPool = require("BackingPool")
+local Maid = require("Maid")
+local Brio = require("Brio")
 
 -- [ Components ] --
 local ItemCardComponent = require("ItemCardComponent")
@@ -27,22 +30,34 @@ local ItemCardComponent = require("ItemCardComponent")
 
 -- [ Module Table ] --
 local ItemsGridComponent = function(props: Props)
+    local MaidObject = Maid.new()
     local Items = props.Items
-    local ItemCards = Items:ObserveValuesBrio():Pipe({
-        RxBrioUtils.map(function(item: ReactiveItemTypes.ReactiveItem)
-            return ItemCardComponent({
-                Visible = (props.Search :: any):Pipe({
-                    Rx.map(function(search: string)
-                        if search == "" then return true end
-                        return string.find(item.Name:lower(), search:lower(), 1, true) ~= nil
-                    end)
-                });
-                Item = item,
-                OnItemPressed = props.OnItemPressed,
-                OnItemHovered = props.OnItemHovered,
-                OnItemUnhovered = props.OnItemUnhovered,
-            })
-        end) :: any
+
+    local Order = Rx.combineLatest({
+        Keys = Items:ObserveKeyList(),
+        Search = props.Search
+    }):Pipe({
+        Rx.map(function(data)
+            local Order = {}
+
+            for _, id in data.Keys do
+                local Item = Items:Get(id)
+
+                if not Item then
+                    continue
+                end
+
+                local Matches = data.Search == "" or string.find(Item.Name:lower(), data.Search:lower(), 1, true)
+
+                if Matches then
+                    table.insert(Order, id)
+                end
+            end
+
+            table.sort(Order)
+            return Order
+        end) :: any,
+        Rx.shareReplay(1) :: any,
     })
 
     return Blend.New "ScrollingFrame" {
@@ -50,8 +65,43 @@ local ItemsGridComponent = function(props: Props)
         Position = props.Position;
         AnchorPoint = props.AnchorPoint;
         ZIndex = props.ZIndex;
+        ScrollBarImageColor3 = props.ScrollBarImageColor3;
+        ScrollBarImageTransparency = props.ScrollBarImageTransparency;
+        ScrollBarThickness = props.ScrollBarThickness;
+        ScrollingDirection = props.ScrollingDirection;
         BackgroundTransparency = props.BackgroundTransparency,
         AutomaticCanvasSize = props.AutomaticCanvasSize;
+        [Blend.Instance] = function(instance)
+            local BackingPoolObj = MaidObject:Add(BackingPool.new({
+                Parent = instance
+            }))
+
+            MaidObject:Add(Items:ObserveCount():Subscribe(function(count: number)
+                BackingPoolObj:Ensure(count)
+            end))
+
+            MaidObject:Add(Items:ObserveValuesBrio():Subscribe(function(brio: Brio.Brio<ReactiveItemTypes.ReactiveItem>)
+                local ItemCardMaid, Item = brio:ToMaidAndValue()
+
+                local Backing = (Order :: any):Pipe({
+                    Rx.map(function(order)
+                        return table.find(order, Item.Id)
+                    end),
+                    Rx.distinct() :: any,
+                    Rx.map(function(index)
+                        return BackingPoolObj:GetBacking(index)
+                    end) :: any
+                })
+                
+                ItemCardMaid:Add(ItemCardComponent({
+                    Item = Item;
+                    Parent = Backing;
+                    OnItemPressed = props.OnItemPressed,
+                    OnItemHovered = props.OnItemHovered,
+                    OnItemUnhovered = props.OnItemUnhovered,
+                }):Subscribe(function()  end))
+            end))
+        end,
         [Blend.Children] = {
             Blend.New "UIPadding" {
                 PaddingTop = props.UIPaddingSizes.PaddingTop;
@@ -62,20 +112,28 @@ local ItemsGridComponent = function(props: Props)
             Blend.New "UIGridLayout" {
                 CellPadding = props.UIGridLayoutSizes.CellPadding;
                 CellSize = props.UIGridLayoutSizes.CellSize;
+                FillDirection = props.UIGridLayoutSizes.FillDirection;
+                SortOrder = Enum.SortOrder.LayoutOrder;
             };
-            ItemCards :: any;
-        }
+        },
+        [Blend.OnEvent "Destroying"] = function()
+            MaidObject:DoCleaning()
+        end
     }
 end
 
 -- [ Types ] --
 type Props = {
-    Size: UDim2?,
-    Position: UDim2?,
-    AnchorPoint: Vector2?,
-    ZIndex: number?,
-    BackgroundTransparency: number?,
-    AutomaticCanvasSize: Enum.AutomaticSize?,
+    Size: ComponentTypes.Prop<UDim2>?,
+    Position: ComponentTypes.Prop<UDim2>?,
+    AnchorPoint: ComponentTypes.Prop<Vector2>?,
+    ZIndex: ComponentTypes.Prop<number>?,
+    BackgroundTransparency: ComponentTypes.Prop<number>?,
+    AutomaticCanvasSize: ComponentTypes.Prop<Enum.AutomaticSize>?,
+    ScrollingDirection: ComponentTypes.Prop<Enum.ScrollingDirection>?,
+    ScrollBarImageColor3: ComponentTypes.Prop<Color3>?,
+    ScrollBarImageTransparency: ComponentTypes.Prop<number>?,
+    ScrollBarThickness: ComponentTypes.Prop<number>?,
     UIPaddingSizes: {
         PaddingTop: UDim,
         PaddingBottom: UDim,
@@ -85,6 +143,7 @@ type Props = {
     UIGridLayoutSizes: {
         CellPadding: UDim2;
         CellSize: UDim2;
+        FillDirection: Enum.FillDirection?;
     },
 
     Items: ObservableMap.ObservableMap<ItemTypes.ItemId, ReactiveItemTypes.ReactiveItem>,

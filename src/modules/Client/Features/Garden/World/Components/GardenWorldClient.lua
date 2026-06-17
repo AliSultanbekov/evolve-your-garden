@@ -3,8 +3,6 @@
 ]=]
 
 -- [ Roblox Services ] --
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 
 -- [ Require ] --
 local require = require(script.Parent.loader).load(script) :: typeof(require)
@@ -20,7 +18,6 @@ local GardenComponent = require(script.Parent.Garden._GardenComponent)
 -- [ Constants ] --
 
 -- [ Variables ] --
-local LocalPlayer = Players.LocalPlayer
 
 -- [ Module Table ] --
 local GardenWorldClient = {}
@@ -57,7 +54,14 @@ function GardenWorldClient.Start(self: Module)
             MouseServiceClient = self._MouseServiceClient;
 
             Garden = garden;
+            SelectedSlot = self._GardenServiceClient:ObserveSelectedSlot();
             
+            OnSlotHovered = function(slotId: GardenTypesShared.SlotId)
+                self._GardenServiceClient:HoverSlot(slotId)
+            end,
+            OnSlotUnhovered = function(slotId: GardenTypesShared.SlotId)
+                self._GardenServiceClient:HoverSlot(nil)
+            end,
             OnSlotSelected = function(slotId: GardenTypesShared.SlotId)
                 self._GardenServiceClient:SelectSlot(slotId)
             end,
@@ -69,38 +73,6 @@ function GardenWorldClient.Start(self: Module)
             end
         }))
     end
-
-    self._Maid:Add(RunService.Heartbeat:Connect(function(dt: number)
-        local SlotModels = self._GardenServiceClient:GetSlotModels()
-        local Character = LocalPlayer.Character
-
-        if not Character then
-            return
-        end
-
-        local CharacterCFrame = Character:GetPivot()
-        
-        local ClosestModel
-        local ClosestDistance
-
-        for slotId, slotModel in SlotModels do
-            local SlotModelCFrame = slotModel:GetPivot()
-            local Distance = (CharacterCFrame.Position - SlotModelCFrame.Position).Magnitude
-            
-            if Distance > 8 then
-                continue
-            end
-
-            if ClosestDistance and  ClosestDistance < Distance then
-                continue
-            end
-
-            ClosestModel = slotModel
-            ClosestDistance = Distance
-        end
-
-        self._GardenServiceClient:SetClosestSlotModel(ClosestModel)
-    end))
 end
 
 return GardenWorldClient :: Module

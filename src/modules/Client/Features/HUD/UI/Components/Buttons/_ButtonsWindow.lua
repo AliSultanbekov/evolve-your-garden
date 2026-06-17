@@ -9,7 +9,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
-local Observable = require("Observable")
+local ComponentTypes = require("ComponentTypes")
 
 -- [ Components ] --
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
@@ -43,7 +43,7 @@ local ButtonsWindow = function(props: Props)
                 Size = UDim2.fromOffset(98, 102);
                 AnchorPoint = Vector2.new(0.5, 0.5);
                 BackgroundTransparency = 1;
-                Image = "rbxassetid://92761967690607";
+                Image = "rbxassetid://135173861387246";
                 OnPressed = function()
                     props.OnToggleUI("Inventory")
                 end
@@ -65,7 +65,7 @@ end
 
 -- [ Types ] --
 type Props = {
-    IsOpen: Observable.Observable<boolean>,
+    IsOpen: ComponentTypes.Prop<boolean>,
     OnToggleUI: (uiName: string) -> (),
 }
 type ModuleData = {}

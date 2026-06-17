@@ -10,6 +10,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local Blend = require("Blend")
 local Observable = require("Observable")
+local ComponentTypes = require("ComponentTypes")
 
 -- [ Components ] --
 local ScalerComponent = require("ScalerComponent")
@@ -54,15 +55,15 @@ end
 
 -- [ Types ] --
 type Props = {
-    Name: string?,
-    Size: UDim2?,
-    Position: UDim2? | any,
-    AnchorPoint: Vector2?,
-    BackgroundColor3: Color3?,
-    BackgroundTransparency: number?,
-    AutomaticSize: Enum.AutomaticSize?,
+    Name: ComponentTypes.Prop<string>?,
+    Size: ComponentTypes.Prop<UDim2>?,
+    Position: ComponentTypes.Prop<UDim2>?,
+    AnchorPoint: ComponentTypes.Prop<Vector2>?,
+    BackgroundColor3: ComponentTypes.Prop<Color3>?,
+    BackgroundTransparency: ComponentTypes.Prop<number>?,
+    AutomaticSize: ComponentTypes.Prop<Enum.AutomaticSize>?,
     Children: { Observable.Observable<Instance> }?,
-    IsOpen: Observable.Observable<boolean>,
+    IsOpen: ComponentTypes.Prop<boolean>,
 }
 type ModuleData = {}
 

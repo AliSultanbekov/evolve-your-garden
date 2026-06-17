@@ -39,7 +39,7 @@ function PackStoreWorldClient.Init(self: Module, serviceBag: ServiceBag.ServiceB
 end
 
 function PackStoreWorldClient.Start(self: Module)
-    task.delay(8, function()
+    --[[task.delay(8, function()
         print("Sssss")
         Pack({
             PackName = "Super Pack",
@@ -61,7 +61,7 @@ function PackStoreWorldClient.Start(self: Module)
             PackNumber = 4,
             TotalPacks = 4,
         })
-    end)
+    end)]]
 end
 
 return PackStoreWorldClient :: Module

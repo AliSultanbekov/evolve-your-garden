@@ -84,6 +84,12 @@ function PlantConfig._Init(self: Module)
                 ItemPool = {
                     ["Snow Blossom Fruit"] = 100
                 }
+            },
+            GrowthStages = {
+                [1] = 0,
+                [2] = 60,
+                [3] = 120,
+                [4] = 180
             }
         }
     }
@@ -186,6 +192,30 @@ function PlantConfig._Init(self: Module)
 end
 
 -- [ Public Functions ] --
+function PlantConfig.GetCurrentGrowthStage(self: Module, plantName: string, growthTime: number)
+    local PlantConfig = self.Plants[plantName]
+    local Stages = #PlantConfig.GrowthStages
+    local CurrentStage = 0
+
+    for i = 1, Stages do
+        if PlantConfig.GrowthStages[i] <= growthTime then
+            CurrentStage = i
+        else
+            break
+        end
+    end
+
+    return CurrentStage
+end
+
+function PlantConfig.IsPlantAdult(self: Module, plantName: string, growthTime: number)
+    local PlantConfig = self.Plants[plantName]
+    local FinalStage = #PlantConfig.GrowthStages
+    local FinalStageTime = PlantConfig.GrowthStages[FinalStage]
+
+    return FinalStageTime <= growthTime
+end
+
 function PlantConfig.GetGenetics(self: Module, plantName: string, geneticNumber: number): Genetics
     local GeneticsConfig = self.Plants[plantName].Genetics
 
@@ -261,6 +291,9 @@ type PlantEntry = {
         AmountPool: { [number]: number },
         ItemPool: { [string]: number },
     },
+    GrowthStages: {
+        [number]: number
+    }
 }
 
 type MutationEntry = {

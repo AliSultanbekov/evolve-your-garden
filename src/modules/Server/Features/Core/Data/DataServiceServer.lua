@@ -9,7 +9,7 @@ local Players = game:GetService("Players")
 local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
-local ProfileConfig = require("_ProfileConfig")
+local ProfileConfig = require("ProfileConfig")
 local ProfileStore = require("_ProfileStore")
 
 local ServiceBag = require("ServiceBag")

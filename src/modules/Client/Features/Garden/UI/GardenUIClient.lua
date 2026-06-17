@@ -11,13 +11,12 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local ServiceBag = require("ServiceBag")
 local Maid = require("Maid")
 local Blend = require("Blend")
-local GardenTypesShared = require("GardenTypesShared")
-local GardenTypesClient = require("GardenTypesClient")
-local ReactiveItmeTypes = require("ReactiveItemTypes")
 local ValueObject = require("ValueObject")
+local GardenTypesShared = require("GardenTypesShared")
+local ReactiveItemTypes = require("ReactiveItemTypes")
 
-local PlantPickerWindow = require(script.Parent.Components.PlantPickerWindow._WindowComponent)
-local PlantPopupWindow = require(script.Parent.Components.PlantPopupWindow._WindowComponent)
+-- [ Components ] --
+local PlantPickerWindow = require(script.Parent.Components.PlantPickerWindow._Window)
 
 -- [ Constants ] --
 
@@ -33,6 +32,8 @@ type ModuleData = {
     _InventoryServiceClient: typeof(require("InventoryServiceClient")),
     _GardenServiceClient: typeof(require("GardenServiceClient")),
     _Maid: Maid.Maid,
+    _Search: ValueObject.ValueObject<string>,
+    _HoveredItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>
 }
 
 export type Module = typeof(GardenUIClient) & ModuleData
@@ -40,74 +41,6 @@ export type Module = typeof(GardenUIClient) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
-function GardenUIClient._SetupPlantPicker(self: Module)
-    self._UIServiceClient:RegisterUI({
-        UIName = "GardenPlantPicker",
-        Category = "Main",
-        Conflicts = {
-            ["Main"] = true
-        }
-    })
-
-    local IsOpen_GardenPlantPicker = self._UIServiceClient:ObserveUI("GardenPlantPicker")
-    local Items = self._InventoryServiceClient:GetItems()
-
-    self._Maid:Add(self._GardenServiceClient:ObserveSelectedSlot():Subscribe(function(SlotId: GardenTypesShared.SlotId?)
-        if not SlotId then
-            self._UIServiceClient:CloseUI("GardenPlantPicker")
-        else
-            self._UIServiceClient:OpenUI("GardenPlantPicker")
-        end
-    end))
-
-    self._Maid:Add(self._UIServiceClient:ObserveUI("GardenPlantPicker"):Subscribe(function(isOpen)
-        if not isOpen then
-            self._GardenServiceClient:SelectSlot(nil)
-        end
-    end))
-
-    self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("Main"), {
-        PlantPickerWindow({
-            IsOpen = IsOpen_GardenPlantPicker,
-            Items = Items,
-            OnClose = function()
-                self._UIServiceClient:CloseUI("GardenPlantPicker")
-            end,
-            OnItemPressed = function(item: ReactiveItmeTypes.ReactiveItem)
-                self._GardenServiceClient:PlacePlant(item.Id)
-            end
-        })
-    }))
-end
-
-function GardenUIClient._SetupPlantPopup(self: Module)
-    local MaidObject = Maid.new()
-    local CurrentSlot = ValueObject.new(nil)
-    local IsOpen = ValueObject.new(false)
-
-    self._Maid:Add(self._GardenServiceClient:GetClosestSlotModel():Observe():Subscribe(function(newTarget: Model?)
-        MaidObject:DoCleaning()
-
-        if not IsOpen.Value then
-            CurrentSlot.Value = newTarget
-            IsOpen.Value = newTarget ~= nil
-        else
-            IsOpen.Value = false
-
-            MaidObject:Add(task.delay(0.2, function()
-                CurrentSlot.Value = newTarget
-                IsOpen.Value = newTarget ~= nil
-            end))
-        end
-    end))
-
-    self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("Misc"), {
-        PlantPopupWindow({
-            Adornee = CurrentSlot:Observe(),
-            IsOpen = IsOpen:Observe(),
-        })
-    }))
-end
 
 function GardenUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     if self._ServiceBag ~= nil then
@@ -119,11 +52,61 @@ function GardenUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._InventoryServiceClient = self._ServiceBag:GetService(require("InventoryServiceClient"))
     self._GardenServiceClient = self._ServiceBag:GetService(require("GardenServiceClient"))
     self._Maid = Maid.new()
+    self._Search = ValueObject.new("")
+    self._HoveredItem = ValueObject.new(nil)
 end
 
 function GardenUIClient.Start(self: Module)
-    --self:_SetupPlantPicker()
-    --self:_SetupPlantPopup()
+    self._UIServiceClient:RegisterUI({
+        UIName = "GardenPlantPicker",
+        Category = "Main",
+        Conflicts = {
+            ["Main"] = true
+        },
+    })
+
+    self._UIServiceClient:CloseUI("GardenPlantPicker")
+
+    self._GardenServiceClient:ObserveSelectedSlot():Subscribe(function(slotId: GardenTypesShared.SlotId?)
+        if not slotId then
+            self._UIServiceClient:CloseUI("GardenPlantPicker")
+        else
+            self._UIServiceClient:OpenUI("GardenPlantPicker")
+        end
+    end)
+
+    self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("Main"), {
+        PlantPickerWindow({
+            IsOpen = self._UIServiceClient:ObserveUI("GardenPlantPicker"),
+            Search = self._Search:Observe(),
+
+            OnClose = function()
+                self._UIServiceClient:CloseUI("GardenPlantPicker")
+                self._GardenServiceClient:SelectSlot(nil)
+            end,
+            GetItems = function()
+                return self._InventoryServiceClient:GetItems("Garden")
+            end,
+            OnItemPressed = function(item: ReactiveItemTypes.ReactiveItem)
+                local SelectedSlot = self._GardenServiceClient:GetSelectedSlot()
+
+                if not SelectedSlot then
+                    return
+                end
+
+                self._GardenServiceClient:PlacePlant(SelectedSlot, item.Id)
+            end,
+            OnItemHovered = function(item: ReactiveItemTypes.ReactiveItem)
+                self._HoveredItem.Value = item
+            end,
+            OnItemUnhovered = function()
+                self._HoveredItem.Value = nil
+            end,
+            OnSearch = function(search: string)
+                self._Search.Value = search
+            end
+        })
+    }))
 end
 
 return GardenUIClient :: Module

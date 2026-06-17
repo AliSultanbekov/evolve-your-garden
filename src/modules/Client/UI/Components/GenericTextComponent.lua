@@ -9,6 +9,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
+local ComponentTypes = require("ComponentTypes")
 
 -- [ Components ] --
 
@@ -42,15 +43,15 @@ end
 
 -- [ Types ] --
 type Props = {
-    Name: string?,
-    Position: UDim2?,
-    Size: UDim2?,
-    AnchorPoint: Vector2?,
-    TextSize: number?,
-    Text: any?,
-    TextColor: Color3?,
-    StrokeThickness: number?,
-    StrokeColor: Color3?,
+    Name: ComponentTypes.Prop<string>?,
+    Position: ComponentTypes.Prop<UDim2>?,
+    Size: ComponentTypes.Prop<UDim2>?,
+    AnchorPoint: ComponentTypes.Prop<Vector2>?,
+    TextSize: ComponentTypes.Prop<number>?,
+    Text: ComponentTypes.Prop<string>?,
+    TextColor: ComponentTypes.Prop<Color3>?,
+    StrokeThickness: ComponentTypes.Prop<number>?,
+    StrokeColor: ComponentTypes.Prop<Color3>?,
 }
 type ModuleData = {}
 

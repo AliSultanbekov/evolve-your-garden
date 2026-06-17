@@ -22,6 +22,7 @@ local TooltipWindow = require(script.Parent.Parent.Components.Tooltip._Window)
 -- [ Variables ] --
 local controls = {
     IsOpen = true,
+    IsSelected = false,
 }
 
 -- [ Module Table ] --
@@ -37,17 +38,22 @@ local Tooltip = {
         }))
 
         local SelectedItem = ValueObject.new(if props.controls.IsOpen then Item else nil)
+        local IsSelected = ValueObject.new(props.controls.IsSelected)
+        local SelectedPosition = ValueObject.new(UDim2.fromScale(0.5, 0.5) :: UDim2?)
 
         MaidObject:Add(props.subscribe(controls, function(newControls)
             SelectedItem.Value = if newControls.IsOpen then Item else nil
+            IsSelected.Value = newControls.IsSelected
         end))
-
-        local SelectedPosition = ValueObject.new(UDim2.fromScale(0.5,0.5) :: UDim2?)
 
         MaidObject:Add(Blend.mount(props.target, {
             TooltipWindow({
                 Item = SelectedItem:Observe(),
                 Position = SelectedPosition:Observe(),
+                IsSelected = IsSelected:Observe(),
+                OnClose = function()
+                    SelectedItem.Value = nil
+                end,
             })
         }))
 

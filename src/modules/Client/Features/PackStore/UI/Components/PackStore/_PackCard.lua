@@ -11,14 +11,12 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local Blend = require("Blend")
 local PackStoreTypesClient = require("PackStoreTypesClient")
-local ImageConfig = require("ImageConfig")
-local PacksConfig = require("PacksConfig")
-local Rx = require("Rx")
 local Observable = require("Observable")
 local PackStoreConfig = require("PackStoreConfig")
 local NumberLocalizationUtils = require("NumberLocalizationUtils")
 local RoundingBehaviourTypes = require("RoundingBehaviourTypes")
 local PackStoreTypesShared = require("PackStoreTypesShared")
+local Rx = require("Rx")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
@@ -35,9 +33,7 @@ local RenderStepped = Rx.fromSignal(RunService.RenderStepped):Pipe({
 -- [ Module Table ] --
 local PackCard = function(props: Props)
     local Pack = props.Pack
-    local PackRarity = PacksConfig.Packs[Pack.Name].Rarity
     local PackPrice = PackStoreConfig.Prices[Pack.Category][Pack.Name].Amount
-    local _PackCurrency = nil
 
     local Rotation = (props.AnimateEffects :: any):Pipe({
         Rx.switchMap(function(shouldAnimate: boolean)
@@ -54,205 +50,158 @@ local PackCard = function(props: Props)
 
     return Blend.New "Frame" {
         Name = "PackCard";
-        Position = UDim2.fromOffset(167, 152);
-        Size = UDim2.fromOffset(323, 543);
+        Size = UDim2.fromOffset(318, 453);
         BackgroundTransparency = 1;
-        ZIndex = 1;
-        Blend.New "ImageLabel" {
-            Name = "Glow";
-            Position = UDim2.fromOffset(-13, -13);
-            Size = UDim2.fromOffset(349, 569);
-            BackgroundTransparency = 1;
-            Image = ImageConfig.PackStore.PackCardRarityGlows[PackRarity];
-            
-            ZIndex = -2;
-        };
-        Blend.New "ImageLabel" {
+        Blend.New "Frame" {
             Name = "Background";
-            Size = UDim2.fromOffset(323, 543);
+            Position = UDim2.fromOffset(3, 3);
+            Size = UDim2.fromOffset(312, 447);
             BackgroundTransparency = 1;
-            Image = "rbxassetid://125032423801149";
-            ScaleType = Enum.ScaleType.Fit;
-            ZIndex = -1;
-        };
-        Blend.New "ImageLabel" {
-            Name = "Rays";
-            Position = UDim2.fromOffset(-61, 12);
-            Size = UDim2.fromOffset(445, 445);
-            BackgroundTransparency = 1;
-            Image = "rbxassetid://90114129986983";
-            ZIndex = 2;
-            Rotation = Rotation
-        };
-        Blend.New "ImageLabel" {
-            Name = "Pack";
-            LayoutOrder = 3;
-            Position = UDim2.fromOffset(22, 48);
-            Size = UDim2.fromOffset(276, 387);
-            BackgroundTransparency = 1;
-            Image = "rbxassetid://83313944132466";
-            ScaleType = Enum.ScaleType.Fit;
-            ZIndex = 3;
-        };
-        Blend.New "TextLabel" {
-            Name = "Stock";
-            Position = UDim2.fromOffset(235, 8);
-            Size = UDim2.fromOffset(80, 50);
-            BackgroundTransparency = 1;
-            FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json");
-            Text = Blend.Computed(Pack.Left, function(left: number)
-                return tostring(left) .. "/" .. tostring(Pack.Stock)
-            end);
-            TextColor3 = Color3.fromRGB(255, 255, 255);
-            TextSize = 24;
-            ZIndex = 3;
-            Blend.New "UIStroke" {
-                Color = Color3.fromRGB(0, 71, 97);
-                LineJoinMode = Enum.LineJoinMode.Miter;
-                Thickness = 3;
+            Blend.New "ImageLabel" {
+                Name = "Background";
+                Position = UDim2.fromOffset(-3, -3);
+                Size = UDim2.fromOffset(318, 453);
+                BackgroundTransparency = 1;
+                Image = "rbxassetid://132194598816904";
+                ScaleType = Enum.ScaleType.Fit;
+            };
+            Blend.New "ImageLabel" {
+                Name = "Header";
+                Position = UDim2.fromOffset(-3, -3);
+                Size = UDim2.fromOffset(318, 71);
+                BackgroundTransparency = 1;
+                Image = "rbxassetid://128769191941711";
+                ScaleType = Enum.ScaleType.Fit;
+                ZIndex = 2;
             };
         };
         Blend.New "TextLabel" {
             Name = "Name";
-            Position = UDim2.fromOffset(68, -28);
-            Size = UDim2.fromOffset(186, 52);
+            Position = UDim2.fromOffset(90, 6);
+            Size = UDim2.fromOffset(140, 55);
             BackgroundTransparency = 1;
-            FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json");
+            FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
             Text = Pack.Name;
             TextColor3 = Color3.fromRGB(255, 255, 255);
-            TextSize = 28;
+            TextScaled = true;
+            TextSize = 24;
             TextWrapped = true;
-            ZIndex = 3;
+            ZIndex = 2;
             Blend.New "UIStroke" {
-                Color = Color3.fromRGB(0, 71, 97);
-                LineJoinMode = Enum.LineJoinMode.Miter;
+                Color = Color3.fromRGB(122, 57, 62);
                 Thickness = 3;
             };
         };
         Blend.New "ImageLabel" {
-            Name = "Rarity";
-            Position = UDim2.fromOffset(14, 15);
-            Size = UDim2.fromOffset(131, 41);
+            Name = "Rays";
+            Position = UDim2.fromOffset(-41 + 400 / 2, 29 + 400 / 2);
+            AnchorPoint = Vector2.new(0.5, 0.5);
+            Size = UDim2.fromOffset(400, 400);
             BackgroundTransparency = 1;
-            Image = ImageConfig.PackStore.RarityImages[PackRarity];
+            Image = "rbxassetid://97163599633952";
             ScaleType = Enum.ScaleType.Fit;
             ZIndex = 3;
+            Rotation = Rotation;
+        };
+        Blend.New "ImageLabel" {
+            Name = "Pack";
+            Position = UDim2.fromOffset(3, 71);
+            Size = UDim2.fromOffset(312, 307);
+            BackgroundTransparency = 1;
+            ClipsDescendants = true;
+            Image = "rbxassetid://117805732973629";
+            ZIndex = 4;
         };
         GenericButtonComponent({
             Name = "Buy";
-            Position = UDim2.fromOffset(166+141/2, 467+61/2);
-            Size = UDim2.fromOffset(141, 61);
+            Position = UDim2.fromOffset(172 + 134 / 2, 387 + 54 / 2);
+            Size = UDim2.fromOffset(134, 54);
             AnchorPoint = Vector2.new(0.5, 0.5);
             BackgroundTransparency = 1;
-            Image = "rbxassetid://120462236037534";
-            ScaleType = Enum.ScaleType.Fit;
-            ZIndex = 3;
+            Image = "rbxassetid://132032011692197";
+            ZIndex = 5;
             OnPressed = function()
                 props.BuyPack(Pack.Id)
             end,
             Children = {
                 Blend.New "TextLabel" {
-                    Name = "Price";
-                    Position = UDim2.fromOffset(6, 11);
-                    Size = UDim2.fromOffset(128, 34);
+                    Name = "Name";
+                    Position = UDim2.fromOffset(5, 5);
+                    Size = UDim2.fromOffset(124, 41);
                     BackgroundTransparency = 1;
-                    FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json");
+                    FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
                     Text = "Buy";
                     TextColor3 = Color3.fromRGB(255, 255, 255);
-                    TextSize = 34;
-                    ZIndex = 3;
+                    TextSize = 20;
                     Blend.New "UIStroke" {
-                        Color = Color3.fromRGB(6, 90, 0);
-                        LineJoinMode = Enum.LineJoinMode.Miter;
-                        Thickness = 3;
+                        Color = Color3.fromRGB(14, 100, 13);
+                        Thickness = 2;
                     };
                 };
             }
         });
-        --[[Blend.New "Frame" {
-            Name = "Locked";
-            Size = UDim2.fromOffset(323, 543);
-            BackgroundTransparency = 1;
-            Visible = false;
-            ZIndex = 100;
-            Blend.New "ImageLabel" {
-                Name = "Background";
-                Size = UDim2.fromScale(1, 1);
-                BackgroundColor3 = Color3.fromRGB(163, 162, 165);
-                BackgroundTransparency = 1;
-                ClipsDescendants = true;
-                Image = "rbxassetid://129228536819931";
-            };
-            Blend.New "ImageLabel" {
-                Name = "Lock";
-                LayoutOrder = 1;
-                Position = UDim2.fromOffset(90, 141);
-                Size = UDim2.fromOffset(139, 139);
-                BackgroundColor3 = Color3.fromRGB(163, 162, 165);
-                BackgroundTransparency = 1;
-                ClipsDescendants = true;
-                Image = "rbxassetid://107871333816720";
-                ScaleType = Enum.ScaleType.Fit;
-                ZIndex = 2;
-            };
-            Blend.New "TextLabel" {
-                Name = "Text";
-                LayoutOrder = 2;
-                Position = UDim2.fromOffset(38, 280);
-                Size = UDim2.fromOffset(247, 58);
-                BackgroundColor3 = Color3.fromRGB(163, 162, 165);
-                BackgroundTransparency = 1;
-                FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json");
-                Text = "Level 20 Garden Required";
-                TextColor3 = Color3.fromRGB(255, 255, 255);
-                TextSize = 24;
-                TextWrapped = true;
-                ZIndex = 3;
-                Blend.New "UIStroke" {
-                    Color = Color3.fromRGB(27, 27, 27);
-                    LineJoinMode = Enum.LineJoinMode.Miter;
-                    Thickness = 4;
-                };
-            };
-        };]]
         Blend.New "Frame" {
             Name = "CurrencyBox";
-            Position = UDim2.fromOffset(20, 470);
-            Size = UDim2.fromOffset(135, 55);
+            Position = UDim2.fromOffset(12, 387);
+            Size = UDim2.fromOffset(134, 54);
             BackgroundTransparency = 1;
-            ZIndex = 3;
+            ZIndex = 6;
             Blend.New "ImageLabel" {
                 Name = "Background";
-                Size = UDim2.fromScale(1, 1);
+                Size = UDim2.fromOffset(134, 54);
                 BackgroundTransparency = 1;
-                ClipsDescendants = true;
-                Image = "rbxassetid://131851695546524";
+                Image = "rbxassetid://117688671611190";
             };
             Blend.New "ImageLabel" {
-                Name = "Currency";
-                Position = UDim2.fromOffset(8, 4);
-                Size = UDim2.fromOffset(47, 46);
+                Name = "Coin";
+                Position = UDim2.fromOffset(7, 2);
+                Size = UDim2.fromOffset(50, 50);
                 BackgroundTransparency = 1;
-                Image = "rbxassetid://83218620453911";
+                ClipsDescendants = true;
+                Image = "rbxassetid://124297337927177";
                 ScaleType = Enum.ScaleType.Fit;
                 ZIndex = 2;
             };
             Blend.New "TextLabel" {
-                Name = "Price";
-                Position = UDim2.fromOffset(52, 8);
-                Size = UDim2.fromOffset(77, 39);
+                Name = "Amount";
+                Position = UDim2.fromOffset(52, 2);
+                Size = UDim2.fromOffset(80, 50);
                 BackgroundTransparency = 1;
-                FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json");
+                FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
                 Text = NumberLocalizationUtils.abbreviate(PackPrice, "en-us", RoundingBehaviourTypes.ROUND_TO_CLOSEST, 3);
                 TextColor3 = Color3.fromRGB(255, 255, 255);
                 TextSize = 24;
-                TextWrapped = true;
                 ZIndex = 3;
                 Blend.New "UIStroke" {
-                    Color = Color3.fromRGB(0, 71, 97);
-                    LineJoinMode = Enum.LineJoinMode.Miter;
-                    Thickness = 3;
+                    Color = Color3.fromRGB(122, 57, 62);
+                    Thickness = 2;
                 };
+            };
+        };
+        Blend.New "ImageLabel" {
+            Name = "Info";
+            Position = UDim2.fromOffset(12, 17);
+            Size = UDim2.fromOffset(30, 32);
+            BackgroundTransparency = 1;
+            Image = "rbxassetid://134370064066838";
+            ScaleType = Enum.ScaleType.Fit;
+            ZIndex = 7;
+        };
+        Blend.New "TextLabel" {
+            Name = "Stock";
+            Position = UDim2.fromOffset(257, 6);
+            Size = UDim2.fromOffset(55, 55);
+            BackgroundTransparency = 1;
+            FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
+            Text = Blend.Computed(Pack.Left, function(left: number)
+                return tostring(left) .. "/" .. tostring(Pack.Stock)
+            end);
+            TextColor3 = Color3.fromRGB(255, 255, 255);
+            TextSize = 20;
+            ZIndex = 8;
+            Blend.New "UIStroke" {
+                Color = Color3.fromRGB(122, 57, 62);
+                Thickness = 3;
             };
         };
     }

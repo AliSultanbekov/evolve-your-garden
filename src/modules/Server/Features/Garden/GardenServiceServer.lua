@@ -21,6 +21,7 @@ local ItemTypes = require("ItemTypes")
 local PlantUtil = require("PlantUtil")
 local ItemUtil = require("ItemUtil")
 local Maid = require("Maid")
+local PlantsConfig = require("PlantsConfig")
 
 -- [ Constants ] --
 
@@ -112,9 +113,18 @@ function GardenServiceServer.GrowthCycle(self: Module, dt: number)
         Packet[GardenId] = {}
     
         for _, slotData: GardenTypesShared.Slot in Data.Garden.Slots do
-            local RawItems: { ItemTypes.RawItem } = {}
-    
-            if not slotData.Plant then
+            local Plant = slotData.Plant
+
+            if not Plant then
+                continue
+            end
+
+            PlantUtil:AdvanceGrowth(Plant, dt)
+            PlantUtil:RollMutation(Plant)
+
+            Packet[GardenId][slotData.Id] = Plant
+            
+            if not PlantsConfig:IsPlantAdult(Plant.Name, Plant.GrowthTime) then
                 continue
             end
     
@@ -123,26 +133,23 @@ function GardenServiceServer.GrowthCycle(self: Module, dt: number)
             if HarvestDelta <= 0 then
                 continue
             end
-    
-            PlantUtil:AdvanceGrowth(slotData.Plant, dt)
-            PlantUtil:RollMutation(slotData.Plant)
 
-            Packet[GardenId][slotData.Id] = slotData.Plant
+            local RawHarvestItems: { ItemTypes.RawItem } = {}
 
-            local Cycles = PlantUtil:ClaimProductionCycles(slotData.Plant)
+            local Cycles = PlantUtil:ClaimProductionCycles(Plant)
 
             if Cycles > 0 then
-                PlantUtil:AddXp(slotData.Plant, Cycles)
+                PlantUtil:AddXp(Plant, Cycles)
             end
 
             local SafeCycles = math.min(Cycles, HarvestDelta)
     
             for _ = 1, SafeCycles do
-                local CycleRawItems = PlantUtil:Produce(slotData.Plant)
-                table.move(CycleRawItems, 1, #CycleRawItems, #RawItems + 1, RawItems)
+                local CycleRawItems = PlantUtil:Produce(Plant)
+                table.move(CycleRawItems, 1, #CycleRawItems, #RawHarvestItems + 1, RawHarvestItems)
             end
     
-            self:AddRawHarvestItems(player, slotData.Id, RawItems)
+            self:AddRawHarvestItems(player, slotData.Id, RawHarvestItems)
         end
     end
 

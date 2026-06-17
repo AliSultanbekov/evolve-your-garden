@@ -9,86 +9,66 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
-local Observable = require("Observable")
+local ComponentTypes = require("ComponentTypes")
 local PackStoreConfig = require("PackStoreConfig")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
 
 -- [ Constants ] --
+-- Per-tab art + title layout. Title is offset right on tabs whose art carries
+-- an icon on the left. Falls back to the full-width Normal layout if a
+-- category has no entry yet.
+local DEFAULT_TAB = {
+    Image = "rbxassetid://130800794395586",
+    TitlePosition = UDim2.fromOffset(6, 6),
+    TitleSize = UDim2.fromOffset(168, 48),
+}
+local TAB_CONFIG = {
+    Normal = {
+        Image = "rbxassetid://130800794395586",
+        TitlePosition = UDim2.fromOffset(6, 6),
+        TitleSize = UDim2.fromOffset(168, 48),
+    },
+    Special = {
+        Image = "rbxassetid://140520092400430",
+        TitlePosition = UDim2.fromOffset(64, 6),
+        TitleSize = UDim2.fromOffset(110, 48),
+    },
+}
 
 -- [ Variables ] --
 
 -- [ Functions ] --
 local function Button(props: ButtonProps)
     local TabName = props.TabName
+    local Config = TAB_CONFIG[TabName] or DEFAULT_TAB
 
     return GenericButtonComponent({
-        Name = "Normal";
-        Position = UDim2.fromOffset(0, 160);
-        Size = UDim2.fromOffset(210, 75);
-        AnchorPoint = Vector2.new(0.5, 0.5);
+        Name = TabName;
+        Size = UDim2.fromOffset(180, 64);
         BackgroundTransparency = 1;
+        Image = Config.Image;
         OnPressed = function()
             props.SwitchTab(TabName)
         end,
         Children = {
-            Blend.New "ImageLabel" {
-                Name = "Glow";
-                Position = UDim2.fromOffset(-8, -13);
-                Size = UDim2.fromOffset(231, 101);
-                BackgroundColor3 = Color3.fromRGB(163, 162, 165);
-                BackgroundTransparency = 1;
-                ImageTransparency = Blend.Spring(
-                    Blend.Computed(props.ActiveTab, function(activeTab: string)
-                        return if activeTab == TabName then 0 else 1
-                    end),
-                    25
-                );
-                Image = "rbxassetid://105934782829660";
-                ScaleType = Enum.ScaleType.Fit;
-                ZIndex = -2;
-            };
             Blend.New "TextLabel" {
-                Name = "Name";
-                Position = UDim2.fromOffset(43, 10);
-                Size = UDim2.fromOffset(110, 50);
+                Name = "Title";
+                Position = Config.TitlePosition;
+                Size = Config.TitleSize;
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
-                FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json");
-                Text = TabName;
+                FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
+                Text = TabName .. " Packs";
                 TextColor3 = Color3.fromRGB(255, 255, 255);
-                TextSize = 35;
+                TextSize = 20;
                 TextWrapped = true;
                 Blend.New "UIStroke" {
-                    Color = Color3.fromRGB(0, 71, 97);
-                    LineJoinMode = Enum.LineJoinMode.Miter;
-                    Thickness = 4;
+                    Color = Color3.fromRGB(97, 61, 34);
+                    Thickness = 3;
                 };
             };
-            Blend.New "ImageLabel" {
-                Name = "Background";
-                LayoutOrder = 1;
-                Position = UDim2.fromOffset(-4, -4);
-                Size = UDim2.fromOffset(218, 83);
-                BackgroundColor3 = Color3.fromRGB(163, 162, 165);
-                BackgroundTransparency = 1;
-                Image = "rbxassetid://138967597938854";
-                ScaleType = Enum.ScaleType.Fit;
-                ZIndex = -1;
-            };
-            --[[Blend.New "ImageLabel" {
-                Name = "Lock";
-                LayoutOrder = 1;
-                Position = UDim2.fromOffset(59, 9);
-                Size = UDim2.fromOffset(56, 58);
-                BackgroundColor3 = Color3.fromRGB(163, 162, 165);
-                BackgroundTransparency = 1;
-                Image = "rbxassetid://88042922627998";
-                ScaleType = Enum.ScaleType.Fit;
-                Visible = false;
-                ZIndex = 2;
-            };]]
         }
     });
 end
@@ -107,16 +87,17 @@ local TabButtons = function(props: Props)
 
     return Blend.New "Frame" {
         Name = "TabButtons";
-        Position = UDim2.fromOffset(-20, 128);
-        Size = UDim2.fromOffset(160, 200);
+        Position = UDim2.fromOffset(4, 96);
+        Size = UDim2.fromOffset(200, 608);
         BackgroundTransparency = 1;
-        ZIndex = -3;
+        ZIndex = 3;
         Blend.New "UIListLayout" {
-            Padding = UDim.new(0, 15);
+            Padding = UDim.new(0, 10);
             SortOrder = Enum.SortOrder.Name;
+            HorizontalAlignment = Enum.HorizontalAlignment.Center;
         };
         Blend.New "UIPadding" {
-            PaddingTop = UDim.new(0, 25);
+            PaddingTop = UDim.new(0, 10);
         };
         Children
     }
@@ -124,12 +105,12 @@ end
 
 -- [ Types ] --
 type Props = {
-    ActiveTab: Observable.Observable<string>,
+    ActiveTab: ComponentTypes.Prop<string>,
     SwitchTab: (tabName: string) -> (),
 }
 type ButtonProps = {
     TabName: string,
-    ActiveTab: Observable.Observable<string>,
+    ActiveTab: ComponentTypes.Prop<string>,
     SwitchTab: (tabName: string) -> (),
 }
 type ModuleData = {}
