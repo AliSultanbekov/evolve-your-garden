@@ -28,8 +28,8 @@ local ImagesConfig = {
     },
     PackStore = {
         Banner = {
-            Normal = "rbxassetid://127317920073362",
-            Special = "rbxassetid://122673110673281"
+            Normal = "rbxassetid://120388679844862",
+            Special = "rbxassetid://95003231122217"
         },
         RarityImages = {
             Celestial = "rbxassetid://108558146289194",

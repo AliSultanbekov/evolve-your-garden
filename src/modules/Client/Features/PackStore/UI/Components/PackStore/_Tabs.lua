@@ -46,7 +46,7 @@ local Banner = function(props: BannerProps)
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
-            Text = props.TabName .. "Packs";
+            Text = props.TabName .. " Packs";
             TextColor3 = Color3.fromRGB(255, 255, 255);
             TextSize = 40;
             ZIndex = 2;
@@ -113,7 +113,7 @@ local Banner = function(props: BannerProps)
                 Size = UDim2.fromOffset(34, 34);
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
-                Image = "rbxassetid://88014861544852";
+                Image = "rbxassetid://112248837592070";
                 ScaleType = Enum.ScaleType.Fit;
                 ZIndex = 4;
             };

@@ -24,15 +24,12 @@ local RoundingBehaviourTypes = require("RoundingBehaviourTypes")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
-local GenericTextComponent = require("GenericTextComponent")
 
 -- [ Constants ] --
 local WIGGLE_COLORS = {
     Common = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(172, 175, 186)),
-        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(190, 192, 202)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(123, 200, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(124, 179, 255)),
     }),
 
     Uncommon = ColorSequence.new({
@@ -105,8 +102,8 @@ local WIGGLE_ANIMATIONS = {
         return GradientUtil:GetColorSequence({
             BaseColorSequence = WIGGLE_COLORS["Celestial"],
             Resolution = 18,
-            Width = 1.2,
-            Speed = 0.45,
+            Width = 6,
+            Speed = 1,
             Seed = 0,
         }, time)
     end
@@ -158,7 +155,7 @@ local ItemCardComponent = function(props: Props)
                 [Blend.Children] = {
                     Blend.New "UIGradient" {
                         Color = WiggleColor;
-                        Rotation = 125;
+                        Rotation = 180;
                     }
                 }
             };
@@ -171,9 +168,8 @@ local ItemCardComponent = function(props: Props)
                 ScaleType = Enum.ScaleType.Fit;
                 Image = ItemConfig:GetIcon(Item.Name, Item.Category);
             };
-
             if ItemUtil:CategoryToStorageMode(Item.Category) == "Stackable" then
-                GenericTextComponent({
+                Blend.New "TextLabel" {
                     Name = "Amount";
                     Position = UDim2.fromOffset(58, 82);
                     Size = UDim2.fromOffset(54, 30);
@@ -182,9 +178,13 @@ local ItemCardComponent = function(props: Props)
                     end);
                     TextColor3 = Color3.fromRGB(255, 255, 255);
                     TextSize = 25;
-                    StrokeColor = Color3.fromRGB(0, 71, 97);
-                    StrokeThickness = 3;
-                }) :: any
+                    BackgroundTransparency = 1;
+                    FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
+                    Blend.New "UIStroke" {
+                        Color = Color3.fromRGB(43, 73, 112);
+                        Thickness = 3;
+                    };
+                } :: any
             else nil 
         },
         OnPressed = function(buttonInstance: GuiButton)

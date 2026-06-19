@@ -77,12 +77,11 @@ local GardenComponent = function(props: Props)
             return
         end
 
-        local GardenModel = AssetProvider:Get(string.format("Objects/Garden/Upgrades/%s", tostring(state.Level))) :: GardenModel
+        local GardenModel = GardenMaid:Add(AssetProvider:Get(string.format("Objects/Garden/Upgrades/%s", tostring(state.Level)))) :: GardenModel
         local IsLocal = state.Owner == LocalUserId
-
-        GardenMaid:Add(GardenModel)
-
+        
         SetupGardenModel(GardenModel)
+        props.OnGardenModelCreated(GardenModel)
 
         GardenMaid:Add(Garden.Slots:ObservePairsBrio():Subscribe(function(brio: Brio.Brio<GardenTypesShared.SlotId, GardenTypesClient.ReactiveSlot>)
             if brio:IsDead() then 
@@ -163,6 +162,7 @@ type Props = {
     OnSlotSelected: (slotId: GardenTypesShared.SlotId) -> (),
     OnSlotCreated: (slotId: GardenTypesShared.SlotId, slotModel: GardenTypesClient.SlotModel) -> (),
     OnSlotDestroyed: (slotId: GardenTypesShared.SlotId) -> (),
+    OnGardenModelCreated: (gardenModel: GardenTypesClient.GardenModel) -> (),
 }
 
 type ModuleData = {}
