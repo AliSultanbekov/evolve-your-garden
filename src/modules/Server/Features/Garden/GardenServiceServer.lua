@@ -66,7 +66,7 @@ function GardenServiceServer._GetFreeGardenId(self: Module): GardenTypesShared.G
     return freeGardenId
 end
 
-function GardenServiceServer._GetUserGarden(self: Module, userId: string): GardenTypesShared.GardenId?
+function GardenServiceServer._GetUserGardenId(self: Module, userId: string): GardenTypesShared.GardenId?
     return self._UserIdToGardenId[userId]
 end
 
@@ -213,7 +213,7 @@ end
 
 function GardenServiceServer.CollectHarvest(self: Module, player: Player, slotId: GardenTypesShared.SlotId)
     local UserId = PlayerToUserId(player)
-    local GardenId = self:_GetUserGarden(UserId)
+    local GardenId = self:_GetUserGardenId(UserId)
     local Data = self._DataServiceServer:GetProfile(player).Data
     local SlotData = Data.Garden.Slots[slotId]
 
@@ -235,7 +235,7 @@ function GardenServiceServer.PlacePlant(self: Module, player: Player, slotId: Ga
     local data = self._DataServiceServer:GetProfile(player).Data
     local SlotData = data.Garden.Slots[slotId]
     local UserId = PlayerToUserId(player)
-    local GardenId = self:_GetUserGarden(UserId)
+    local GardenId = self:_GetUserGardenId(UserId)
 
     if not GardenId then
         return
@@ -270,7 +270,7 @@ function GardenServiceServer.RemovePlant(self: Module, player: Player, slotId: G
     local data = self._DataServiceServer:GetProfile(player).Data
     local SlotData = data.Garden.Slots[slotId]
     local UserId = PlayerToUserId(player)
-    local GardenId = self:_GetUserGarden(UserId)
+    local GardenId = self:_GetUserGardenId(UserId)
 
     if not GardenId then
         return
@@ -293,7 +293,7 @@ end
 function GardenServiceServer.ClaimGarden(self: Module, player: Player)
     local UserId = PlayerToUserId(player)
 
-    if self:_GetUserGarden(UserId) then
+    if self:_GetUserGardenId(UserId) then
         return
     end
 
@@ -325,7 +325,7 @@ end
 
 function GardenServiceServer.AbandonGarden(self: Module, player: Player)
     local UserId = PlayerToUserId(player)
-    local GardenId = self:_GetUserGarden(UserId)
+    local GardenId = self:_GetUserGardenId(UserId)
 
     if not GardenId then
         return
@@ -396,7 +396,7 @@ function GardenServiceServer.Start(self: Module)
             local PlayerData = self._DataServiceServer:GetData(player)
 
             local UserId = PlayerToUserId(player)
-            local GardenId = self:_GetUserGarden(UserId)
+            local GardenId = self:_GetUserGardenId(UserId)
             local GardenLevel = self._UpgradesServiceServer:GetUpgradeLevel(player, "Garden")
             local Slots = PlayerData.Garden.Slots
 
@@ -405,14 +405,14 @@ function GardenServiceServer.Start(self: Module)
             end
 
             Gardens[GardenId] = {
-                GardenId = GardenId,
-                UserId = UserId,
-                GardenLevel = GardenLevel,
+                Id = GardenId,
+                Owner = UserId,
+                Level = GardenLevel,
                 Slots = Slots,
             }
         end
 
-        return Gardens
+        return { Gardens = Gardens }
     end
 end
 

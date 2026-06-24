@@ -59,66 +59,102 @@ local ItemsGridComponent = function(props: Props)
         end) :: any,
         Rx.shareReplay(1) :: any,
     })
-
-    return Blend.New "ScrollingFrame" {
-        Size = props.Size;
-        Position = props.Position;
-        AnchorPoint = props.AnchorPoint;
-        ZIndex = props.ZIndex;
-        ScrollBarImageColor3 = props.ScrollBarImageColor3;
-        ScrollBarImageTransparency = props.ScrollBarImageTransparency;
-        ScrollBarThickness = props.ScrollBarThickness;
-        ScrollingDirection = props.ScrollingDirection;
-        BackgroundTransparency = props.BackgroundTransparency,
-        AutomaticCanvasSize = props.AutomaticCanvasSize;
-        [Blend.Instance] = function(instance)
-            local BackingPoolObj = MaidObject:Add(BackingPool.new({
-                Parent = instance
-            }))
-
-            MaidObject:Add(Items:ObserveCount():Subscribe(function(count: number)
-                BackingPoolObj:Ensure(count)
-            end))
-
-            MaidObject:Add(Items:ObserveValuesBrio():Subscribe(function(brio: Brio.Brio<ReactiveItemTypes.ReactiveItem>)
-                local ItemCardMaid, Item = brio:ToMaidAndValue()
-
-                local Backing = (Order :: any):Pipe({
-                    Rx.map(function(order)
-                        return table.find(order, Item.Id)
-                    end),
-                    Rx.distinct() :: any,
-                    Rx.map(function(index)
-                        return BackingPoolObj:GetBacking(index)
-                    end) :: any
-                })
-                
-                ItemCardMaid:Add(ItemCardComponent({
-                    Item = Item;
-                    Parent = Backing;
-                    OnItemPressed = props.OnItemPressed,
-                    OnItemHovered = props.OnItemHovered,
-                    OnItemUnhovered = props.OnItemUnhovered,
-                }):Subscribe(function()  end))
-            end))
-        end,
-        [Blend.Children] = {
-            Blend.New "UIPadding" {
-                PaddingTop = props.UIPaddingSizes.PaddingTop;
-                PaddingBottom = props.UIPaddingSizes.PaddingBottom;
-                PaddingLeft = props.UIPaddingSizes.PaddingLeft;
-                PaddingRight = props.UIPaddingSizes.PaddingRight;
-            };
+    Blend.New "CanvasGroup" {
+        Name = "Canvas";
+        LayoutOrder = 1;
+        Position = UDim2.fromOffset(14, 18);
+        Size = UDim2.fromOffset(1050, 530);
+        BackgroundTransparency = 1;
+        BorderSizePixel = 0;
+        ZIndex = 2;
+        Blend.New "ScrollingFrame" {
+            Name = "ItemsGrid";
+            Size = UDim2.fromOffset(1050, 530);
+            AutomaticCanvasSize = Enum.AutomaticSize.X;
+            BackgroundColor3 = Color3.fromRGB(163, 162, 165);
+            BackgroundTransparency = 1;
+            CanvasSize = UDim2.new(0, 0, 0, 0);
+            ScrollBarImageColor3 = Color3.fromRGB(255, 255, 255);
+            ScrollBarImageTransparency = 0.5;
+            ScrollBarThickness = 4;
+            ScrollingDirection = Enum.ScrollingDirection.X;
             Blend.New "UIGridLayout" {
-                CellPadding = props.UIGridLayoutSizes.CellPadding;
-                CellSize = props.UIGridLayoutSizes.CellSize;
-                FillDirection = props.UIGridLayoutSizes.FillDirection;
+                CellPadding = UDim2.fromOffset(10, 0);
+                CellSize = UDim2.fromOffset(120, 120);
                 SortOrder = Enum.SortOrder.LayoutOrder;
             };
-        },
-        [Blend.OnEvent "Destroying"] = function()
-            MaidObject:DoCleaning()
-        end
+            Blend.New "UIPadding" {
+                PaddingBottom = UDim.new(0, 10);
+                PaddingLeft = UDim.new(0, 10);
+                PaddingRight = UDim.new(0, 10);
+                PaddingTop = UDim.new(0, 10);
+            };
+        };
+    };
+    return Blend.New "CanvasGroup" {
+        Name = "Canvas";
+        Position = props.Position;
+        Size = props.Size;
+        BackgroundTransparency = 1;
+        ZIndex = props.ZIndex;
+        Blend.New "ScrollingFrame" {
+            Name = "Grid";
+            Size = UDim2.fromScale(1, 1);
+            ScrollBarImageColor3 = props.ScrollBarImageColor3;
+            ScrollBarImageTransparency = props.ScrollBarImageTransparency;
+            ScrollBarThickness = props.ScrollBarThickness;
+            ScrollingDirection = props.ScrollingDirection;
+            BackgroundTransparency = 1,
+            AutomaticCanvasSize = props.AutomaticCanvasSize;
+            [Blend.Instance] = function(instance)
+                local BackingPoolObj = MaidObject:Add(BackingPool.new({
+                    Parent = instance
+                }))
+    
+                MaidObject:Add(Items:ObserveCount():Subscribe(function(count: number)
+                    BackingPoolObj:Ensure(count)
+                end))
+    
+                MaidObject:Add(Items:ObserveValuesBrio():Subscribe(function(brio: Brio.Brio<ReactiveItemTypes.ReactiveItem>)
+                    local ItemMaid, Item = brio:ToMaidAndValue()
+    
+                    local Backing = (Order :: any):Pipe({
+                        Rx.map(function(order)
+                            return table.find(order, Item.Id)
+                        end),
+                        Rx.distinct() :: any,
+                        Rx.map(function(index)
+                            return BackingPoolObj:GetBacking(index)
+                        end) :: any
+                    })
+                    
+                    ItemMaid:Add(ItemCardComponent({
+                        Item = Item;
+                        Parent = Backing;
+                        OnItemPressed = props.OnItemPressed,
+                        OnItemHovered = props.OnItemHovered,
+                        OnItemUnhovered = props.OnItemUnhovered,
+                    }):Subscribe(function()  end))
+                end))
+            end,
+            [Blend.Children] = {
+                Blend.New "UIPadding" {
+                    PaddingTop = props.UIPaddingSizes.PaddingTop;
+                    PaddingBottom = props.UIPaddingSizes.PaddingBottom;
+                    PaddingLeft = props.UIPaddingSizes.PaddingLeft;
+                    PaddingRight = props.UIPaddingSizes.PaddingRight;
+                };
+                Blend.New "UIGridLayout" {
+                    CellPadding = props.UIGridLayoutSizes.CellPadding;
+                    CellSize = props.UIGridLayoutSizes.CellSize;
+                    FillDirection = props.UIGridLayoutSizes.FillDirection;
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                };
+            },
+            [Blend.OnEvent "Destroying"] = function()
+                MaidObject:DoCleaning()
+            end
+        }
     }
 end
 
@@ -128,7 +164,6 @@ type Props = {
     Position: ComponentTypes.Prop<UDim2>?,
     AnchorPoint: ComponentTypes.Prop<Vector2>?,
     ZIndex: ComponentTypes.Prop<number>?,
-    BackgroundTransparency: ComponentTypes.Prop<number>?,
     AutomaticCanvasSize: ComponentTypes.Prop<Enum.AutomaticSize>?,
     ScrollingDirection: ComponentTypes.Prop<Enum.ScrollingDirection>?,
     ScrollBarImageColor3: ComponentTypes.Prop<Color3>?,
@@ -150,7 +185,7 @@ type Props = {
     Search: Observable.Observable<string>,
     OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
     OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
-    OnItemUnhovered: () -> (),
+    OnItemUnhovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
 }
 type ModuleData = {}
 

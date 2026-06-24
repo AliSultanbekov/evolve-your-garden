@@ -54,17 +54,17 @@ local WIGGLE_COLORS = {
     }),
 
     Legendary = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 230, 80)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 110, 0)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 200, 60)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 233, 108)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 143, 57)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 214, 110)),
     }),
 
     Mythic = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 0, 25)),
-        ColorSequenceKeypoint.new(0.3, Color3.fromRGB(255, 45, 60)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 175, 160)),
-        ColorSequenceKeypoint.new(0.7, Color3.fromRGB(255, 45, 60)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(160, 10, 35)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 8, 28)),
+        ColorSequenceKeypoint.new(0.3, Color3.fromRGB(220, 25, 45)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 85, 70)),
+        ColorSequenceKeypoint.new(0.7, Color3.fromRGB(220, 25, 45)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 8, 28)),
     }),
 
     Celestial = ColorSequence.new({
@@ -84,26 +84,26 @@ local WIGGLE_ANIMATIONS = {
         return GradientUtil:GetColorSequence({
             BaseColorSequence = WIGGLE_COLORS["Legendary"],
             Resolution = 18,
-            Width = 2,
-            Speed = 1,
+            Width = 1.2,
+            Speed = 0.6,
             Seed = 0,
         }, time)
     end,
     Mythic = function(time: number)
         return GradientUtil:GetColorSequence({
             BaseColorSequence = WIGGLE_COLORS["Mythic"],
-            Resolution = 18,
-            Width = 2,
-            Speed = 1.2,
+            Resolution = 10,
+            Width = 1,
+            Speed = 0.4,
             Seed = 0,
         }, time)
     end,
     Celestial = function(time: number)
         return GradientUtil:GetColorSequence({
             BaseColorSequence = WIGGLE_COLORS["Celestial"],
-            Resolution = 18,
-            Width = 6,
-            Speed = 1,
+            Resolution = 16,
+            Width = 1.8,
+            Speed = 0.3,
             Seed = 0,
         }, time)
     end
@@ -155,7 +155,7 @@ local ItemCardComponent = function(props: Props)
                 [Blend.Children] = {
                     Blend.New "UIGradient" {
                         Color = WiggleColor;
-                        Rotation = 180;
+                        Rotation = 115;
                     }
                 }
             };
@@ -210,7 +210,7 @@ local ItemCardComponent = function(props: Props)
             props.OnItemHovered(Item, UDim2.fromOffset(pos.X, pos.Y))
         end,
         OnUnhovered = function()
-            props.OnItemUnhovered()
+            props.OnItemUnhovered(Item)
         end,
         OnDestroyed = function()
             MaidObject:DoCleaning()
@@ -225,7 +225,7 @@ type Props = {
     Parent: ComponentTypes.Prop<Instance>?,
     OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
     OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
-    OnItemUnhovered: () -> (),
+    OnItemUnhovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
 }
 type ModuleData = {}
 

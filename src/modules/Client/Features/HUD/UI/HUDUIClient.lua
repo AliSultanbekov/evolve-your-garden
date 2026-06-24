@@ -10,7 +10,6 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
 local Maid = require("Maid")
-local Blend = require("Blend")
 
 -- [ Components ] --
 local ButtonsWindow = require(script.Parent.Components.Buttons._ButtonsWindow)
@@ -42,25 +41,25 @@ function HUDUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._UIServiceClient = self._ServiceBag:GetService(require("UIServiceClient"))
     self._Maid = Maid.new()
-end
 
-function HUDUIClient.Start(self: Module)
     self._UIServiceClient:RegisterUI({
         UIName = "HUDButtons",
         Category = "HUD",
         Conflicts = {}
     })
+end
 
+function HUDUIClient.Start(self: Module)
     self._UIServiceClient:OpenUI("HUDButtons")
 
-    self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("HUD"), {
+    self._Maid:Add(self._UIServiceClient:MountToScreen("UIs", function() return {
         ButtonsWindow({
             IsOpen = self._UIServiceClient:ObserveUI("HUDButtons"),
             OnToggleUI = function(uiName: string)
                 self._UIServiceClient:ToggleUI(uiName)
             end
         })
-    }))
+    } end))
 end
 
 return HUDUIClient :: Module

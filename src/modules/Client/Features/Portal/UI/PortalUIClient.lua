@@ -10,7 +10,6 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
 local Maid = require("Maid")
-local Blend = require("Blend")
 local Rx = require("Rx")
 local PortalTypesClient = require("PortalTypesClient")
 
@@ -49,7 +48,7 @@ function PortalUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 end
 
 function PortalUIClient.Start(self: Module)
-    self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("Misc"), {
+    self._Maid:Add(self._UIServiceClient:MountToScreen("UIs", function() return {
         GenericPromptComponent({
             Adornee = self._PortalServiceClient:ObserveClosestPortal():Pipe({
                 Rx.where(function(portal: PortalTypesClient.Portal?)
@@ -75,7 +74,7 @@ function PortalUIClient.Start(self: Module)
             end,
             Text = "Teleport"
         })
-    }))
+    } end))
 end
 
 return PortalUIClient :: Module

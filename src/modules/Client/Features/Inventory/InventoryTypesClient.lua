@@ -27,7 +27,7 @@ export type TabsConfig = {
     }
 }
 export type Actions = {
-    ["Open"]: (amount: number) -> ()
+    [string]: (...any) -> (...any)
 }
 
 return nil

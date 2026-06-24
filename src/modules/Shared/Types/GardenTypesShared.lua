@@ -82,11 +82,13 @@ export type HarvestCollectedRemotePacket = {
 }
 
 export type GetGardensRemotePacket = {
-    [GardenId]: {
-        GardenId: GardenId,
-        UserId: string,
-        GardenLevel: number,
-        Slots: Slots
+    Gardens: {
+        [GardenId]: {
+            Id: GardenId,
+            Owner: string,
+            Level: number,
+            Slots: Slots
+        }
     }
 }
 

@@ -1,5 +1,3 @@
-local HttpService = game:GetService("HttpService")
-
 --[=[
     @class WeatherServiceServer
 ]=]

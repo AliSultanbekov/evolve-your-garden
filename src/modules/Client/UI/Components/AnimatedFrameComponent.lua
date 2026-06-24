@@ -43,6 +43,7 @@ local AnimatedFrameComponent = function(props: Props)
         BackgroundColor3 = props.BackgroundColor3;
         BackgroundTransparency = props.BackgroundTransparency;
         AutomaticSize = props.AutomaticSize;
+        ZIndex = props.ZIndex;
         Visible = Blend.Computed(Scale, function(scale: number)
             return if scale < 0.01 then false else true
         end);
@@ -61,6 +62,7 @@ type Props = {
     AnchorPoint: ComponentTypes.Prop<Vector2>?,
     BackgroundColor3: ComponentTypes.Prop<Color3>?,
     BackgroundTransparency: ComponentTypes.Prop<number>?,
+    ZIndex: ComponentTypes.Prop<number>?,
     AutomaticSize: ComponentTypes.Prop<Enum.AutomaticSize>?,
     Children: { Observable.Observable<Instance> }?,
     IsOpen: ComponentTypes.Prop<boolean>,

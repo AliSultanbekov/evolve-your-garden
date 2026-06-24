@@ -18,7 +18,7 @@ local NPCConfigClient = {}
 
 -- [ Private Functions ] --
 function NPCConfigClient._Init(self: Module)
-    self.Range = 8
+    self.Range = 14
 end
 
 -- [ Public Functions ] --

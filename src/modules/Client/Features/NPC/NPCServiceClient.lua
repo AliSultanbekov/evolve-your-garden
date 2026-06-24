@@ -1,5 +1,3 @@
-
-
 --[=[
     @class NPCServiceClient
 ]=]
@@ -19,6 +17,7 @@ local ObservableMap = require("ObservableMap")
 local ValueObject = require("ValueObject")
 local Maid = require("Maid")
 local NPCConfigClient = require("NPCConfigClient")
+local NPCTypesShared = require("NPCTypesShared")
 
 -- [ Constants ] --
 
@@ -33,7 +32,8 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _Maid: Maid.Maid,
     _NPCs: NPCTypesClient.NPCs,
-    _ClosestNPC: ValueObject.ValueObject<NPCTypesClient.NPC?>
+    _ClosestNPC: ValueObject.ValueObject<NPCTypesClient.NPC?>,
+    _ActiveTopicId: ValueObject.ValueObject<NPCTypesShared.TopicId?>,
 }
 
 export type Module = typeof(NPCServiceClient) & ModuleData
@@ -41,6 +41,18 @@ export type Module = typeof(NPCServiceClient) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
+function NPCServiceClient.GetActiveTopicId(self: Module)
+    return self._ActiveTopicId.Value
+end
+
+function NPCServiceClient.ObserveActiveTopicId(self: Module)
+    return self._ActiveTopicId:Observe()
+end
+
+function NPCServiceClient.SetActiveTopicId(self: Module, topicId: NPCTypesShared.TopicId?)
+    self._ActiveTopicId.Value = topicId
+end
+
 function NPCServiceClient.GetClosestNPC(self: Module)
     return self._ClosestNPC.Value
 end
@@ -74,6 +86,7 @@ function NPCServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._Maid = Maid.new()
     self._NPCs = ObservableMap.new()
     self._ClosestNPC = ValueObject.new()
+    self._ActiveTopicId = ValueObject.new()
 end
 
 function NPCServiceClient.Start(self: Module)
@@ -96,6 +109,14 @@ function NPCServiceClient.Start(self: Module)
                 ClosestDistance = Distance
                 ClosestNPC = npc
             end
+        end
+
+        if not ClosestNPC then
+            -- Walked away from every NPC: end any active conversation.
+            self._ActiveTopicId.Value = nil
+        elseif self._ActiveTopicId.Value then
+            -- Mid-conversation: lock ClosestNPC to the current partner.
+            return
         end
 
         self._ClosestNPC.Value = ClosestNPC

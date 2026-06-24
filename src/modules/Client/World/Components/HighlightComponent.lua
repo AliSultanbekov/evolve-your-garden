@@ -28,7 +28,6 @@ local HighlightComponent = function(props: Props)
         OutlineColor = props.OutlineColor or Color3.new(1, 1, 1);
         OutlineTransparency = props.OutlineTransparency or 0;
         Adornee = props.Adornee;
-        Parent = props.Adornee;
     }
 end
 

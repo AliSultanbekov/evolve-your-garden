@@ -21,7 +21,7 @@ local ObservableMap = require("ObservableMap")
 
 -- [ Types ] --
 export type ReactiveGarden = {
-    GardenId: GardenTypesShared.GardenId,
+    Id: GardenTypesShared.GardenId,
     Owner: ValueObject.ValueObject<string?>,
     Level: ValueObject.ValueObject<number?>,
     Slots: ReactiveSlots,
@@ -35,9 +35,12 @@ export type ReactiveSlot = {
     Harvest: ObservableMap.ObservableMap<ItemTypes.ItemId, ReactiveItemTypes.ReactiveItem>,
 }
 export type ReactiveSlots = ObservableMap.ObservableMap<GardenTypesShared.SlotId, ReactiveSlot>
-export type ReactiveHarvest = ObservableMap.ObservableMap<GardenTypesShared.SlotId, ReactiveItemTypes.ReactiveItem>
 export type SlotModel = typeof(ReplicatedStorage.Assets.Objects.Garden.Slot)
 export type GardenModel = typeof(ReplicatedStorage.Assets.Objects.Garden.Upgrades["1"])
 export type GardenFolder = typeof(workspace.World.Gardens["1"])
+export type SlotInfo = {
+    GardenId: GardenTypesShared.GardenId,
+    SlotId: GardenTypesShared.SlotId,
+}
 
 return nil

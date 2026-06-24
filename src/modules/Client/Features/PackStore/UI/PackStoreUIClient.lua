@@ -11,7 +11,6 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local ServiceBag = require("ServiceBag")
 local ValueObject = require("ValueObject")
 local Maid = require("Maid")
-local Blend = require("Blend")
 local PackStoreTypesShared = require("PackStoreTypesShared")
 
 -- [ Components ] --
@@ -48,9 +47,7 @@ function PackStoreUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._PackStoreServiceClient = self._ServiceBag:GetService(require("PackStoreServiceClient"))
     self._Maid = Maid.new()
     self._ActiveTab = ValueObject.new("Normal")
-end
 
-function PackStoreUIClient.Start(self: Module)
     self._UIServiceClient:RegisterUI({
         UIName = "PackStore",
         Category = "Main",
@@ -58,8 +55,10 @@ function PackStoreUIClient.Start(self: Module)
             ["Main"] = true
         }
     })
+end
 
-    self._Maid:Add(Blend.mount(self._UIServiceClient:GetScreen("Main"), {
+function PackStoreUIClient.Start(self: Module)
+    self._Maid:Add(self._UIServiceClient:MountToScreen("UIs", function() return {
         PackStoreWindow({
             IsOpen = self._UIServiceClient:ObserveUI("PackStore"),
             Packs = self._PackStoreServiceClient:GetPacks(),
@@ -72,7 +71,7 @@ function PackStoreUIClient.Start(self: Module)
                 self._PackStoreServiceClient:BuyPack(packId)
             end
         })
-    }))
+    } end))
 end
 
 return PackStoreUIClient :: Module
