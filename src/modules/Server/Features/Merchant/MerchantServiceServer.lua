@@ -17,6 +17,7 @@ local Brio = require("Brio")
 local Maid = require("Maid")
 local ProfileConfig = require("ProfileConfig")
 local MerchantTypesShared = require("MerchantTypesShared")
+local InventoryTypesShared = require("InventoryTypesShared")
 local ChanceClass = require("ChanceClass")
 local ItemUtil = require("ItemUtil")
 -- [ Constants ] --
@@ -67,13 +68,16 @@ function MerchantServiceServer.Refresh(self: Module, player: Player)
         BuySlots[Id] = Slot
     end
 
+    local LastRefresh = DateTime.now().UnixTimestamp
+
     PlayerData.Merchant = {
-        LastRefresh = DateTime.now().UnixTimestamp,
+        LastRefresh = LastRefresh,
         BuySlots = BuySlots
     }
 
     self._MerchantNetworkServer:Refreshed(player, {
-        BuySlots = BuySlots
+        BuySlots = BuySlots,
+        LastRefresh = LastRefresh
     })
 end
 
@@ -81,8 +85,12 @@ function MerchantServiceServer.Buy(self: Module, player: Player, slotId: Merchan
     local PlayerData = self._DataServiceServer:GetData(player)
     local MerchantData = PlayerData.Merchant
 
+    if not MerchantData.BuySlots then
+        return
+    end
+
     local Slot = MerchantData.BuySlots[slotId]
-    
+
     if not Slot then
         return
     end
@@ -93,41 +101,72 @@ function MerchantServiceServer.Buy(self: Module, player: Player, slotId: Merchan
 
     local BuyItemConfig = MerchantConfig.BuyItems[Slot.ItemName]
 
+    if not BuyItemConfig then
+        return
+    end
+
     local Price = BuyItemConfig.Price
-    local CurrencyName = BuyItemConfig.CurrencyName
+    local CurrencyName = BuyItemConfig.Currency
     local Currency = self._InventoryServiceServer:GetItem(player, CurrencyName) :: ItemTypes.CurrencyItem?
 
     if not Currency then
         return
     end
 
-    local Delta = Currency.Amount - Price
-
-    if Delta < 0 then
+    if Currency.Amount < Price then
         return
     end
 
-    self._InventoryServiceServer:RemoveItems(player, ItemUtil:ProcessRawItem({
+    -- Grant first (capacity-checked); only take payment once the item fits.
+    local BoughtItem = ItemUtil:ProcessRawItem(ItemUtil:MakeRawFromName(Slot.ItemName))
+    local Result: InventoryTypesShared.Result = self._InventoryServiceServer:AddItems(player, { BoughtItem })
+
+    if Result == "Fail" then
+        return
+    end
+
+    self._InventoryServiceServer:RemoveItems(player, { ItemUtil:ProcessRawItem({
         Name = CurrencyName,
         Category = "Currency",
         Amount = Price
-    }))
+    }) })
+
+    Slot.Left -= 1
+
+    self._MerchantNetworkServer:Bought(player, {
+        SlotId = slotId,
+        Left = Slot.Left
+    })
 end
 
-function MerchantServiceServer.Sell(self: Module, player: Player, item: ItemTypes.MaterialItem)
-    local SellConfigData = MerchantConfig.SellItems[item.Name]
+function MerchantServiceServer.Sell(self: Module, player: Player, itemId: ItemTypes.ItemId, amount: number)
+    -- Server-authoritative: everything (name, category, price) derives from the
+    -- STORED item at itemId — never from client-declared fields.
+    if type(amount) ~= "number" or amount ~= amount or amount <= 0 or amount % 1 ~= 0 then
+        return
+    end
+
+    local InventoryItem = self._InventoryServiceServer:GetItem(player, itemId) :: ItemTypes.MaterialItem?
+
+    if not InventoryItem then
+        return
+    end
+
+    if InventoryItem.Category ~= "Material" then
+        return
+    end
+
+    local SellConfigData = MerchantConfig.SellItems[InventoryItem.Name]
 
     if not SellConfigData then
         return
     end
 
-    local InventoryItem = self._InventoryServiceServer:GetItem(player, item.Id) :: ItemTypes.MaterialItem
-
-    if InventoryItem.Amount < item.Amount then
+    if InventoryItem.Amount < amount then
         return
     end
 
-    local TotalPrice = SellConfigData.Price * item.Amount
+    local TotalPrice = SellConfigData.Price * amount
 
     local Currency: ItemTypes.CurrencyItem = {
         Id = SellConfigData.Currency,
@@ -136,10 +175,11 @@ function MerchantServiceServer.Sell(self: Module, player: Player, item: ItemType
         Amount = TotalPrice,
     }
 
-    self._InventoryServiceServer:RemoveItems(player, { item })
+    -- GetItem returns a clone, so adjusting Amount only affects the removal request.
+    InventoryItem.Amount = amount
+
+    self._InventoryServiceServer:RemoveItems(player, { InventoryItem })
     self._InventoryServiceServer:AddItems(player, { Currency })
-
-
 end
 
 function MerchantServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
@@ -156,9 +196,20 @@ end
 function MerchantServiceServer.Start(self: Module)
     self._MerchantNetworkServer.RemoteFunctions["GetBuySlots"] = function(player: Player)
         local PlayerData = self._DataServiceServer:GetData(player)
-        
-        return { BuySlots = PlayerData.Merchant.BuySlots }
+
+        return {
+            BuySlots = PlayerData.Merchant.BuySlots,
+            LastRefresh = PlayerData.Merchant.LastRefresh
+        }
     end
+
+    self._MerchantNetworkServer.RemoteEvents.Buy:Connect(function(player: Player, packet: MerchantTypesShared.BuyRemotePacket)
+        self:Buy(player, packet.SlotId)
+    end)
+
+    self._MerchantNetworkServer.RemoteEvents.Sell:Connect(function(player: Player, packet: MerchantTypesShared.SellRemotePacket)
+        self:Sell(player, packet.ItemId, packet.Amount)
+    end)
 
     RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
         local Maid: Maid.Maid, Player: Player = brio:ToMaidAndValue()

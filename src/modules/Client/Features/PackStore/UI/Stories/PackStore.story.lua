@@ -56,10 +56,17 @@ local PackStoreStory = {
             PackStoreWindow({
                 IsOpen = IsOpen:Observe(),
                 Packs = Packs,
+                StartTime = ValueObject.new(DateTime.now().UnixTimestamp):Observe(),
                 ActiveTab = ActiveTab:Observe(),
 
                 SwitchTab = function(tabName: string)
                     ActiveTab.Value = tabName
+                end,
+                BuyPack = function(packId: PackStoreTypesShared.PackId)
+                    print("[Story] BuyPack:", packId)
+                end,
+                OnClose = function()
+                    IsOpen.Value = false
                 end
             })
         }))

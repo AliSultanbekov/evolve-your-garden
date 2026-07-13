@@ -58,15 +58,22 @@ function ChanceClass._UpdateChances<K>(self: Object<K>, chancePool: ChancePool<K
         UpdatedChances[key] = NewChance
     end
 
+    -- Recompute the total from the final pool so Choose's random ceiling always
+    -- matches what the pool actually sums to (redistribution renormalizes it).
+    local FinalTotalChance = 0
+    for _, chance in UpdatedChances do
+        FinalTotalChance += chance
+    end
+
     self._ChancePool = UpdatedChances
-    self._TotalChance = TotalChance
+    self._TotalChance = FinalTotalChance
 end
 
 -- [ Public Functions ] --
-function ChanceClass.new<K>(chancePool: { [K]: number }, _luck: number?, luckAffectedChances: number?): Object<K>
+function ChanceClass.new<K>(chancePool: { [K]: number }, luck: number?, luckAffectedChances: number?): Object<K>
     local self = setmetatable({} :: any, ChanceClass) :: Object<K>
 
-    self._Luck = 1
+    self._Luck = luck or 1
     self._LuckAffectedChances = luckAffectedChances or 10
     self._ChancePool = {}
     self._TotalChance = 0

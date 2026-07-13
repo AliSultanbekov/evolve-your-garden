@@ -45,7 +45,13 @@ function PackStoreServiceClient.GetPacks(self: Module)
     return self._CurrentSale.Packs
 end
 
+function PackStoreServiceClient.ObserveStartTime(self: Module)
+    return self._CurrentSale.StartTime:Observe()
+end
+
 function PackStoreServiceClient.UpdatePacks(self: Module, packs: PackStoreTypesShared.Packs, startTime: number)
+    self._CurrentSale.StartTime.Value = startTime
+
     for _, key in self._CurrentSale.Packs:GetKeyList() do
         self._CurrentSale.Packs:Remove(key)
     end
@@ -71,6 +77,8 @@ end
 function PackStoreServiceClient.Start(self: Module)
     self._PackStoreNetworkClient:GetCurrentSale():Then(function(packet: PackStoreTypesShared.GetCurrentSaleRemotePacket)
         self:UpdatePacks(packet.Packs, packet.StartTime)
+    end):Catch(function(err)
+        warn("[PackStoreServiceClient] GetCurrentSale failed:", err)
     end)
 
     self._PackStoreNetworkClient.RemoteEvents.Refreshed:Connect(function(packet: PackStoreTypesShared.RefreshedRemotePacket)
@@ -84,7 +92,8 @@ function PackStoreServiceClient.Start(self: Module)
             return
         end
 
-        Pack.Left.Value -= 1
+        -- Server sends the authoritative remaining stock — never derive it locally.
+        Pack.Left.Value = packet.Left
     end)
 end
 

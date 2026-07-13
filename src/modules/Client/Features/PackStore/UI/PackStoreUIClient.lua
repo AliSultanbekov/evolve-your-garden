@@ -62,6 +62,7 @@ function PackStoreUIClient.Start(self: Module)
         PackStoreWindow({
             IsOpen = self._UIServiceClient:ObserveUI("PackStore"),
             Packs = self._PackStoreServiceClient:GetPacks(),
+            StartTime = self._PackStoreServiceClient:ObserveStartTime(),
             ActiveTab = self._ActiveTab:Observe(),
 
             SwitchTab = function(tabName: string)
@@ -69,6 +70,9 @@ function PackStoreUIClient.Start(self: Module)
             end,
             BuyPack = function(packId: PackStoreTypesShared.PackId)
                 self._PackStoreServiceClient:BuyPack(packId)
+            end,
+            OnClose = function()
+                self._UIServiceClient:CloseUI("PackStore")
             end
         })
     } end))

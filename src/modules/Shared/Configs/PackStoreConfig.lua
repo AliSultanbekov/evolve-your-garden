@@ -19,6 +19,7 @@ local PacksStoreConfig = {}
 
 -- [ Private Functions ] --
 function PacksStoreConfig._Init(self: Module)
+    self.SaleDuration = 30 * 60 -- seconds a sale stays purchasable after StartTime
     self.Categories = {"Normal", "Special"}
     self.LocalCategories = {
         Normal = {
@@ -57,6 +58,7 @@ end
 -- [ Types ] --
 
 type ModuleData = {
+    SaleDuration: number,
     Categories: { PackStoreTypesShared.Category },
     LocalCategories: { 
         [PackStoreTypesShared.Category]: { 

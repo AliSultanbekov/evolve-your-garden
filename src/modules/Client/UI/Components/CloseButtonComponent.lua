@@ -38,7 +38,7 @@ type Props = {
     BackgroundTransparency: ComponentTypes.Prop<number>?,
     ZIndex: ComponentTypes.Prop<number>?,
     Image: ComponentTypes.Prop<string>?,
-    OnClose: () -> ()?,
+    OnClose: () -> (),
 }
 type ModuleData = {}
 

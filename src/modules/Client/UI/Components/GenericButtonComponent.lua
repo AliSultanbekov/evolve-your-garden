@@ -48,6 +48,9 @@ local GenericButtonComponent = function(props: Props)
         Visible = VisibleState;
         Parent = props.Parent;
         Image = props.Image or "";
+        ImageColor3 = props.ImageColor3;
+        ScaleType = props.ScaleType;
+        ClipsDescendants = props.ClipsDescendants;
         [Blend.Instance] = function(inst: GuiButton)
             ButtonInstance = inst
         end;
@@ -105,6 +108,9 @@ type Props = {
     Parent: ComponentTypes.Prop<Instance>?,
     Visible: ComponentTypes.Prop<boolean>?,
     Image: ComponentTypes.Prop<string>?,
+    ImageColor3: ComponentTypes.Prop<Color3>?,
+    ScaleType: ComponentTypes.Prop<Enum.ScaleType>?,
+    ClipsDescendants: ComponentTypes.Prop<boolean>?,
     OnPressed: ((buttonInstance: GuiButton) -> ())?,
     OnHovered: ((buttonInstance: GuiButton) -> ())?,
     OnUnhovered: ((buttonInstance: GuiButton) -> ())?,

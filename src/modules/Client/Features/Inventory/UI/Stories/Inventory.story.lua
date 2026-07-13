@@ -34,6 +34,7 @@ local InventoryStory = {
         local IsOpen = ValueObject.new(true)
         local ActiveTab = ValueObject.new("Garden")
         local Search = ValueObject.new("")
+        local DeleteMode = ValueObject.new(false)
         local Items = ObservableMap.new()
 
         -- Build a reactive item from a raw item and key it by its generated Id.
@@ -55,6 +56,7 @@ local InventoryStory = {
                 IsOpen = IsOpen:Observe(),
                 ActiveTab = ActiveTab:Observe(),
                 Search = Search:Observe(),
+                DeleteMode = DeleteMode:Observe(),
                 GetItems = function(_filter: string?)
                     return Items :: any
                 end,
@@ -77,7 +79,7 @@ local InventoryStory = {
                     Search.Value = text
                 end,
                 OnDeleteMode = function()
-                    print("Delete mode toggled")
+                    DeleteMode.Value = not DeleteMode.Value
                 end,
             })
         }))

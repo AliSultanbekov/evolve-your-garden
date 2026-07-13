@@ -1,12 +1,15 @@
 --[=[
-    @class Top
+    @class TooltipTopComponent
+
+    Shared tooltip header: spinning rays, item icon, rarity badge and name.
+    Used by every item/plant tooltip (inventory item, garden item, world plant).
 ]=]
 
 -- [ Roblox Services ] --
 local RunService = game:GetService("RunService")
 
 -- [ Require ] --
-local require = require(script:FindFirstAncestor("Components").loader).load(script) :: typeof(require)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
@@ -29,7 +32,7 @@ local RenderStepped = Rx.fromSignal(RunService.RenderStepped):Pipe({
 -- [ Functions ] --
 
 -- [ Module Table ] --
-local Top = function(props: Props)
+local TooltipTopComponent = function(props: Props)
     local ItemName = Blend.Computed(props.Item, function(item)
         return item.Name
     end)
@@ -47,7 +50,7 @@ local Top = function(props: Props)
             if not shouldAnimate then
                 return Rx.of(0) :: any
             end
-    
+
             return (RenderStepped :: any):Pipe({
                 Rx.scan(function(acc, dt: number) return (acc or 0) + dt * 45 end, 0),
                 Rx.map(function(r: number) return r % 360 end),
@@ -120,6 +123,6 @@ type Props = {
 }
 type ModuleData = {}
 
-export type Module = typeof(Top) & ModuleData
+export type Module = typeof(TooltipTopComponent) & ModuleData
 
-return Top :: Module
+return TooltipTopComponent :: Module

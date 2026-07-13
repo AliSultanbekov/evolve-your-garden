@@ -24,7 +24,8 @@ local MerchantServiceClient = {}
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _MerchantNetworkClient: typeof(require("MerchantNetworkClient")),
-    _BuySlots: MerchantTypesClient.ReactiveSlots
+    _BuySlots: MerchantTypesClient.ReactiveSlots,
+    _LastRefresh: ValueObject.ValueObject<number?>
 }
 
 export type Module = typeof(MerchantServiceClient) & ModuleData
@@ -59,6 +60,10 @@ function MerchantServiceClient.UpdateBuySlots(self: Module, buySlots: MerchantTy
     for _, slot in buySlots do
         local ReactiveSlot = self._BuySlots[slot.Id]
 
+        if not ReactiveSlot then
+            continue
+        end
+
         self:_SyncSlotFromPlain(ReactiveSlot, slot)
     end
 end
@@ -66,6 +71,23 @@ end
 -- [ Public Functions ] --
 function MerchantServiceClient.GetBuySlots(self: Module)
     return self._BuySlots
+end
+
+function MerchantServiceClient.ObserveLastRefresh(self: Module)
+    return self._LastRefresh:Observe()
+end
+
+function MerchantServiceClient.Buy(self: Module, slotId: MerchantTypesShared.SlotId)
+    self._MerchantNetworkClient:Buy({
+        SlotId = slotId
+    })
+end
+
+function MerchantServiceClient.Sell(self: Module, itemId: string, amount: number)
+    self._MerchantNetworkClient:Sell({
+        ItemId = itemId,
+        Amount = amount
+    })
 end
 
 function MerchantServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
@@ -76,11 +98,38 @@ function MerchantServiceClient.Init(self: Module, serviceBag: ServiceBag.Service
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._MerchantNetworkClient = self._ServiceBag:GetService(require("MerchantNetworkClient"))
     self._BuySlots = self:_SetupBuySlots()
+    self._LastRefresh = ValueObject.new(nil)
 end
 
 function MerchantServiceClient.Start(self: Module)
-    self._MerchantNetworkClient:GetSlots():Then(function(packet: MerchantTypesShared.GetBuySlotsRemotePacket)
+    -- Push path: server fires Refreshed on data-ready and every restock.
+    self._MerchantNetworkClient.RemoteEvents.Refreshed:Connect(function(packet: MerchantTypesShared.RefreshedRemotePacket)
+        self._LastRefresh.Value = packet.LastRefresh
         self:UpdateBuySlots(packet.BuySlots)
+    end)
+
+    -- Authoritative stock after a purchase.
+    self._MerchantNetworkClient.RemoteEvents.Bought:Connect(function(packet: MerchantTypesShared.BoughtRemotePacket)
+        local ReactiveSlot = self._BuySlots[packet.SlotId]
+
+        if not ReactiveSlot then
+            return
+        end
+
+        ReactiveSlot.Left.Value = packet.Left
+    end)
+
+    -- Catch-up fetch: BuySlots may be nil if we resolve before the server's
+    -- first refresh — the Refreshed push covers that case.
+    self._MerchantNetworkClient:GetSlots():Then(function(packet: MerchantTypesShared.GetBuySlotsRemotePacket)
+        if not packet.BuySlots then
+            return
+        end
+
+        self._LastRefresh.Value = packet.LastRefresh
+        self:UpdateBuySlots(packet.BuySlots)
+    end):Catch(function(err)
+        warn("[MerchantServiceClient] GetSlots failed:", err)
     end)
 end
 

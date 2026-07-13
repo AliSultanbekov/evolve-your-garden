@@ -71,6 +71,9 @@ local function AnimatedButton(props: {
     })
 end
 
+-- Intentionally empty for now: there is no plant action usable from the
+-- inventory yet (planting goes through the garden slot picker, not here).
+-- Add buttons once a plant UseAction exists server-side.
 local function PlantButtons(
     isSelected: Observable.Observable<boolean>,
     itemCategory: Observable.Observable<ItemTypes.Category>,

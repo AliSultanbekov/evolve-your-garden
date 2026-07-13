@@ -5,9 +5,10 @@
 -- [ Roblox Services ] --
 
 -- [ Require ] --
-local _require = require(script.Parent.loader).load(script) :: typeof(require)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
+local ItemTypes = require("ItemTypes")
 
 -- [ Constants ] --
 
@@ -27,7 +28,7 @@ local MaterialsConfig = {
         [string]: {
             Name: string,
             Icon: string,
-            Rarity: string
+            Rarity: ItemTypes.Rarity
         }
     }
 }

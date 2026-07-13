@@ -64,6 +64,7 @@ local Window = function(props: Props)
                 OnSearch = props.OnSearch;
             });
             Buttons({
+                DeleteMode = props.DeleteMode;
                 OnDeleteMode = props.OnDeleteMode;
             });
             Title();
@@ -87,7 +88,8 @@ type Props = {
     IsOpen: ComponentTypes.Prop<boolean>,
     ActiveTab: ComponentTypes.Prop<string>,
     Search: Observable.Observable<string>,
-    
+    DeleteMode: Observable.Observable<boolean>,
+
     GetItems: (filter: string?) -> ReactiveItemTypes.ReactiveItems,
     SwitchTab: (tabName: string) -> (),
     OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),

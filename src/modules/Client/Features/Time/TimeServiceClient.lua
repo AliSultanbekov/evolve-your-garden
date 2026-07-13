@@ -11,6 +11,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
 local ValueObject = require("ValueObject")
+local Maid = require("Maid")
 local Time = require("Time")
 local TimeTypesShared = require("TimeTypesShared")
 
@@ -24,6 +25,7 @@ local TimeServiceClient = {}
 -- [ Types ] --
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
+    _Maid: Maid.Maid,
     _Time: ValueObject.ValueObject<number>,
     _Phase: ValueObject.ValueObject<TimeTypesShared.Phase>
 }
@@ -59,12 +61,13 @@ function TimeServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     end
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
+    self._Maid = Maid.new()
     self._Time = ValueObject.new(0)
     self._Phase = ValueObject.new("Day" :: any)
 end
 
 function TimeServiceClient.Start(self: Module)
-    RunService.Heartbeat:Connect(function(dt: number)
+    self._Maid:Add(RunService.Heartbeat:Connect(function(dt: number)
         self._Time.Value = math.floor(workspace:GetServerTimeNow() * 60)
 
         local Hour = self:GetHMS()
@@ -78,7 +81,7 @@ function TimeServiceClient.Start(self: Module)
         else
             self._Phase.Value = "Night"
         end
-    end)
+    end))
 end
 
 return TimeServiceClient :: Module

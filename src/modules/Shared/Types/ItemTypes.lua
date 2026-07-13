@@ -19,6 +19,7 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 export type ItemId = string
 export type Category = "Plant" | "Material" | "Pack" | "Currency"
 export type StorageMode = "Unique" | "Stackable"
+export type Rarity = "Common" | "Uncommon" | "Rare" | "Epic" | "Legendary" | "Mythic" | "Celestial"
 
 -- ===== Building blocks =====
 -- Common to every item, regardless of category or storage mode.
@@ -72,7 +73,7 @@ export type Item = PlantItem | MaterialItem | PackItem | CurrencyItem
 -- These ARE Items (not structural views), so they round-trip into Inventory: { [ID]: Item }.
 -- Keep in sync with ItemConfig.CategoryToStorageMode whenever you add a category.
 export type UniqueItem = PlantItem
-export type StackableItem = MaterialItem
+export type StackableItem = MaterialItem | PackItem | CurrencyItem
 export type StorageItem = Item
 
 -- ===== Raw items (input to ProcessRawItem) =====

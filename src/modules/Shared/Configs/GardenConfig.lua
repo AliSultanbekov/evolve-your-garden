@@ -41,16 +41,12 @@ local GardenConfig = {
 }
 
 -- [ Types ] --
-export type UpgradeStats = {
-    PlantMutationBaseChance: number,
-    BaseTick: number,
-    MaxGardens: number,
-    [number]: {
-        Slots: number,
-        Cols: number,
-        Spacing: number,
-        HarvestCap: number,
-    }
+-- One row of UpgradeStats (per garden level).
+export type UpgradeStatsEntry = {
+    Slots: number,
+    Cols: number,
+    Spacing: number,
+    HarvestCap: number,
 }
 type ModuleData = {}
 

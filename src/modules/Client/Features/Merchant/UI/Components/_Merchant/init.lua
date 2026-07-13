@@ -16,6 +16,7 @@ local MerchantTypesClient = require("MerchantTypesClient")
 -- [ Components ] --
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local CloseButtonComponent = require("CloseButtonComponent")
+local SearchBarComponent = require("SearchBarComponent")
 local Tabs = require(script._Tabs)
 local TabButtons = require(script._TabButtons)
 
@@ -82,9 +83,23 @@ local Merchant = function(props: Props)
                 ActiveTab = props.ActiveTab,
                 Items = props.Items,
                 Search = props.Search,
-                BuySlots = props.BuySlots
+                BuySlots = props.BuySlots,
+                LastRefresh = props.LastRefresh,
+                Buy = props.Buy,
+                Sell = props.Sell
             });
             Title();
+            -- NOTE: header gap between Title (ends x=413) and TabButtons (starts
+            -- x=619) — reposition/resize freely when the design gets a real slot.
+            SearchBarComponent({
+                LayoutOrder = 4;
+                Position = UDim2.fromOffset(419, 9);
+                Size = UDim2.fromOffset(194, 64);
+                ZIndex = 3;
+                BackgroundImage = "rbxassetid://129977395166820";
+                SearchBoxSize = UDim2.fromOffset(194, 64);
+                OnSearch = props.OnSearch;
+            });
             CloseButtonComponent({
                 Name = "Close";
                 LayoutOrder = 2;
@@ -92,6 +107,9 @@ local Merchant = function(props: Props)
                 Size = UDim2.fromOffset(61, 64);
                 BackgroundTransparency = 1;
                 ZIndex = 3;
+                OnClose = function()
+                    props.OnClose()
+                end;
             });
             Blend.New "ImageLabel" {
                 Name = "Background";
@@ -115,8 +133,13 @@ type Props = {
     Items: ReactiveItemTypes.ReactiveItems,
     Search: Observable.Observable<string>,
     BuySlots: MerchantTypesClient.ReactiveSlots,
+    LastRefresh: Observable.Observable<number?>,
 
     SwitchTab: (tab: string) -> (),
+    Buy: (slotId: string) -> (),
+    Sell: (itemId: string, amount: number) -> (),
+    OnSearch: (text: string) -> (),
+    OnClose: () -> (),
 }
 type ModuleData = {}
 

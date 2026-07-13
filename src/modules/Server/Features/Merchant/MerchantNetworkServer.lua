@@ -10,6 +10,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
 local MerchantTypesShared = require("MerchantTypesShared")
+local Signal = require("Signal")
 
 -- [ Constants ] --
 
@@ -23,7 +24,10 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _NetworkServiceShared: typeof(require("NetworkServiceShared")),
 
-    RemoteEvents: {},
+    RemoteEvents: {
+        Buy: Signal.Signal<Player, MerchantTypesShared.BuyRemotePacket>,
+        Sell: Signal.Signal<Player, MerchantTypesShared.SellRemotePacket>,
+    },
     RemoteFunctions: {
         GetBuySlots: (player: Player) -> MerchantTypesShared.GetBuySlotsRemotePacket
     }
@@ -35,7 +39,9 @@ export type Module = typeof(MerchantNetworkServer) & ModuleData
 
 -- [ Public Functions ] --
 function MerchantNetworkServer.Bought(self: Module, player: Player, packet: MerchantTypesShared.BoughtRemotePacket)
-    
+    local Channel = self._NetworkServiceShared:GetChannel("Merchant")
+
+    Channel:FireClient("Bought", player, packet)
 end
 
 function MerchantNetworkServer.Refreshed(self: Module, player: Player, packet: MerchantTypesShared.RefreshedRemotePacket)
@@ -53,7 +59,8 @@ function MerchantNetworkServer.Init(self: Module, serviceBag: ServiceBag.Service
     self._NetworkServiceShared = self._ServiceBag:GetService(require("NetworkServiceShared"))
 
     self.RemoteEvents = {
-        
+        Buy = Signal.new(),
+        Sell = Signal.new(),
     } :: any
 
     self.RemoteFunctions = {
@@ -67,9 +74,19 @@ function MerchantNetworkServer.Start(self: Module)
     Channel:DeclareMethod("GetBuySlots")
     Channel:DeclareEvent("Refreshed")
     Channel:DeclareEvent("Bought")
+    Channel:DeclareEvent("Buy")
+    Channel:DeclareEvent("Sell")
 
     Channel:Bind("GetBuySlots", function(player: Player)
         return self.RemoteFunctions.GetBuySlots(player)
+    end)
+
+    Channel:Connect("Buy", function(player: Player, packet: MerchantTypesShared.BuyRemotePacket)
+        self.RemoteEvents.Buy:Fire(player, packet)
+    end)
+
+    Channel:Connect("Sell", function(player: Player, packet: MerchantTypesShared.SellRemotePacket)
+        self.RemoteEvents.Sell:Fire(player, packet)
     end)
 end
 

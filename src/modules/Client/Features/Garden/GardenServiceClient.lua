@@ -266,7 +266,11 @@ function GardenServiceClient.Start(self: Module)
             Garden.Owner.Value = garden.Owner
 
             self:_AddSlotsToMap(Garden.Slots, garden.Slots)
+
+            self._UserIdToGardenId[garden.Owner] = garden.Id
         end
+    end):Catch(function(err)
+        warn("[GardenServiceClient] GetGardens failed:", err)
     end)
 
     self._GardenNetworkClient.RemoteEvents.GardenClaimed:Connect(function(packet: GardenTypesShared.GardenClaimedRemotePacket)
@@ -361,7 +365,7 @@ function GardenServiceClient.Start(self: Module)
         end
     end)
 
-    self._GardenNetworkClient.RemoteEvents.HarvestItemsUpdated:Connect(function(packet: GardenTypesShared.HarvestItemsAddedRemotePacket)
+    self._GardenNetworkClient.RemoteEvents.HarvestItemsUpdated:Connect(function(packet: GardenTypesShared.HarvestItemsUpdatedRemotePacket)
         local Garden = self._Gardens[packet.GardenId]
 
         if not Garden then

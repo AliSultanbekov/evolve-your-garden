@@ -64,13 +64,15 @@ local GardenComponent = function(props: Props)
     MaidObject:Add(Rx.combineLatest({
         Owner = Garden.Owner:Observe(),
         Level = Garden.Level:Observe(),
-    }):Pipe({
-        Rx.where(function(data)
-            GardenMaid:DoCleaning()
+    }):Subscribe(function(data: { Owner: string?, Level: number? })
+        -- Tear down the previous garden on EVERY emission (owner left, level
+        -- changed, ...), then rebuild only when the garden is fully defined.
+        -- Cleanup lives here, not in a where() predicate — filters must be pure.
+        GardenMaid:DoCleaning()
 
-            return if data.Owner and data.Level then true else false
-        end) :: any
-    }):Subscribe(function(data: { Owner: string, Level: number })
+        if not (data.Owner and data.Level) then
+            return
+        end
         local GardenModel = GardenMaid:Add(
             SetupGardenModel(
                 AssetProvider:Get(

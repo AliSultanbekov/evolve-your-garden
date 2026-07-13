@@ -82,6 +82,13 @@ function InventoryServiceServer.UseAction(self: Module, player: Player, action: 
             Amount = Amount,
             Gateway = Gateway,
         })
+    elseif action == InventoryEnums.Actions.Delete then
+        -- Currencies aren't deletable — too easy to nuke your own economy.
+        if Item.Category == "Currency" then
+            return
+        end
+
+        self:RemoveItems(player, { Item })
     end
 end
 
@@ -95,8 +102,13 @@ end
 
 function InventoryServiceServer.GetItem(self: Module, player: Player, itemId: ItemTypes.ItemId): ItemTypes.Item?
     local Data = self._DataServiceServer:GetData(player)
+    local Item = Data.Inventory[itemId]
 
-    return table.clone(Data.Inventory[itemId])
+    if not Item then
+        return nil
+    end
+
+    return table.clone(Item)
 end
 
 function InventoryServiceServer.AddRawItems(self: Module, player: Player, rawItems: { [any]: ItemTypes.RawItem })
@@ -112,20 +124,19 @@ end
 function InventoryServiceServer.AddItems(self: Module, player: Player, items: { [any]: ItemTypes.Item }, transmitDelay: number?): InventoryTypesShared.Result
     local Data = self._DataServiceServer:GetProfile(player).Data
     local InventoryData = Data.Inventory
-    local ItemCount = self._PlayersInventoryItemCount[player]
+    local ItemCount = self._PlayersInventoryItemCount[player] or 0
 
-    if ItemCount >= INVENTORY_CAPACITY then
-        return InventoryEnums.Result.Fail
-    end
-
+    -- An item creates a NEW entry when nothing is stored under its id yet
+    -- (Unique items always have fresh GUID ids; Stackables merge into an
+    -- existing stack). Only new entries consume capacity.
     local NewItemsCount = 0
     for _, item in items do
-        if InventoryData[item.Id] then
+        if not InventoryData[item.Id] then
             NewItemsCount += 1
         end
     end
 
-    if NewItemsCount > INVENTORY_CAPACITY then
+    if ItemCount + NewItemsCount > INVENTORY_CAPACITY then
         return InventoryEnums.Result.Fail
     end
 
@@ -136,6 +147,8 @@ function InventoryServiceServer.AddItems(self: Module, player: Player, items: { 
         ItemUtil:OnStorageMode(item, {
             Unique = function(item: ItemTypes.UniqueItem)
                 Data.Inventory[item.Id] = item
+                ItemCount += 1
+                self._PlayersInventoryItemCount[player] = ItemCount
                 AddedItems[item.Id] = item
             end,
             Stackable = function(item: ItemTypes.StackableItem)
@@ -149,6 +162,8 @@ function InventoryServiceServer.AddItems(self: Module, player: Player, items: { 
                     end
                 else
                     Data.Inventory[item.Id] = item
+                    self._PlayersInventoryItemCount[player] = ItemCount + 1
+                    ItemCount += 1
                     AddedItems[item.Id] = item
                 end
             end,

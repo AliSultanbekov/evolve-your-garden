@@ -52,12 +52,12 @@ end
 function WeatherServiceClient.Start(self: Module)
     self._WeatherNetworkClient:GetCurrentWeather():Then(function(packet: WeatherTypesShared.GetCurrentWeatherRemotePacket)
         self._CurrentWeather.Value = packet.Weather
-        print(self._CurrentWeather)
+    end):Catch(function(err)
+        warn("[WeatherServiceClient] GetCurrentWeather failed:", err)
     end)
 
     self._WeatherNetworkClient.RemoteEvents.WeatherSelected:Connect(function(packet: WeatherTypesShared.WeatherSelectedRemotePacket)
         self._CurrentWeather.Value = packet.Weather
-        print(self._CurrentWeather)
     end)
 end
 

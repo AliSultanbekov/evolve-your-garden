@@ -24,7 +24,7 @@ function MerchantConfig._Init(self: Module)
             Name = "Snow Blossom",
             Stock = NumberRange.new(1, 4),
             Price = 100,
-            CurrencyName = "Coins",
+            Currency = "Coins",
             Chance = 100,
         }
     }
@@ -47,7 +47,7 @@ type ModuleData = {
             Name: string,
             Stock: NumberRange,
             Price: number,
-            CurrencyName: string,
+            Currency: string,
             Chance: number,
         }
     },

@@ -33,9 +33,9 @@ local ItemConfig = {
 -- [ Types ] --
 type ModuleData = {
     CategoryToStorageMode: {
-        [ItemTypes.Category]: "Unqiue" | "Stackable"
+        [ItemTypes.Category]: ItemTypes.StorageMode
     },
-    Categories: ItemTypes.Category,
+    Categories: { ItemTypes.Category },
     MaxAmount: number,
 }
 
@@ -74,7 +74,7 @@ function ItemConfig.GetIcon(self: Module, itemName: string, itemCategory: ItemTy
     error("No icon found for item: " .. tostring(itemName) .. " (" .. tostring(Category) .. ")")
 end
 
-function ItemConfig.GetRarity(self: Module, itemName: string, itemCategory: ItemTypes.Category?): string
+function ItemConfig.GetRarity(self: Module, itemName: string, itemCategory: ItemTypes.Category?): ItemTypes.Rarity
     local Category = itemCategory or self:GetCategory(itemName)
 
     if Category == "Plant" then

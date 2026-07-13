@@ -52,13 +52,20 @@ function Array.Insert<V>(self: Object<V>, value: V, index: number?)
 end
 
 function Array.Remove<V>(self: Object<V>, index: number?)
+    local Removed
+
     if index then
-        table.remove(self._Array, index)
+        Removed = table.remove(self._Array, index)
     else
-        table.remove(self._Array)
+        Removed = table.remove(self._Array)
     end
 
-    self._Size -= 1
+    -- Only shrink when something was actually removed (empty array / bad index).
+    if Removed ~= nil then
+        self._Size -= 1
+    end
+
+    return Removed
 end
 
 function Array.Get<V>(self: Object<V>, index: number)

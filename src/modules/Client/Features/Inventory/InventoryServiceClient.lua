@@ -66,12 +66,20 @@ end
 -- [ Public Functions ] --
 function InventoryServiceClient.UseAction(self: Module, action: string, params: { [string]: any }?)
     if not self._SelectedItem.Value then
-        return 
+        return
     end
-    
+
     self._InventoryNetworkClient:UseAction({
         Action = action,
         ItemId = self._SelectedItem.Value.Id,
+        Params = params
+    })
+end
+
+function InventoryServiceClient.UseItemAction(self: Module, item: ReactiveItemTypes.ReactiveItem, action: string, params: { [string]: any }?)
+    self._InventoryNetworkClient:UseAction({
+        Action = action,
+        ItemId = item.Id,
         Params = params
     })
 end
@@ -117,6 +125,8 @@ end
 function InventoryServiceClient.Start(self: Module)
     self._InventoryNetworkClient:GetItems():Then(function(packet: InventoryTypesShared.GetItemsRemotePacket)
         self:_ProcessItems(packet.Items)
+    end):Catch(function(err)
+        warn("[InventoryServiceClient] GetItems failed:", err)
     end)
 
     self._InventoryNetworkClient.RemoteEvents.ItemsUpdated:Connect(function(packet: InventoryTypesShared.ItemsUpdatedRemotePacket)
@@ -141,7 +151,15 @@ function InventoryServiceClient.Start(self: Module)
 
             local Tab = InventoryConfigClient.CategoryToTab[item.Category]
 
-            self._FilteredItems[Tab]:Remove(item.Id)
+            -- Mirror _ProcessItems: an item lives in BOTH the tab map and the
+            -- category map — remove from both, guarded the same way.
+            if self._FilteredItems[Tab] then
+                self._FilteredItems[Tab]:Remove(item.Id)
+            end
+
+            if self._FilteredItems[item.Category] then
+                self._FilteredItems[item.Category]:Remove(item.Id)
+            end
         end
     end)
 end

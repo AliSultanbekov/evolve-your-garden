@@ -70,9 +70,22 @@ function MerchantUIClient.Start(self: Module)
             Items = self._InventoryServiceClient:GetItemsByCategory("Material"),
             Search = self._Search:Observe(),
             BuySlots = self._MerchantServiceClient:GetBuySlots(),
+            LastRefresh = self._MerchantServiceClient:ObserveLastRefresh(),
 
             SwitchTab = function(tab: string)
                 self._ActiveTab.Value = tab
+            end,
+            Buy = function(slotId: string)
+                self._MerchantServiceClient:Buy(slotId)
+            end,
+            Sell = function(itemId: string, amount: number)
+                self._MerchantServiceClient:Sell(itemId, amount)
+            end,
+            OnSearch = function(text: string)
+                self._Search.Value = text
+            end,
+            OnClose = function()
+                self._UIServiceClient:CloseUI("Merchant")
             end
         })
     } end))

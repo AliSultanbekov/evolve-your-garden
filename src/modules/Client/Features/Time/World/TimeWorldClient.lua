@@ -11,6 +11,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
+local Maid = require("Maid")
 
 -- [ Constants ] --
 
@@ -22,7 +23,8 @@ local TimeWorldClient = {}
 -- [ Types ] --
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
-    _TimeServiceClient: typeof(require("TimeServiceClient"))
+    _TimeServiceClient: typeof(require("TimeServiceClient")),
+    _Maid: Maid.Maid
 }
 
 export type Module = typeof(TimeWorldClient) & ModuleData
@@ -37,14 +39,15 @@ function TimeWorldClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._TimeServiceClient = self._ServiceBag:GetService(require("TimeServiceClient"))
+    self._Maid = Maid.new()
 end
 
 function TimeWorldClient.Start(self: Module)
-    self._TimeServiceClient:ObserveTime():Subscribe(function(time: number)
+    self._Maid:Add(self._TimeServiceClient:ObserveTime():Subscribe(function(time: number)
         local Hour, Minute, Second = self._TimeServiceClient:ConvertTimeToHMS(time)
 
         Lighting.TimeOfDay = string.format("%d:%d:%d", Hour, Minute, Second)
-    end)
+    end))
 end
 
 return TimeWorldClient :: Module

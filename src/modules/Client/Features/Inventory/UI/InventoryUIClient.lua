@@ -36,7 +36,8 @@ type ModuleData = {
     _ActiveTab: ValueObject.ValueObject<string>,
     _SelectedItemPosition: ValueObject.ValueObject<UDim2?>,
     _HoveredItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>,
-    _Search: ValueObject.ValueObject<string>
+    _Search: ValueObject.ValueObject<string>,
+    _DeleteMode: ValueObject.ValueObject<boolean>
 }
 
 export type Module = typeof(InventoryUIClient) & ModuleData
@@ -104,6 +105,7 @@ function InventoryUIClient._SetupInventory(self: Module)
         if open == false then
             self._HoveredItem.Value = nil
             self._InventoryServiceClient:SelectItem(nil)
+            self._DeleteMode.Value = false
         end
     end))
 
@@ -112,6 +114,7 @@ function InventoryUIClient._SetupInventory(self: Module)
             IsOpen = self._UIServiceClient:ObserveUI("Inventory"),
             ActiveTab = self._ActiveTab:Observe(),
             Search = self._Search:Observe(),
+            DeleteMode = self._DeleteMode:Observe(),
 
             SwitchTab = function(tabName: string)
                 self._ActiveTab.Value = tabName
@@ -122,6 +125,11 @@ function InventoryUIClient._SetupInventory(self: Module)
                 return self._InventoryServiceClient:GetItemsByTab(filter)
             end,
             OnItemPressed = function(item: ReactiveItemTypes.ReactiveItem, position: UDim2)
+                if self._DeleteMode.Value then
+                    self._InventoryServiceClient:UseItemAction(item, InventoryEnums.Actions.Delete)
+                    return
+                end
+
                 self._InventoryServiceClient:SelectItem(item)
                 self._SelectedItemPosition.Value = position
             end,
@@ -140,7 +148,13 @@ function InventoryUIClient._SetupInventory(self: Module)
                 self._Search.Value = text
             end,
             OnDeleteMode = function()
-                
+                self._DeleteMode.Value = not self._DeleteMode.Value
+
+                -- Entering delete mode shouldn't keep a selection/tooltip open.
+                if self._DeleteMode.Value then
+                    self._HoveredItem.Value = nil
+                    self._InventoryServiceClient:SelectItem(nil)
+                end
             end
         })
     } end))
@@ -161,6 +175,7 @@ function InventoryUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._SelectedItemPosition = ValueObject.new(nil)
     self._HoveredItem = ValueObject.new(nil)
     self._Search = ValueObject.new("")
+    self._DeleteMode = ValueObject.new(false)
 
     self._UIServiceClient:RegisterUI({
         UIName = "Inventory",

@@ -119,6 +119,7 @@ function GardenServiceServer.CollectHarvest(self: Module, player: Player, slotId
     end
 
     SlotData.Harvest = {}
+    SlotData.HarvestCount = 0
 
     self._GardenNetworkServer:HarvestCollected({
         GardenId = GardenId,
@@ -171,7 +172,7 @@ function GardenServiceServer.GrowthCycle(self: Module, dt: number)
 
             local Cycles = PlantUtil:ClaimProductionCycles(Plant)
 
-            if Cycles < 0 then
+            if Cycles <= 0 then
                 continue
             end
 
@@ -295,6 +296,10 @@ function GardenServiceServer.PlacePlant(self: Module, player: Player, slotId: Ga
         return
     end
 
+    if not SlotData then
+        return
+    end
+
     if SlotData.Plant then
         return
     end
@@ -330,11 +335,19 @@ function GardenServiceServer.RemovePlant(self: Module, player: Player, slotId: G
         return
     end
 
+    if not SlotData then
+        return
+    end
+
     if not SlotData.Plant then
         return
     end
 
-    self._InventoryServiceServer:AddItems(player, { SlotData.Plant })
+    local Result: InventoryTypesShared.Result = self._InventoryServiceServer:AddItems(player, { SlotData.Plant })
+
+    if Result == "Fail" then
+        return
+    end
 
     SlotData.Plant = nil
 

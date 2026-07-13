@@ -41,8 +41,13 @@ function Map.Put<K, V>(self: Object<K, V>, key: K, value: V)
     if value == nil then
         return
     end
+
+    -- Overwriting an existing key doesn't grow the map.
+    if self._Map[key] == nil then
+        self._Size += 1
+    end
+
     self._Map[key] = value
-    self._Size += 1
 end
 
 function Map.Remove<K, V>(self: Object<K, V>, key: K)

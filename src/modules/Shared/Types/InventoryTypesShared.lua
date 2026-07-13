@@ -17,16 +17,16 @@ local ItemTypes = require("ItemTypes")
 -- [ Types ] --
 
 export type ItemsRemovedRemotePacket = {
-    Items: { [any]: ItemTypes.Item }
+    Items: { [ItemTypes.ItemId]: ItemTypes.Item }
 }
 export type ItemsAddedRemotePacket = {
-    Items: { [any]: ItemTypes.Item }
+    Items: { [ItemTypes.ItemId]: ItemTypes.Item }
 }
 export type ItemsUpdatedRemotePacket = {
-    Items: { [any]: ItemTypes.Item },
+    Items: { [ItemTypes.ItemId]: ItemTypes.Item },
 }
 export type GetItemsRemotePacket = {
-    Items: { [any]: ItemTypes.Item },
+    Items: { [ItemTypes.ItemId]: ItemTypes.Item },
 }
 export type UseActionRemotePacket = {
     Action: string,

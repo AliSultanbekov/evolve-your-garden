@@ -212,7 +212,7 @@ local TooltipPlantStatsComponent = function(props: Props)
         Blend.New "UIListLayout" {
             HorizontalAlignment = Enum.HorizontalAlignment.Center;
             Padding = UDim.new(0, 10);
-            SortOrder = Enum.SortOrder.Name;
+            SortOrder = Enum.SortOrder.LayoutOrder;
             VerticalAlignment = Enum.VerticalAlignment.Center;
         };
         Blend.New "UIPadding" {

@@ -17,8 +17,8 @@ local InventoryTypesClient = require("InventoryTypesClient")
 
 -- [ Components ] --
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
-local Background = require(script._Background)
-local Top = require(script._Top)
+local Background = require("TooltipBackgroundComponent")
+local Top = require("TooltipTopComponent")
 local Buttons = require(script._Buttons)
 local TooltipPlantStatsComponent = require("TooltipPlantStatsComponent")
 

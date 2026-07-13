@@ -5,9 +5,10 @@
 -- [ Roblox Services ] --
 
 -- [ Require ] --
-local _require = require(script.Parent.loader).load(script) :: typeof(require)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
+local ItemTypes = require("ItemTypes")
 
 -- [ Constants ] --
 local DEFAULT_AMOUNT_POOL = {
@@ -179,7 +180,7 @@ type GeneticsConfig = {
 
 type PlantEntry = {
     Name: string,
-    Rarity: string,
+    Rarity: ItemTypes.Rarity,
     Icon: string,
     BaseCycleTime: number,
     Level: (xp: number) -> (number, number, number),

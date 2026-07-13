@@ -24,10 +24,14 @@ local function Button(props: ButtonProps)
     local TabName = props.TabName
 
     return GenericButtonComponent({
-        Name = "TabButton";
+        Name = TabName .. "Tab";
+        LayoutOrder = props.LayoutOrder;
         Size = UDim2.fromOffset(154, 78);
         BackgroundTransparency = 1;
         Image = "rbxassetid://119559485193173";
+        ImageColor3 = Blend.Computed(props.ActiveTab, function(activeTab: string)
+            return if activeTab == TabName then Color3.fromRGB(255, 255, 255) else Color3.fromRGB(170, 170, 170)
+        end);
         OnPressed = function()
             props.SwitchTab(TabName)
         end,
@@ -57,9 +61,10 @@ end
 local TabButtons = function(props: Props)
     local Children = {}
 
-    for category, _ in InventoryConfigClient.TabsConfig do
+    for order, tabName in InventoryConfigClient.TabOrder do
         table.insert(Children, Button({
-            TabName = category,
+            TabName = tabName,
+            LayoutOrder = order,
             ActiveTab = props.ActiveTab,
             SwitchTab = props.SwitchTab
         }))
@@ -75,7 +80,7 @@ local TabButtons = function(props: Props)
             Padding = UDim.new(0, 5);
             HorizontalAlignment = Enum.HorizontalAlignment.Left;
             VerticalAlignment = Enum.VerticalAlignment.Center;
-            SortOrder = Enum.SortOrder.Name;
+            SortOrder = Enum.SortOrder.LayoutOrder;
         };
         Children
     }
@@ -88,6 +93,7 @@ type Props = {
 }
 type ButtonProps = {
     TabName: string,
+    LayoutOrder: number,
     ActiveTab: ComponentTypes.Prop<string>,
     SwitchTab: (tabName: string) -> (),
 }

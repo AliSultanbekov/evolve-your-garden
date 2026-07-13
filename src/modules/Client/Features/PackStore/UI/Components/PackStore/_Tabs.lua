@@ -3,6 +3,7 @@
 ]=]
 
 -- [ Roblox Services ] --
+local RunService = game:GetService("RunService")
 
 -- [ Require ] --
 local require = require(script:FindFirstAncestor("Components").loader).load(script) :: typeof(require)
@@ -11,6 +12,7 @@ local require = require(script:FindFirstAncestor("Components").loader).load(scri
 local Blend = require("Blend")
 local PackStoreTypesClient = require("PackStoreTypesClient")
 local RxBrioUtils = require("RxBrioUtils")
+local Rx = require("Rx")
 local Observable = require("Observable")
 local ComponentTypes = require("ComponentTypes")
 local PackStoreConfig = require("PackStoreConfig")
@@ -25,7 +27,32 @@ local PackCard = require(script.Parent._PackCard)
 -- [ Variables ] --
 
 -- [ Functions ] --
+local function FormatHMMSS(seconds: number): string
+    return string.format("%d:%02d:%02d", math.floor(seconds / 3600), math.floor((seconds % 3600) / 60), math.floor(seconds % 60))
+end
 local Banner = function(props: BannerProps)
+    local Now = Rx.fromSignal(RunService.Heartbeat):Pipe({
+        Rx.map(function()
+            return DateTime.now().UnixTimestamp
+        end) :: any,
+        Rx.startWith({ DateTime.now().UnixTimestamp }) :: any,
+        Rx.distinct() :: any,
+    })
+
+    local TimeLeft = Rx.combineLatest({
+        StartTime = props.StartTime,
+        Now = Now,
+    }):Pipe({
+        Rx.map(function(data: any)
+            if not data.StartTime then
+                return nil
+            end
+
+            return math.max(0, (data.StartTime + PackStoreConfig.SaleDuration) - data.Now)
+        end) :: any,
+        Rx.distinct() :: any,
+    })
+
     return Blend.New "Frame" {
         Name = "Banner";
         Size = UDim2.fromOffset(976, 125);
@@ -97,7 +124,13 @@ local Banner = function(props: BannerProps)
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
                 FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
-                Text = "3:00:00";
+                Text = Blend.Computed(TimeLeft, function(timeLeft: number?)
+                    if not timeLeft then
+                        return ""
+                    end
+
+                    return FormatHMMSS(timeLeft)
+                end);
                 TextColor3 = Color3.fromRGB(255, 255, 255);
                 TextSize = 20;
                 ZIndex = 3;
@@ -166,7 +199,8 @@ local Tab = function(props: TabProps)
                     PaddingTop = UDim.new(0, 10);
                 };
                 Banner({
-                    TabName = props.TabName
+                    TabName = props.TabName,
+                    StartTime = props.StartTime
                 });
                 Blend.New "Frame" {
                     Name = "Packs";
@@ -200,6 +234,7 @@ local Tabs = function(props: Props)
             ActiveTab = props.ActiveTab,
             AnimateEffects = props.AnimateEffects,
             Packs = props.Packs,
+            StartTime = props.StartTime,
             BuyPack = props.BuyPack,
         }))
     end
@@ -216,6 +251,7 @@ end
 -- [ Types ] --
 type Props = {
     Packs: PackStoreTypesClient.Packs,
+    StartTime: Observable.Observable<number?>,
     ActiveTab: ComponentTypes.Prop<string>,
     AnimateEffects: Observable.Observable<boolean>,
 
@@ -226,12 +262,13 @@ type TabProps = {
     ActiveTab: ComponentTypes.Prop<string>,
     AnimateEffects: Observable.Observable<boolean>,
     Packs: PackStoreTypesClient.Packs,
+    StartTime: Observable.Observable<number?>,
 
     BuyPack: (packId: PackStoreTypesShared.PackId) -> ()
 }
 type BannerProps = {
     TabName: string,
-    
+    StartTime: Observable.Observable<number?>,
 }
 
 type ModuleData = {}

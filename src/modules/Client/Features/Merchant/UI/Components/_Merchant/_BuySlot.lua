@@ -129,6 +129,9 @@ local Slot = function(props: Props)
             Image = "rbxassetid://89071506225026";
             ScaleType = Enum.ScaleType.Fit;
             ZIndex = 4;
+            OnPressed = function()
+                props.Buy(props.Slot.Id)
+            end;
             Children = {
                 Blend.New "TextLabel" {
                     Name = "Name";
@@ -192,7 +195,9 @@ local Slot = function(props: Props)
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
-            Text = "Snow Blossom";
+            Text = Blend.Computed(ItemName, function(itemName: string?)
+                return itemName or ""
+            end);
             TextColor3 = Color3.fromRGB(255, 255, 255);
             TextSize = 22;
             ZIndex = 7;
@@ -206,7 +211,8 @@ end
 
 -- [ Types ] --
 type Props = {
-    Slot: MerchantTypesClient.ReactiveSlot
+    Slot: MerchantTypesClient.ReactiveSlot,
+    Buy: (slotId: string) -> (),
 }
 type ModuleData = {}
 

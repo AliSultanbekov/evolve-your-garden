@@ -46,8 +46,12 @@ end)
 local ScreenSizeUtils = {}
 
 -- [ Public Functions ] --
-function ScreenSizeUtils.ObserveViewport(): ValueObject.ValueObject<Vector2>
-    return viewportSize
+function ScreenSizeUtils.ObserveViewport()
+    return viewportSize:Observe()
+end
+
+function ScreenSizeUtils.GetViewport(): Vector2
+    return viewportSize.Value
 end
 
 function ScreenSizeUtils.ComputeScale(designSize: Vector2?)

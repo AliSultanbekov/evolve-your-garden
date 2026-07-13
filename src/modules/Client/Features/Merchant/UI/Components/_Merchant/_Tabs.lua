@@ -16,6 +16,7 @@ local MerchantTypesClient = require("MerchantTypesClient")
 -- [ Components ] --
 local ItemsGridComponent = require("ItemsGridComponent")
 local BuySlot = require(script.Parent._BuySlot)
+local RefreshTime = require(script.Parent._RefreshTime)
 
 -- [ Constants ] --
 
@@ -25,7 +26,8 @@ local BuySlot = require(script.Parent._BuySlot)
 local Tabs = function(props: Props)
     local BuySlots = Blend.ComputedPairs(props.BuySlots, function(_, slot: MerchantTypesClient.ReactiveSlot)
         return BuySlot({
-            Slot = slot
+            Slot = slot,
+            Buy = props.Buy,
         })
     end)
     
@@ -84,8 +86,11 @@ local Tabs = function(props: Props)
                 };
                 Items = props.Items,
                 Search = props.Search;
-                OnItemPressed = function()
+                OnItemPressed = function(item: ReactiveItemTypes.ReactiveItem)
+                    -- Sell the whole stack; the server validates sellability/amount.
+                    local Stackable = item :: ReactiveItemTypes.ReactiveStackableItem
 
+                    props.Sell(item.Id, Stackable.Amount.Value)
                 end;
                 OnItemHovered = function()
 
@@ -141,6 +146,13 @@ local Tabs = function(props: Props)
                     BuySlots;
                 };
             };
+            RefreshTime({
+                Position = UDim2.new(0.5, 0, 0, 480);
+                AnchorPoint = Vector2.new(0.5, 0);
+                Size = UDim2.fromOffset(400, 40);
+                ZIndex = 2;
+                LastRefresh = props.LastRefresh;
+            });
         };
     }
 end
@@ -151,6 +163,9 @@ type Props = {
     Items: ReactiveItemTypes.ReactiveItems,
     Search: Observable.Observable<string>,
     BuySlots: MerchantTypesClient.ReactiveSlots,
+    LastRefresh: Observable.Observable<number?>,
+    Buy: (slotId: string) -> (),
+    Sell: (itemId: string, amount: number) -> (),
 }
 type ModuleData = {}
 

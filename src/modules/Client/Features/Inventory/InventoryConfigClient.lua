@@ -1,5 +1,5 @@
 --[=[
-    @class InventoryConstants
+    @class InventoryConfigClient
 ]=]
 
 -- [ Roblox Services ] --
@@ -16,7 +16,9 @@ local ItemTypes = require("ItemTypes")
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local InventoryConstants = {
+local InventoryConfigClient = {
+    -- Display order of the tabs (TabsConfig is a dict, so it can't carry order).
+    TabOrder = { "Garden", "Materials", "Items", "Currencies" },
     TabsConfig = {
         ["Garden"] = {
             ["Plant"] = true,
@@ -38,6 +40,7 @@ local InventoryConstants = {
         ["Currency"] = "Currencies"
     }
 } :: {
+    TabOrder: { string },
     TabsConfig: InventoryTypesClient.TabsConfig,
     CategoryToTab: {
         [ItemTypes.Category]: string
@@ -47,10 +50,10 @@ local InventoryConstants = {
 -- [ Types ] --
 type ModuleData = {}
 
-export type Module = typeof(InventoryConstants) & ModuleData
+export type Module = typeof(InventoryConfigClient) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
 
-return InventoryConstants :: Module
+return InventoryConfigClient :: Module

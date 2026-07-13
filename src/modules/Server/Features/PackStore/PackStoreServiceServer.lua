@@ -16,7 +16,8 @@ local RxPlayerUtils = require("RxPlayerUtils")
 local Brio = require("Brio")
 local PackStoreConfig = require("PackStoreConfig")
 local PackStoreTypesShared = require("PackStoreTypesShared")
-local ItemTypes = require("ItemTypes")
+local InventoryTypesShared = require("InventoryTypesShared")
+local ItemUtil = require("ItemUtil")
 
 -- [ Constants ] --
 
@@ -45,19 +46,25 @@ function PackStoreService.BuyPack(self: Module, player: Player, packId: PackStor
     local PackStoreData = PlayerData.PackStore
     local Pack = PackStoreData.Packs[packId]
 
+    if not Pack then
+        return
+    end
+
     if Pack.Left <= 0 then
         return
     end
 
     if PackStoreData.SaleId ~= self._CurrentSale.SaleId then
-        return 
-    end
-
-    if self._CurrentSale.StartTime + (30 * 60) <= os.clock() then
         return
     end
 
-    local PriceCategoryConfig = PackStoreConfig.Prices[Pack.Category] 
+    -- StartTime is a Unix timestamp from the backend — compare against wall
+    -- clock, not os.clock() (process uptime).
+    if self._CurrentSale.StartTime + PackStoreConfig.SaleDuration <= DateTime.now().UnixTimestamp then
+        return
+    end
+
+    local PriceCategoryConfig = PackStoreConfig.Prices[Pack.Category]
 
     if not PriceCategoryConfig then
         return
@@ -86,19 +93,27 @@ function PackStoreService.BuyPack(self: Module, player: Player, packId: PackStor
         return
     end
 
-    Pack.Left -= 1
-
-    CurrencyItem.Amount = PackPrice
-
-    local RawPackItem: ItemTypes.RawPackItem = {
+    -- Grant first (capacity-checked); only take payment and stock once the
+    -- pack actually fits in the inventory.
+    local PackItem = ItemUtil:ProcessRawItem({
         Category = "Pack",
         Name = Pack.Name,
         Amount = 1,
-    }
-    
+    })
+    local Result: InventoryTypesShared.Result = self._InventoryServiceServer:AddItems(player, { PackItem })
+
+    if Result == "Fail" then
+        return
+    end
+
+    -- GetItem returns a clone, so adjusting Amount only affects the removal request.
+    CurrencyItem.Amount = PackPrice
+
     self._InventoryServiceServer:RemoveItems(player, {CurrencyItem})
-    self._InventoryServiceServer:AddRawItems(player, {RawPackItem})
-    self._PackStoreNetworkServer:PackBought(player, { PackId = packId })
+
+    Pack.Left -= 1
+
+    self._PackStoreNetworkServer:PackBought(player, { PackId = packId, Left = Pack.Left })
 end
 
 function PackStoreService.Refresh(
@@ -194,7 +209,6 @@ function PackStoreService.Start(self: Module)
             local PlayerData = self._DataServiceServer:GetData(Player)
     
             if PlayerData.PackStore.SaleId ~= self._CurrentSale.SaleId then
-                print(PlayerData.PackStore.SaleId, self._CurrentSale.SaleId)
                 self:Refresh(self._CurrentSale.SaleId, self._CurrentSale.GlobalPacks, self._CurrentSale.StartTime, { Player })
             end
     
@@ -204,7 +218,6 @@ function PackStoreService.Start(self: Module)
         end)
 
         self._PackStoreNetworkServer.RemoteEvents.BuyPack:Connect(function(player: Player, packet: PackStoreTypesShared.BuyPackRemotePacket)
-            print("xxxxx")
             self:BuyPack(player, packet.PackId)
         end)
     end)

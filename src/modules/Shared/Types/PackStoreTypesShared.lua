@@ -60,7 +60,8 @@ export type BuyPackRemotePacket = {
 }
 
 export type PackBoughtRemotePacket = {
-    PackId: PackId
+    PackId: PackId,
+    Left: number,
 }
 
 return nil

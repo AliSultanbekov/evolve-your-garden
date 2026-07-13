@@ -9,6 +9,7 @@ local require = require(script:FindFirstAncestor("Components").loader).load(scri
 
 -- [ Imports ] --
 local Blend = require("Blend")
+local Observable = require("Observable")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
@@ -46,8 +47,12 @@ local Buttons = function(props: Props)
                     BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                     BackgroundTransparency = 1;
                     FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
-                    Text = "Delete Mode";
-                    TextColor3 = Color3.fromRGB(255, 255, 255);
+                    Text = Blend.Computed(props.DeleteMode, function(deleteMode: boolean)
+                        return if deleteMode then "Deleting..." else "Delete Mode"
+                    end);
+                    TextColor3 = Blend.Computed(props.DeleteMode, function(deleteMode: boolean)
+                        return if deleteMode then Color3.fromRGB(255, 120, 120) else Color3.fromRGB(255, 255, 255)
+                    end);
                     TextSize = 18;
                     TextWrapped = true;
                     Blend.New "UIStroke" {
@@ -63,6 +68,7 @@ end
 
 -- [ Types ] --
 type Props = {
+    DeleteMode: Observable.Observable<boolean>,
     OnDeleteMode: () -> (),
 }
 type ModuleData = {}

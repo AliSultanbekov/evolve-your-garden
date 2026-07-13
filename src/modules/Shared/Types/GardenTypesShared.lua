@@ -72,12 +72,12 @@ export type GrowthCycleRemotePacket = {
 
 export type HarvestItemsAddedRemotePacket = {
     GardenId: GardenId,
-    Harvest: { [SlotId]: { [any]: ItemTypes.Item } }
+    Harvest: { [SlotId]: { [ItemTypes.ItemId]: ItemTypes.Item } }
 }
 
 export type HarvestItemsUpdatedRemotePacket = {
     GardenId: GardenId,
-    Harvest: { [SlotId]: { [any]: ItemTypes.Item } }
+    Harvest: { [SlotId]: { [ItemTypes.ItemId]: ItemTypes.Item } }
 }
 
 export type HarvestCollectedRemotePacket = {

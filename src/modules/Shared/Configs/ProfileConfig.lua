@@ -57,10 +57,6 @@ export type ProfileTemplate = {
     Upgrades: {
         Garden: number
     },
-    Currencies: {
-        Coins: number,
-        Gems: number,
-    },
     Inventory: {
         [ItemTypes.ItemId]: ItemTypes.Item
     },

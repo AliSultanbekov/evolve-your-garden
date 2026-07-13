@@ -47,6 +47,9 @@ local Window = function(props: Props)
                 Size = UDim2.fromOffset(61, 64);
                 AnchorPoint = Vector2.new(0.5, 0.5);
                 BackgroundTransparency = 1;
+                OnClose = function()
+                    props.OnClose()
+                end;
             });
             TabButtons({
                 ActiveTab = props.ActiveTab,
@@ -54,6 +57,7 @@ local Window = function(props: Props)
             });
             Tabs({
                 Packs = props.Packs,
+                StartTime = props.StartTime,
                 ActiveTab = props.ActiveTab,
                 AnimateEffects = props.IsOpen,
                 BuyPack = props.BuyPack
@@ -66,10 +70,12 @@ end
 type Props = {
     IsOpen: Observable.Observable<boolean>,
     Packs: PackStoreTypesClient.Packs,
+    StartTime: Observable.Observable<number?>,
     ActiveTab: ComponentTypes.Prop<string>,
 
     SwitchTab: (tabName: string) -> (),
-    BuyPack: (packId: PackStoreTypesShared.PackId) -> ()
+    BuyPack: (packId: PackStoreTypesShared.PackId) -> (),
+    OnClose: () -> (),
 }
 type ModuleData = {}
 

@@ -91,7 +91,11 @@ local function PlantButtons(
             Text = "Info";
             StrokeColor = Color3.fromRGB(115, 70, 34);
             OnPressed = function()
-                actions.Info()
+                -- Info action isn't implemented yet (GardenUIClient only provides
+                -- Close/DigUp/Harvest) — guard so pressing doesn't error.
+                if actions.Info then
+                    actions.Info()
+                end
             end;
         }),
         AnimatedButton({

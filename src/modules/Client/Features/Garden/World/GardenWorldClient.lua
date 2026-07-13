@@ -75,9 +75,9 @@ function GardenWorldClient._SetupHover(self: Module)
                 return
             end
             
-            local SlotNodel = self._GardenServiceClient:GetSlotModel(SlotInfo.GardenId, SlotInfo.SlotId)
+            local SlotModel = self._GardenServiceClient:GetSlotModel(SlotInfo.GardenId, SlotInfo.SlotId)
 
-            if not SlotNodel then
+            if not SlotModel then
                 return
             end
 
@@ -85,7 +85,7 @@ function GardenWorldClient._SetupHover(self: Module)
                 return
             end
 
-            if not RangeUtil:CheckModelRange(SlotNodel, data.Character, GardenConfigClient.InteractionRange) then
+            if not RangeUtil:CheckModelRange(SlotModel, data.Character, GardenConfigClient.InteractionRange) then
                 return
             end
 

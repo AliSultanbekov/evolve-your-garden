@@ -57,11 +57,19 @@ function WeatherWorldClient.Start(self: Module)
     end
 
     local WeatherMaid = Maid.new()
+    self._Maid:Add(WeatherMaid)
 
     self._Maid:Add(self._WeatherServiceClient:ObserveCurrentWeather():Subscribe(function(weather: WeatherTypesShared.Weather)
+        local WeatherComponent = self._Weathers[weather.Name]
+
+        if not WeatherComponent then
+            warn(`[WeatherWorldClient] No weather component for "{weather.Name}"`)
+            return
+        end
+
         WeatherMaid:DoCleaning()
 
-        WeatherMaid:Add(self._Weathers[weather.Name]({
+        WeatherMaid:Add(WeatherComponent({
             Weather = weather
         }))
     end))

@@ -5,9 +5,10 @@
 -- [ Roblox Services ] --
 
 -- [ Require ] --
-local _require = require(script.Parent.loader).load(script) :: typeof(require)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
+local ItemTypes = require("ItemTypes")
 
 -- [ Constants ] --
 
@@ -20,7 +21,7 @@ local PacksConfig = {}
 function PacksConfig._Init(self: Module)
     self.Packs = {
         ["Super Pack"] = {
-            Name = "Starter Pack",
+            Name = "Super Pack",
             Rarity = "Common",
             Icon = "rbxassetid://101088311100253",
             PlantPool = {
@@ -28,7 +29,7 @@ function PacksConfig._Init(self: Module)
             }
         },
         ["Mega Pack"] = {
-            Name = "Starter Pack",
+            Name = "Mega Pack",
             Rarity = "Celestial",
             Icon = "rbxassetid://101088311100253",
             PlantPool = {
@@ -43,7 +44,7 @@ end
 -- [ Types ] --
 type PackEntry = {
     Name: string,
-    Rarity: string,
+    Rarity: ItemTypes.Rarity,
     Icon: string,
     PlantPool: {
         [string]: number

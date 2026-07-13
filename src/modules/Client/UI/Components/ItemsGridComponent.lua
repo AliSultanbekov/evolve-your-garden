@@ -57,38 +57,6 @@ local ItemsGridComponent = function(props: Props)
         end) :: any,
         Rx.shareReplay(1) :: any,
     })
-    Blend.New "CanvasGroup" {
-        Name = "Canvas";
-        LayoutOrder = 1;
-        Position = UDim2.fromOffset(14, 18);
-        Size = UDim2.fromOffset(1050, 530);
-        BackgroundTransparency = 1;
-        BorderSizePixel = 0;
-        ZIndex = 2;
-        Blend.New "ScrollingFrame" {
-            Name = "ItemsGrid";
-            Size = UDim2.fromOffset(1050, 530);
-            AutomaticCanvasSize = Enum.AutomaticSize.X;
-            BackgroundColor3 = Color3.fromRGB(163, 162, 165);
-            BackgroundTransparency = 1;
-            CanvasSize = UDim2.new(0, 0, 0, 0);
-            ScrollBarImageColor3 = Color3.fromRGB(255, 255, 255);
-            ScrollBarImageTransparency = 0.5;
-            ScrollBarThickness = 4;
-            ScrollingDirection = Enum.ScrollingDirection.X;
-            Blend.New "UIGridLayout" {
-                CellPadding = UDim2.fromOffset(10, 0);
-                CellSize = UDim2.fromOffset(120, 120);
-                SortOrder = Enum.SortOrder.LayoutOrder;
-            };
-            Blend.New "UIPadding" {
-                PaddingBottom = UDim.new(0, 10);
-                PaddingLeft = UDim.new(0, 10);
-                PaddingRight = UDim.new(0, 10);
-                PaddingTop = UDim.new(0, 10);
-            };
-        };
-    };
     return Blend.New "CanvasGroup" {
         Name = "Canvas";
         Position = props.Position;

@@ -1,11 +1,14 @@
 --[=[
-    @class Background
+    @class TooltipBackgroundComponent
+
+    Shared 9-sliced tooltip background. Fills its parent, so the tooltip frame
+    decides the size.
 ]=]
 
 -- [ Roblox Services ] --
 
 -- [ Require ] --
-local require = require(script:FindFirstAncestor("Components").loader).load(script) :: typeof(require)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
@@ -19,7 +22,7 @@ local Blend = require("Blend")
 -- [ Functions ] --
 
 -- [ Module Table ] --
-local Background = function()
+local TooltipBackgroundComponent = function()
     return Blend.New "ImageLabel" {
         Name = "Background";
         Position = UDim2.fromScale(0.5, 0.5);
@@ -35,11 +38,8 @@ local Background = function()
 end
 
 -- [ Types ] --
-type Props = {
-    
-}
 type ModuleData = {}
 
-export type Module = typeof(Background) & ModuleData
+export type Module = typeof(TooltipBackgroundComponent) & ModuleData
 
-return Background :: Module
+return TooltipBackgroundComponent :: Module
