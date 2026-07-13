@@ -20,6 +20,7 @@ local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local Background = require(script._Background)
 local Top = require(script._Top)
 local Buttons = require(script._Buttons)
+local TooltipPlantStatsComponent = require("TooltipPlantStatsComponent")
 
 -- [ Constants ] --
 
@@ -43,6 +44,7 @@ local Window = function(props: Props)
 
     return AnimatedFrameComponent({
         Name = "Tooltip";
+        ApplyDeviceScale = true;
         Position = props.Position;
         AnchorPoint = Vector2.new(0, 0.5);
         Size = UDim2.fromOffset(256, 0);
@@ -75,6 +77,9 @@ local Window = function(props: Props)
                         Actions = props.Actions,
 
                         OnClose = props.OnClose,
+                    }),
+                    TooltipPlantStatsComponent({
+                        Item = DisplayItem :: any,
                     })
                 }
             }

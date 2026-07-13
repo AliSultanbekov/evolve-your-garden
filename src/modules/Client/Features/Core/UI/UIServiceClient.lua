@@ -82,6 +82,16 @@ function UIServiceClient.ObserveCategory(self: Module, category: UITypesClient.C
     }) :: any
 end
 
+function UIServiceClient.IsCategoryOpen(self: Module, category: UITypesClient.Category): boolean
+    for uiName, uiInfo in self._UIInfos do
+        if uiInfo.Category == category and self._UIStates[uiName].Value then
+            return true
+        end
+    end
+
+    return false
+end
+
 --[=[
     Observes a screen (a ScreenGui tagged "Screen") by name as a Brio. The brio
     is alive while the screen exists and dies when it is removed/untagged, so
@@ -146,6 +156,10 @@ end
 
 function UIServiceClient.ObserveUI(self: Module, uiName: string)
     return self._UIStates[uiName]:Observe()
+end
+
+function UIServiceClient.GetUIState(self: Module, uiName: string)
+    return self._UIStates[uiName].Value
 end
 
 function UIServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)

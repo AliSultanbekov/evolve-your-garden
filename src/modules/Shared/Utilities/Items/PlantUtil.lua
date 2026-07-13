@@ -15,6 +15,27 @@ local ItemUtil = require("ItemUtil")
 local GardenConfig = require("GardenConfig")
 
 -- [ Constants ] --
+local ACCUM_OPS = {
+    ["+"] = { Default = 0, Apply = function(a: number, b: number) return a + b end },
+    ["*"] = { Default = 1, Apply = function(a: number, b: number) return a * b end },
+}
+
+local STAT_ACCUM_SIGN: { [string]: "+" | "*" } = {
+    MutationSlot             = "+",
+    YieldMultiplier          = "*",
+    SpeedMultiplier          = "*",
+    BabyChanceMultiplier     = "*",
+    QualityMultiplier        = "*",
+    MutationChanceMultiplier = "*",
+}
+
+local GENETIC_OFFSETS = {
+    Speed = 1,
+    BabyChance = 2,
+    Quality = 3,
+    Yield = 4,
+    MutationChance = 5,
+}
 
 -- [ Variables ] --
 
@@ -22,30 +43,121 @@ local GardenConfig = require("GardenConfig")
 local Plant = {}
 
 -- [ Types ] --
+type Genetics = {
+    Speed: number,
+    BabyChance: number,
+    Yield: number,
+    Quality: number,
+    MutationChance: number,
+}
+
 type ModuleData = {}
 
 export type Module = typeof(Plant) & ModuleData
 
 -- [ Private Functions ] --
+function Plant._ScaleGenetic(self: Module, range: NumberRange, t: number): number
+    return range.Min + (range.Max - range.Min) * t
+end
 
 -- [ Public Functions ] --
+function Plant.GetLastGrowthStageTime(self: Module, plantName: string): number
+    local PlantConfig = PlantsConfig.Plants[plantName]
+    local Stages = #PlantConfig.GrowthStages
+
+    return PlantConfig.GrowthStages[Stages]
+end
+
+function Plant.GetCurrentGrowthStage(self: Module, plantName: string, growthTime: number)
+    local PlantConfig = PlantsConfig.Plants[plantName]
+    local Stages = #PlantConfig.GrowthStages
+    local CurrentStage = 0
+
+    for i = 1, Stages do
+        if PlantConfig.GrowthStages[i] <= growthTime then
+            CurrentStage = i
+        else
+            break
+        end
+    end
+
+    return CurrentStage
+end
+
+function Plant.IsPlantFullyGrown(self: Module, plantName: string, growthTime: number)
+    local PlantConfig = PlantsConfig.Plants[plantName]
+    local FinalStage = #PlantConfig.GrowthStages
+    local FinalStageTime = PlantConfig.GrowthStages[FinalStage]
+
+    return FinalStageTime <= growthTime
+end
+
+function Plant.GetGenetics(self: Module, plantName: string, geneticNumber: number): Genetics
+    local GeneticsConfig = PlantsConfig.Plants[plantName].Genetics
+
+    return {
+        Speed = self:_ScaleGenetic(GeneticsConfig.Speed, Random.new(geneticNumber + GENETIC_OFFSETS.Speed):NextNumber()),
+        BabyChance = self:_ScaleGenetic(GeneticsConfig.BabyChance, Random.new(geneticNumber + GENETIC_OFFSETS.BabyChance):NextNumber()),
+        Yield = self:_ScaleGenetic(GeneticsConfig.Yield, Random.new(geneticNumber + GENETIC_OFFSETS.Yield):NextNumber()),
+        Quality = self:_ScaleGenetic(GeneticsConfig.Quality, Random.new(geneticNumber + GENETIC_OFFSETS.Quality):NextNumber()),
+        MutationChance = self:_ScaleGenetic(GeneticsConfig.MutationChance, Random.new(geneticNumber + GENETIC_OFFSETS.MutationChance):NextNumber()),
+    }
+end
+
+function Plant.GetLevelTreeStat(self: Module, plantLevel: number, stat: PlantsConfig.LevelTreeStat, choices: PlantsConfig.LevelTreeChoices): number
+    local Result = nil
+    local Op = nil
+
+    for milestone, milestoneData in PlantsConfig.LevelTreeRewards do
+        if milestone > plantLevel then
+            continue
+        end
+
+        local ChoiceIndex = choices[milestone]
+        if not ChoiceIndex then
+            continue
+        end
+
+        local Choice = milestoneData.Choices[ChoiceIndex]
+        if not Choice or Choice.Stat ~= stat then
+            continue
+        end
+
+        if not Op then
+            Op = ACCUM_OPS[Choice.AccumSign]
+            Result = Op.Default
+        end
+
+        Result = Op.Apply(Result, Choice.Value)
+    end
+
+    if Result ~= nil then
+        return Result
+    end
+
+    local sign = STAT_ACCUM_SIGN[stat]
+    return if sign then ACCUM_OPS[sign].Default else 0
+end
+
 function Plant.AdvanceGrowth(self: Module, item: ItemTypes.PlantItem, time: number)
     item.GrowthTime += time
 end
 
 function Plant.ClaimProductionCycles(self: Module, item: ItemTypes.PlantItem): number
     local GrowthTime = item.GrowthTime
-    local Genetics = PlantsConfig:GetGenetics(item.Name, item.GeneticNumber)
+    local Genetics = self:GetGenetics(item.Name, item.GeneticNumber)
     local PlantConfig = PlantsConfig.Plants[item.Name]
     local Level = PlantConfig.Level(item.Xp)
+    local FinalStageTime = self:GetLastGrowthStageTime(item.Name)
+    local ProductionStart = math.max(item.LastProduction, FinalStageTime)
 
-    if GrowthTime <= item.LastProduction then
+    if GrowthTime <= ProductionStart then
         return 0
     end
 
-    local BaseCycleTime = PlantsConfig.Plants[item.Name].BaseCycleTime
-    local ActualCycleTime = BaseCycleTime / ( Genetics.Speed * PlantsConfig:GetLevelTreeStat(Level, "SpeedMultiplier", item.LevelTreeChoices) )
-    local Delta = GrowthTime - item.LastProduction
+    local BaseCycleTime = PlantConfig.BaseCycleTime
+    local ActualCycleTime = BaseCycleTime / ( Genetics.Speed * self:GetLevelTreeStat(Level, "SpeedMultiplier", item.LevelTreeChoices) )
+    local Delta = GrowthTime - ProductionStart
     local Cycles = math.floor(Delta / ActualCycleTime)
 
     if Cycles > 0 then
@@ -56,20 +168,20 @@ function Plant.ClaimProductionCycles(self: Module, item: ItemTypes.PlantItem): n
     return Cycles
 end
 
-function Plant.Produce(self: Module, plant: ItemTypes.PlantItem): { ItemTypes.RawItem }
+function Plant.Produce(self: Module, plant: ItemTypes.PlantItem): { ItemTypes.Item }
     local PlantConfig = PlantsConfig.Plants[plant.Name]
-    local Genetics = PlantsConfig:GetGenetics(plant.Name, plant.GeneticNumber)
+    local Genetics = self:GetGenetics(plant.Name, plant.GeneticNumber)
     local Level = PlantConfig.Level(plant.Xp)
 
     local Amount = ChanceClass.new(
         PlantConfig.Production.AmountPool,
-        Genetics.Yield * PlantsConfig:GetLevelTreeStat(Level, "YieldMultiplier", plant.LevelTreeChoices),
+        Genetics.Yield * self:GetLevelTreeStat(Level, "YieldMultiplier", plant.LevelTreeChoices),
         30
     ):Choose()
 
-    local Items: { ItemTypes.RawItem } = table.create(Amount)
-    local BabyChance = Genetics.BabyChance * PlantsConfig:GetLevelTreeStat(Level, "BabyChanceMultiplier", plant.LevelTreeChoices)
-    local Quality = Genetics.Quality * PlantsConfig:GetLevelTreeStat(Level, "QualityMultiplier", plant.LevelTreeChoices)
+    local Items: { ItemTypes.Item } = table.create(Amount)
+    local BabyChance = Genetics.BabyChance * self:GetLevelTreeStat(Level, "BabyChanceMultiplier", plant.LevelTreeChoices)
+    local Quality = Genetics.Quality * self:GetLevelTreeStat(Level, "QualityMultiplier", plant.LevelTreeChoices)
 
     for _ = 1, Amount do
         local Pool = {
@@ -77,16 +189,16 @@ function Plant.Produce(self: Module, plant: ItemTypes.PlantItem): { ItemTypes.Ra
             ["No"] = 100 - BabyChance,
         }
 
-        local RawItem: ItemTypes.RawItem
+        local Item: ItemTypes.Item
 
         if ChanceClass.new(Pool):Choose() == "Yes" then
-            local Baby: ItemTypes.RawPlantItem = {
+            local Baby = ItemUtil:ProcessRawItem({
                 Name = plant.Name,
                 Category = "Plant",
                 GeneticNumber = plant.GeneticNumber,
-            }
+            })
 
-            RawItem = Baby
+            Item = Baby
         else
             local ItemName = ChanceClass.new(
                 PlantConfig.Production.ItemPool,
@@ -94,10 +206,10 @@ function Plant.Produce(self: Module, plant: ItemTypes.PlantItem): { ItemTypes.Ra
                 10
             ):Choose()
 
-            RawItem = ItemUtil:MakeRawFromName(ItemName)
+            Item = ItemUtil:ProcessRawItem(ItemUtil:MakeRawFromName(ItemName))
         end
 
-        table.insert(Items, RawItem)
+        table.insert(Items, Item)
     end
 
     return Items
@@ -107,7 +219,7 @@ function Plant.GetAvaliableMutationSlotCount(self: Module, plant: ItemTypes.Plan
     local TakenCount = #plant.Mutations
     local PlantConfig = PlantsConfig.Plants[plant.Name]
     local Level = PlantConfig.Level(plant.Xp)
-    local BaseCount = PlantsConfig:GetLevelTreeStat(Level, "MutationSlot", plant.LevelTreeChoices)
+    local BaseCount = self:GetLevelTreeStat(Level, "MutationSlot", plant.LevelTreeChoices)
 
     return math.max(0, BaseCount-TakenCount)
 end
@@ -121,8 +233,8 @@ function Plant.RollMutation(self: Module, plant: ItemTypes.PlantItem)
 
     local PlantConfig = PlantsConfig.Plants[plant.Name]
     local Level = PlantConfig.Level(plant.Xp)
-    local Genetics = PlantsConfig:GetGenetics(plant.Name, plant.GeneticNumber)
-    local MutationChance = Genetics.MutationChance * PlantsConfig:GetLevelTreeStat(Level, "MutationChanceMultiplier", plant.LevelTreeChoices)
+    local Genetics = self:GetGenetics(plant.Name, plant.GeneticNumber)
+    local MutationChance = Genetics.MutationChance * self:GetLevelTreeStat(Level, "MutationChanceMultiplier", plant.LevelTreeChoices)
 
     local OptionPool = {
         ["Yes"] = GardenConfig.PlantMutationBaseChance,

@@ -5,7 +5,7 @@
 -- [ Roblox Services ] --
 
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script) :: typeof(require)
+local require = require(script:FindFirstAncestor("Components").loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
@@ -22,44 +22,43 @@ local GenericButtonComponent = require("GenericButtonComponent")
 local ResponseCard = function(props: Props)
     return GenericButtonComponent({
         Name = "Response";
-        Size = UDim2.fromOffset(303, 50);
+        Size = UDim2.fromOffset(286, 56);
         BackgroundTransparency = 1;
-        Image = "rbxassetid://139632621327134";
+        Image = "rbxassetid://86693117896157";
         ScaleType = Enum.ScaleType.Fit;
         Children = {
             Blend.New "TextLabel" {
                 Name = "Number";
                 Position = UDim2.fromOffset(6, 6);
-                Size = UDim2.fromOffset(39, 38);
+                Size = UDim2.fromOffset(44, 44);
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
-                FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
+                FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Italic);
                 Text = props.Response.Id;
                 TextColor3 = Color3.fromRGB(255, 255, 255);
                 TextSize = 18;
-                TextWrapped = true;
                 Blend.New "UIStroke" {
                     Color = Color3.fromRGB(43, 73, 112);
-                    Thickness = 3;
+                    Thickness = 2;
                 };
             };
             Blend.New "TextLabel" {
                 Name = "Text";
                 LayoutOrder = 1;
-                Position = UDim2.fromOffset(45, 6);
-                Size = UDim2.fromOffset(255, 38);
+                Position = UDim2.fromOffset(55, 6);
+                Size = UDim2.fromOffset(220, 44);
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
-                FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
+                FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Italic);
                 Text = props.Response.Text;
                 TextColor3 = Color3.fromRGB(255, 255, 255);
-                TextSize = 13;
+                TextSize = 16;
                 TextWrapped = true;
                 TextXAlignment = Enum.TextXAlignment.Left;
                 ZIndex = 2;
                 Blend.New "UIStroke" {
                     Color = Color3.fromRGB(43, 73, 112);
-                    Thickness = 3;
+                    Thickness = 2;
                 };
             };
         };

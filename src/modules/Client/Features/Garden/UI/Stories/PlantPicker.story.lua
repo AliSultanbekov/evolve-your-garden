@@ -16,7 +16,7 @@ local ItemUtil = require("ItemUtil")
 local ReactiveItemUtil = require("ReactiveItemUtil")
 
 -- [ Components ] --
-local PlantPickerWindow = require(script.Parent.Parent.Components.PlantPickerWindow._Window)
+local PlantPickerWindow = require(script.Parent.Parent.Components._PlantPickerComponent)
 
 -- [ Constants ] --
 

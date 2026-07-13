@@ -36,4 +36,6 @@ export type UseActionRemotePacket = {
 
 export type Action = "Open" | "Delete"
 
+export type Result = "Success" | "Fail"
+
 return nil

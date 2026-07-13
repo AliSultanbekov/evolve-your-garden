@@ -26,14 +26,17 @@ local ItemConfig = {
         ["Pack"] = "Stackable",
         ["Currency"] = "Stackable",
     },
-    Categories = {"Plant", "Material", "Pack", "Currency"}
+    Categories = {"Plant", "Material", "Pack", "Currency"},
+    MaxAmount = 100000
 }
 
 -- [ Types ] --
 type ModuleData = {
     CategoryToStorageMode: {
         [ItemTypes.Category]: "Unqiue" | "Stackable"
-    }
+    },
+    Categories: ItemTypes.Category,
+    MaxAmount: number,
 }
 
 export type Module = typeof(ItemConfig) & ModuleData

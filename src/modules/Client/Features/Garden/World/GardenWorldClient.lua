@@ -3,6 +3,7 @@
 ]=]
 
 -- [ Roblox Services ] --
+local Players = game:GetService("Players")
 
 -- [ Require ] --
 local require = require(script.Parent.loader).load(script) :: typeof(require)
@@ -10,9 +11,12 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
 local Maid = require("Maid")
-local GardenTypesShared = require("GardenTypesShared")
 local GardenTypesClient = require("GardenTypesClient")
 local Rx = require("Rx")
+local RxCharacterUtils = require("RxCharacterUtils")
+local RangeUtil = require("RangeUtil")
+local GardenConfigClient = require("GardenConfigClient")
+local GardenTypesShared = require("GardenTypesShared")
 
 -- [ Components ] --
 local GardenComponent = require(script.Parent.Components._GardenComponent)
@@ -39,9 +43,6 @@ export type Module = typeof(GardenWorldClient) & ModuleData
 
 -- [ Private Functions ] --
 function GardenWorldClient._ResolveSlotInfo(self: Module, instance: Instance?): GardenTypesClient.SlotInfo?
-    -- Walk ancestors until we hit a registered slot model. No depth cap: a
-    -- plant model can nest more than one level under the slot, and the walk is
-    -- O(tree depth) once per hover change — cheap and robust.
     while instance do
         local info = self._SlotModelToSlotInfo[instance]
         if info then
@@ -51,6 +52,85 @@ function GardenWorldClient._ResolveSlotInfo(self: Module, instance: Instance?): 
     end
 
     return nil
+end
+
+function GardenWorldClient._SetupHover(self: Module)
+    self._Maid:Add(Rx.combineLatest({
+        IsMainOpen = self._UIServiceClient:ObserveCategory("Main"),
+        Character = RxCharacterUtils.observeLocalPlayerCharacter(),
+        Model = self._MouseServiceClient:ObserveHoveredModel()
+    }):Pipe({
+        Rx.map(function(data: any)
+            if data.IsMainOpen then
+                return
+            end
+
+            if self._GardenServiceClient:GetSelectedSlotInfo() then
+                return
+            end
+
+            local SlotInfo = self:_ResolveSlotInfo(data.Model)
+            
+            if not SlotInfo then
+                return
+            end
+            
+            local SlotNodel = self._GardenServiceClient:GetSlotModel(SlotInfo.GardenId, SlotInfo.SlotId)
+
+            if not SlotNodel then
+                return
+            end
+
+            if not data.Character then
+                return
+            end
+
+            if not RangeUtil:CheckModelRange(SlotNodel, data.Character, GardenConfigClient.InteractionRange) then
+                return
+            end
+
+            return SlotInfo
+        end) :: any,
+        Rx.distinct() :: any,
+    }):Subscribe(function(slotInfo: GardenTypesClient.SlotInfo?)
+        self._GardenServiceClient:HoverSlotInfo(slotInfo)
+    end))
+end
+
+function GardenWorldClient._SetupSelect(self: Module)
+    self._Maid:Add(Rx.fromSignal(self._MouseServiceClient.Signals.MousePressed :: any):Subscribe(function(pressedInstance: Instance?)
+        if self._UIServiceClient:IsCategoryOpen("Main") then
+            return
+        end
+
+        if self._GardenServiceClient:GetSelectedSlotInfo() then
+            return
+        end
+
+        local Character = Players.LocalPlayer.Character
+
+        if not Character then
+            return
+        end
+
+        local SlotInfo = self:_ResolveSlotInfo(pressedInstance)
+
+        if not SlotInfo then
+            return
+        end
+
+        local SlotModel = self._GardenServiceClient:GetSlotModel(SlotInfo.GardenId, SlotInfo.SlotId)
+
+        if not SlotModel then
+            return
+        end
+
+        if not RangeUtil:CheckModelRange(SlotModel, Character, GardenConfigClient.InteractionRange) then
+            return
+        end
+
+        self._GardenServiceClient:SelectSlotInfo(SlotInfo)
+    end))
 end
 
 -- [ Public Functions ] --
@@ -69,25 +149,8 @@ function GardenWorldClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 end
 
 function GardenWorldClient.Start(self: Module)
-    self._Maid:Add(Rx.combineLatest({
-        Model = self._MouseServiceClient:ObserveHoveredModel(),
-        MainOpen = self._UIServiceClient:ObserveCategory("Main"),
-    }):Pipe({
-        Rx.map(function(data)
-            if data.MainOpen then
-                return
-            end
-
-            return self:_ResolveSlotInfo(data.Model)
-        end) :: any,
-        Rx.distinct() :: any,
-    }):Subscribe(function(slotInfo)
-        self._GardenServiceClient:HoverSlotInfo(slotInfo)
-    end))
-
-    self._Maid:Add(Rx.fromSignal(self._MouseServiceClient.Signals.MousePressed):Subscribe(function()
-        self._GardenServiceClient:SelectSlotInfo(self._GardenServiceClient:GetHoveredSlotInfo())
-    end))
+    self:_SetupHover()
+    self:_SetupSelect()
 
     for _, garden in pairs(self._GardenServiceClient:GetGardens()) do
         local OutsidePortalId = self._PortalServiceClient:RegisterPortal(workspace.World.Gardens[garden.Id]["Portal"])

@@ -116,6 +116,11 @@ local RenderStepped = Rx.fromSignal(RunService.RenderStepped):Pipe({
     Rx.share() :: any
 })
 
+local Elapsed = (RenderStepped :: any):Pipe({
+    Rx.scan(function(acc, dt: number) return (acc or 0) + dt end, 0),
+    Rx.share() :: any
+})
+
 -- [ Functions ] --
 
 -- [ Module Table ] --
@@ -128,9 +133,7 @@ local ItemCardComponent = function(props: Props)
     local WiggleAnimation = WIGGLE_ANIMATIONS[ItemRarity]
 
     if WiggleAnimation then
-        MaidObject:Add((RenderStepped :: any):Pipe({
-            Rx.scan(function(acc, dt: number) return (acc or 0) + dt end, 0),
-        }):Subscribe(function(elapsed: number)
+        MaidObject:Add(Elapsed:Subscribe(function(elapsed: number)
             WiggleColor.Value = WiggleAnimation(elapsed)
         end))
     end

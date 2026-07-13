@@ -6,7 +6,7 @@
 local RunService = game:GetService("RunService")
 
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script) :: typeof(require)
+local require = require(script:FindFirstAncestor("Components").loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")

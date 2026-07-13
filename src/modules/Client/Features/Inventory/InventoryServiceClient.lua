@@ -17,6 +17,7 @@ local InventoryTypesClient = require("InventoryTypesClient")
 local InventoryConfigClient = require("InventoryConfigClient")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local ValueObject = require("ValueObject")
+local ItemConfig = require("ItemConfig")
 
 -- [ Constants ] --
 
@@ -29,7 +30,7 @@ local InventoryServiceClient = {}
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _InventoryNetworkClient: typeof(require("InventoryNetworkClient")),
-    _Items: InventoryTypesClient.Items,
+    _Items: ReactiveItemTypes.ReactiveItems,
     _FilteredItems: InventoryTypesClient.FilteredItems,
     _SelectedItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>
 }
@@ -38,22 +39,27 @@ export type Module = typeof(InventoryServiceClient) & ModuleData
 
 -- [ Private Functions ] --
 function InventoryServiceClient._SetupFilteredItems(self: Module)
-    for tabName, _ in InventoryConfigClient.TabsConfig do
-        self._FilteredItems[tabName] = ObservableMap.new()
+    for tab, _ in InventoryConfigClient.TabsConfig do
+        self._FilteredItems[tab] = ObservableMap.new()
+    end
+
+    for _, category: ItemTypes.Category in ItemConfig.Categories :: { ItemTypes.Category } do
+        self._FilteredItems[category] = ObservableMap.new()
     end
 end
 
 function InventoryServiceClient._ProcessItems(self: Module, items: { [any]: ItemTypes.Item })
     for _, item in items do
         local ReactiveItem = ReactiveItemUtil:ToReactive(item)
-        local TabName = InventoryConfigClient.CategoryToTab[item.Category]
+        local Tab = InventoryConfigClient.CategoryToTab[item.Category]
 
-        if not self._FilteredItems[TabName] then
+        if not self._FilteredItems[Tab] then
             continue
         end
 
         self._Items:Set(item.Id, ReactiveItem)
-        self._FilteredItems[TabName]:Set(item.Id, ReactiveItem)
+        self._FilteredItems[Tab]:Set(item.Id, ReactiveItem)
+        self._FilteredItems[item.Category]:Set(item.Id, ReactiveItem)
     end
 end
 
@@ -82,12 +88,16 @@ function InventoryServiceClient.ObserveSelectedItem(self: Module)
     return self._SelectedItem:Observe()
 end
 
-function InventoryServiceClient.GetItems(self: Module, tabFilter: string?)
-    if tabFilter then
-        return self._FilteredItems[tabFilter]
-    else
-        return self._Items
-    end
+function InventoryServiceClient.GetItemsByCategory(self: Module, category: ItemTypes.Category)
+    return self._FilteredItems[category]
+end
+
+function InventoryServiceClient.GetItemsByTab(self: Module, tab: string)
+    return self._FilteredItems[tab]
+end
+
+function InventoryServiceClient.GetItems(self: Module)
+    return self._Items
 end
 
 function InventoryServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
@@ -129,9 +139,9 @@ function InventoryServiceClient.Start(self: Module)
         for _, item in packet.Items do
             self._Items:Remove(item.Id)
 
-            local TabName = InventoryConfigClient.CategoryToTab[item.Category]
+            local Tab = InventoryConfigClient.CategoryToTab[item.Category]
 
-            self._FilteredItems[TabName]:Remove(item.Id)
+            self._FilteredItems[Tab]:Remove(item.Id)
         end
     end)
 end

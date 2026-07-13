@@ -26,42 +26,13 @@ local ScalerComponent = require("ScalerComponent")
 local GenericButtonComponent = function(props: Props)
     local IsPressed = ValueObject.new(false)
     local VisibleState = if props.Visible == nil then true else props.Visible
-    local AnimateVisibility = if props.AnimateVisibility == nil then true else props.AnimateVisibility
 
-    local PressScale = Blend.Spring(
+    local Scale = Blend.Spring(
         Blend.Computed(IsPressed, function(pressed: boolean)
             return if pressed then 0.9 else 1
         end),
         35
     )
-
-    local Scale
-    local VisibleProp
-
-    if AnimateVisibility then
-        local VisibilityScale = Blend.Spring(
-            Blend.Computed(VisibleState, function(visible: boolean)
-                return if visible then 1 else 0
-            end),
-            Blend.Computed(VisibleState, function(visible: boolean)
-                return if visible then 60 else 60
-            end),
-            Blend.Computed(VisibleState, function(visible: boolean)
-                return if visible then 0.6 else 0.6
-            end)
-        )
-
-        Scale = Blend.Computed(VisibilityScale, PressScale, function(visibility: number, press: number)
-            return visibility * press
-        end)
-
-        VisibleProp = Blend.Computed(VisibilityScale, function(scale: number)
-            return scale >= 0.01
-        end)
-    else
-        Scale = PressScale
-        VisibleProp = VisibleState
-    end
 
     local ButtonInstance: GuiButton
 
@@ -74,7 +45,7 @@ local GenericButtonComponent = function(props: Props)
         LayoutOrder = props.LayoutOrder;
         BackgroundColor3 = props.BackgroundColor3;
         BackgroundTransparency = props.BackgroundTransparency;
-        Visible = VisibleProp;
+        Visible = VisibleState;
         Parent = props.Parent;
         Image = props.Image or "";
         [Blend.Instance] = function(inst: GuiButton)
@@ -133,7 +104,6 @@ type Props = {
     BackgroundTransparency: ComponentTypes.Prop<number>?,
     Parent: ComponentTypes.Prop<Instance>?,
     Visible: ComponentTypes.Prop<boolean>?,
-    AnimateVisibility: boolean?,
     Image: ComponentTypes.Prop<string>?,
     OnPressed: ((buttonInstance: GuiButton) -> ())?,
     OnHovered: ((buttonInstance: GuiButton) -> ())?,

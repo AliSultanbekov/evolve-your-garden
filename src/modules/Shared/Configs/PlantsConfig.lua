@@ -10,28 +10,6 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 
 -- [ Constants ] --
-local ACCUM_OPS = {
-    ["+"] = { Default = 0, Apply = function(a: number, b: number) return a + b end },
-    ["*"] = { Default = 1, Apply = function(a: number, b: number) return a * b end },
-}
-
-local STAT_ACCUM_SIGN: { [string]: "+" | "*" } = {
-    MutationSlot             = "+",
-    YieldMultiplier          = "*",
-    SpeedMultiplier          = "*",
-    BabyChanceMultiplier     = "*",
-    QualityMultiplier        = "*",
-    MutationChanceMultiplier = "*",
-}
-
-local GENETIC_OFFSETS = {
-    Speed = 1,
-    BabyChance = 2,
-    Quality = 3,
-    Yield = 4,
-    MutationChance = 5,
-}
-
 local DEFAULT_AMOUNT_POOL = {
     [1] = 50,
     [2] = 25,
@@ -47,7 +25,7 @@ local DEFAULT_GENETICS_CONFIG = {
     MutationChance = NumberRange.new(0, 2),
 }
 
-local DEFAULT_LEVEL = function(xp: number): number
+local DEFAULT_LEVEL = function(xp: number): (number, number, number) -- currentlevel, currentlevelxp, nextlevelxp
     local level = 1
     local cumulative = 0
     while level < 25 do
@@ -57,7 +35,8 @@ local DEFAULT_LEVEL = function(xp: number): number
         end
         level += 1
     end
-    return level
+    
+    return level, math.floor(50 * (level-1) ^ 1.5), cumulative
 end
 
 -- [ Variables ] --
@@ -66,15 +45,11 @@ end
 local PlantConfig = {}
 
 -- [ Private Functions ] --
-function PlantConfig._ScaleGenetic(self: Module, range: NumberRange, t: number): number
-    return range.Min + (range.Max - range.Min) * t
-end
-
 function PlantConfig._Init(self: Module)
     self.Plants = {
         ["Snow Blossom"] = {
             Name = "Snow Blossom",
-            Rarity = "Celestial",
+            Rarity = "Common",
             Icon = "rbxassetid://175279732",
             BaseCycleTime = 5,
             Level = DEFAULT_LEVEL,
@@ -192,86 +167,8 @@ function PlantConfig._Init(self: Module)
 end
 
 -- [ Public Functions ] --
-function PlantConfig.GetCurrentGrowthStage(self: Module, plantName: string, growthTime: number)
-    local PlantConfig = self.Plants[plantName]
-    local Stages = #PlantConfig.GrowthStages
-    local CurrentStage = 0
-
-    for i = 1, Stages do
-        if PlantConfig.GrowthStages[i] <= growthTime then
-            CurrentStage = i
-        else
-            break
-        end
-    end
-
-    return CurrentStage
-end
-
-function PlantConfig.IsPlantAdult(self: Module, plantName: string, growthTime: number)
-    local PlantConfig = self.Plants[plantName]
-    local FinalStage = #PlantConfig.GrowthStages
-    local FinalStageTime = PlantConfig.GrowthStages[FinalStage]
-
-    return FinalStageTime <= growthTime
-end
-
-function PlantConfig.GetGenetics(self: Module, plantName: string, geneticNumber: number): Genetics
-    local GeneticsConfig = self.Plants[plantName].Genetics
-
-    return {
-        Speed = self:_ScaleGenetic(GeneticsConfig.Speed, Random.new(geneticNumber + GENETIC_OFFSETS.Speed):NextNumber()),
-        BabyChance = self:_ScaleGenetic(GeneticsConfig.BabyChance, Random.new(geneticNumber + GENETIC_OFFSETS.BabyChance):NextNumber()),
-        Yield = self:_ScaleGenetic(GeneticsConfig.Yield, Random.new(geneticNumber + GENETIC_OFFSETS.Yield):NextNumber()),
-        Quality = self:_ScaleGenetic(GeneticsConfig.Quality, Random.new(geneticNumber + GENETIC_OFFSETS.Quality):NextNumber()),
-        MutationChance = self:_ScaleGenetic(GeneticsConfig.MutationChance, Random.new(geneticNumber + GENETIC_OFFSETS.MutationChance):NextNumber()),
-    }
-end
-
-function PlantConfig.GetLevelTreeStat(self: Module, plantLevel: number, stat: LevelTreeStat, choices: LevelTreeChoices): number
-    local Result = nil
-    local Op = nil
-
-    for milestone, milestoneData in self.LevelTreeRewards do
-        if milestone > plantLevel then
-            continue
-        end
-
-        local ChoiceIndex = choices[milestone]
-        if not ChoiceIndex then
-            continue
-        end
-
-        local Choice = milestoneData.Choices[ChoiceIndex]
-        if not Choice or Choice.Stat ~= stat then
-            continue
-        end
-
-        if not Op then
-            Op = ACCUM_OPS[Choice.AccumSign]
-            Result = Op.Default
-        end
-
-        Result = Op.Apply(Result, Choice.Value)
-    end
-
-    if Result ~= nil then
-        return Result
-    end
-
-    local sign = STAT_ACCUM_SIGN[stat]
-    return if sign then ACCUM_OPS[sign].Default else 0
-end
 
 -- [ Types ] --
-type Genetics = {
-    Speed: number,
-    BabyChance: number,
-    Yield: number,
-    Quality: number,
-    MutationChance: number,
-}
-
 type GeneticsConfig = {
     Speed: NumberRange,
     BabyChance: NumberRange,
@@ -285,7 +182,7 @@ type PlantEntry = {
     Rarity: string,
     Icon: string,
     BaseCycleTime: number,
-    Level: (xp: number) -> number,
+    Level: (xp: number) -> (number, number, number),
     Genetics: GeneticsConfig,
     Production: {
         AmountPool: { [number]: number },

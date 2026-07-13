@@ -1,11 +1,11 @@
 --[=[
-    @class SearchBar
+    @class SearchBarComponent
 ]=]
 
 -- [ Roblox Services ] --
 
 -- [ Require ] --
-local require = require(script:FindFirstAncestor("Components").loader).load(script) :: typeof(require)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
@@ -16,44 +16,42 @@ local Blend = require("Blend")
 
 -- [ Variables ] --
 
--- [ Functions ] --
-
 -- [ Module Table ] --
-local SearchBar = function(props: Props)
+local SearchBarComponent = function(props: Props)
     return Blend.New "Frame" {
         Name = "SearchBar";
-        LayoutOrder = 3;
-        Position = UDim2.fromOffset(831, 9);
-        Size = UDim2.fromOffset(306, 64);
+        LayoutOrder = props.LayoutOrder;
+        Position = props.Position;
+        Size = props.Size;
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
         BackgroundTransparency = 1;
-        ZIndex = 4;
+        ZIndex = props.ZIndex;
         Blend.New "ImageLabel" {
             Name = "Background";
-            Size = UDim2.fromOffset(306, 64);
+            Size = UDim2.fromScale(1, 1);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
-            Image = "rbxassetid://129977395166820";
+            Image = props.BackgroundImage;
             ScaleType = Enum.ScaleType.Fit;
         };
         Blend.New "TextBox" {
             Name = "SearchText";
             LayoutOrder = 1;
-            Size = UDim2.fromOffset(306, 64);
+            Position = props.SearchBoxPosition;
+            Size = props.SearchBoxSize;
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             CursorPosition = -1;
             Text = "";
-            PlaceholderText = "Search...";
+            PlaceholderText = props.PlaceholderText or "Search...";
             PlaceholderColor3 = Color3.fromRGB(255, 255, 255);
-            FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
+            FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
             TextColor3 = Color3.fromRGB(255, 255, 255);
-            TextSize = 25;
+            TextSize = 24;
             TextWrapped = true;
             ZIndex = 2;
             Blend.New "UIStroke" {
-                Color = Color3.fromRGB(32, 83, 118);
-                LineJoinMode = Enum.LineJoinMode.Miter;
+                Color = Color3.fromRGB(43, 73, 112);
                 Thickness = 3;
             };
             [Blend.OnChange "Text"] = function(text: string)
@@ -65,10 +63,22 @@ end
 
 -- [ Types ] --
 type Props = {
+    Size: UDim2,
+    BackgroundImage: string,
+    SearchBoxSize: UDim2,
     OnSearch: (text: string) -> (),
+    Position: UDim2?,
+    SearchBoxPosition: UDim2?,
+    LayoutOrder: number?,
+    ZIndex: number?,
+    PlaceholderText: string?,
 }
 type ModuleData = {}
 
-export type Module = typeof(SearchBar) & ModuleData
+export type Module = typeof(SearchBarComponent) & ModuleData
 
-return SearchBar :: Module
+-- [ Private Functions ] --
+
+-- [ Public Functions ] --
+
+return SearchBarComponent :: Module

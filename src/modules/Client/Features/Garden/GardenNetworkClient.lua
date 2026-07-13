@@ -29,7 +29,10 @@ type ModuleData = {
         PlantRemoved: Signal.Signal<GardenTypesShared.PlantRemovedRemotePacket>,
         GardenClaimed: Signal.Signal<GardenTypesShared.GardenClaimedRemotePacket>,
         GardenAbandoned: Signal.Signal<GardenTypesShared.GardenAbandonedRemotePacket>,
-        GrowthCycle: Signal.Signal<GardenTypesShared.GrowthCycleRemotePacket>
+        GrowthCycle: Signal.Signal<GardenTypesShared.GrowthCycleRemotePacket>,
+        HarvestItemsAdded: Signal.Signal<GardenTypesShared.HarvestItemsAddedRemotePacket>,
+        HarvestItemsUpdated: Signal.Signal<GardenTypesShared.HarvestItemsUpdatedRemotePacket>,
+        HarvestCollected: Signal.Signal<GardenTypesShared.HarvestCollectedRemotePacket>,
     },
     RemoteFunctions: {}
 }
@@ -39,6 +42,12 @@ export type Module = typeof(GardenNetworkClient) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
+function GardenNetworkClient.CollectHarvest(self: Module, packet: GardenTypesShared.CollectHarvestRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:FireServer("CollectHarvest", packet)
+end
+
 function GardenNetworkClient.RemovePlant(self: Module, packet: GardenTypesShared.RemovePlantRemotePacket)
     local Channel = self._NetworkServiceShared:GetChannel("Garden")
 
@@ -71,6 +80,9 @@ function GardenNetworkClient.Init(self: Module, serviceBag: ServiceBag.ServiceBa
         GardenClaimed = Signal.new(),
         GardenAbandoned = Signal.new(),
         GrowthCycle = Signal.new(),
+        HarvestItemsAdded = Signal.new(),
+        HarvestItemsUpdated = Signal.new(),
+        HarvestCollected = Signal.new()
     } :: any
 
     self.RemoteFunctions = {
@@ -99,6 +111,18 @@ function GardenNetworkClient.Start(self: Module)
 
     Channel:Connect("GrowthCycle", function(packet: GardenTypesShared.GrowthCycleRemotePacket)
         self.RemoteEvents.GrowthCycle:Fire(packet)
+    end)
+
+    Channel:Connect("HarvestItemsAdded", function(packet: GardenTypesShared.HarvestItemsAddedRemotePacket)
+        self.RemoteEvents.HarvestItemsAdded:Fire(packet)
+    end)
+
+    Channel:Connect("HarvestItemsUpdated", function(packet: GardenTypesShared.HarvestItemsUpdatedRemotePacket)
+        self.RemoteEvents.HarvestItemsUpdated:Fire(packet)
+    end)
+
+    Channel:Connect("HarvestCollected", function(packet: GardenTypesShared.HarvestCollectedRemotePacket)
+        self.RemoteEvents.HarvestCollected:Fire(packet)
     end)
 end
 

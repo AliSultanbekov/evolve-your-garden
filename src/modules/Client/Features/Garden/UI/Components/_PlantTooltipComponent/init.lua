@@ -18,6 +18,8 @@ local Rx = require("Rx")
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local Background = require(script._Background)
 local Top = require(script._Top)
+local Buttons = require(script._Buttons)
+local TooltipPlantStatsComponent = require("TooltipPlantStatsComponent")
 
 -- [ Constants ] --
 
@@ -38,9 +40,10 @@ local Window = function(props: Props)
             return item ~= nil
         end) :: any
     }) :: any
-
+    
     return AnimatedFrameComponent({
         Name = "Tooltip";
+        ApplyDeviceScale = true;
         Position = props.Position;
         AnchorPoint = Vector2.new(0, 0);
         Size = UDim2.fromOffset(256, 0);
@@ -60,12 +63,20 @@ local Window = function(props: Props)
                 [Blend.Children] = {
                     Blend.New "UIListLayout" {};
                     Blend.New "UIPadding" {
-                        PaddingBottom = UDim.new(0, 3)
+                        PaddingBottom = UDim.new(0, 4)
                     },
                     Top({
                         Item = DisplayItem,
                         AnimateEffects = IsOpen,
                     }),
+                    Buttons({
+                        Item = DisplayItem,
+                        IsSelected = props.IsSelected,
+                        Actions = props.Actions
+                    }),
+                    TooltipPlantStatsComponent({
+                        Item = DisplayItem :: any,
+                    })
                 }
             }
         }
@@ -76,6 +87,8 @@ end
 type Props = {
     Item: Observable.Observable<ReactiveItemTypes.ReactiveItem?>,
     Position: Observable.Observable<UDim2>,
+    IsSelected: Observable.Observable<boolean>,
+    Actions: { [string]: (...any) -> (...any) }
 }
 
 type ModuleData = {}

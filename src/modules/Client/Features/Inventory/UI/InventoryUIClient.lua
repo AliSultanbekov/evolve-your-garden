@@ -3,7 +3,6 @@
 ]=]
 
 -- [ Roblox Services ] --
-local GuiService = game:GetService("GuiService")
 
 -- [ Require ] --
 local require = require(script.Parent.loader).load(script) :: typeof(require)
@@ -44,43 +43,44 @@ export type Module = typeof(InventoryUIClient) & ModuleData
 
 -- [ Private Functions ] --
 function InventoryUIClient._SetupTooltip(self: Module)
-    local Item = ValueObject.new(nil) :: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>
-    local IsSelected = ValueObject.new(false) :: ValueObject.ValueObject<boolean>
-    local Position = ValueObject.new(nil) :: ValueObject.ValueObject<UDim2?>
-
-    self._Maid:Add(Rx.combineLatest({
-        SelectedItem = self._InventoryServiceClient:ObserveSelectedItem(),
-        SelectedPosition = self._SelectedItemPosition:Observe(),
+    local DisplayItem = Rx.combineLatest({
         HoveredItem = self._HoveredItem:Observe(),
+        SelectedItem = self._InventoryServiceClient:ObserveSelectedItem(),
+    }):Pipe({
+        Rx.map(function(data)
+            return data.SelectedItem or data.HoveredItem
+        end) :: any,
+    }) :: any
+
+    local IsSelected = self._InventoryServiceClient:ObserveSelectedItem():Pipe({
+        Rx.map(function(isSelected)
+            return isSelected ~= nil
+        end) :: any
+    }) :: any
+
+    local Position = Rx.combineLatest({
+        SelectedPosition = self._SelectedItemPosition:Observe(),
+        IsSelected = IsSelected,
+        DisplayItem = DisplayItem,
         MousePosition = self._MouseServiceClient:ObserveMousePosition(),
-    }):Subscribe(function(data: any)
-        if data.SelectedItem then
-
-            IsSelected.Value = true
-            Item.Value = data.SelectedItem
-            Position.Value = data.SelectedPosition
-        elseif data.HoveredItem and data.MousePosition then
-            IsSelected.Value = false
-            Item.Value = data.HoveredItem
-
-            local MousePosition = data.MousePosition - GuiService:GetGuiInset()
-            Position.Value = UDim2.fromOffset(MousePosition.X + 30, MousePosition.Y)
-        else
-            IsSelected.Value = false
-            Item.Value = nil
-            Position.Value = nil
-        end
-    end))
+    }):Pipe({
+        Rx.where(function(data)
+            return data.DisplayItem ~= nil
+        end) :: any,
+        Rx.map(function(data: any)
+            if data.IsSelected and data.SelectedPosition then
+                return data.SelectedPosition + UDim2.fromOffset(80, 60)
+            else
+                return UDim2.fromOffset(data.MousePosition.X + 30, data.MousePosition.Y)
+            end
+        end) :: any
+    }) :: any
 
     self._Maid:Add(self._UIServiceClient:MountToScreen("UIs", function() return {
         ItemTooltipComponent({
-            Item = Item:Observe(),
-            IsSelected = IsSelected:Observe(),
-            Position = Position:Observe():Pipe({
-                Rx.where(function(position: UDim2?)
-                    return position ~= nil
-                end) :: any
-            }) :: any,
+            Item = DisplayItem,
+            IsSelected = IsSelected,
+            Position = Position,
             
             Actions = {
                 Open = function(amount: number)
@@ -119,7 +119,7 @@ function InventoryUIClient._SetupInventory(self: Module)
                 self._InventoryServiceClient:SelectItem(nil)
             end,
             GetItems = function(filter: string?)
-                return self._InventoryServiceClient:GetItems(filter)
+                return self._InventoryServiceClient:GetItemsByTab(filter)
             end,
             OnItemPressed = function(item: ReactiveItemTypes.ReactiveItem, position: UDim2)
                 self._InventoryServiceClient:SelectItem(item)

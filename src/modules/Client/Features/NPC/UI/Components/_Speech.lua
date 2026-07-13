@@ -79,67 +79,49 @@ local Window = function(props: Props)
         Children = {
             AnimatedFrameComponent({
                 IsOpen = props.IsOpen,
+                ApplyDeviceScale = true;
                 Name = "Speech";
                 Position = UDim2.fromScale(0.5, 0.5);
                 AnchorPoint = Vector2.new(0.5, 0.5);
-                Size = UDim2.fromOffset(276, 0);
-                AutomaticSize = Enum.AutomaticSize.Y;
+                Size = UDim2.fromOffset(306, 106);
                 BackgroundTransparency = 1;
                 Children = {
                     Blend.New "ImageLabel" {
                         Name = "Background";
-                        Size = UDim2.new(0, 276, 1, 24);
+                        Size = UDim2.fromOffset(306, 106);
+                        BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                         BackgroundTransparency = 1;
-                        Image = "rbxassetid://95824691443002";
-                        ScaleType = Enum.ScaleType.Slice;
-                        SliceCenter = Rect.new(Vector2.new(527, 21), Vector2.new(527, 153));
+                        Image = "rbxassetid://105672648971722";
+                        ScaleType = Enum.ScaleType.Fit;
                     };
-                    Blend.New "Frame" {
-                        Name = "Container";
+                    Blend.New "TextLabel" {
+                        Name = "Text";
                         LayoutOrder = 1;
-                        Size = UDim2.fromOffset(276, 0);
-                        AutomaticSize = Enum.AutomaticSize.Y;
+                        Position = UDim2.fromOffset(9, 9);
+                        Size = UDim2.fromOffset(288, 66);
+                        BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                         BackgroundTransparency = 1;
-                        ClipsDescendants = true;
+                        FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Italic);
+                        MaxVisibleGraphemes = TypeState:Pipe({
+                            Rx.map(function(state)
+                                return state.Visible
+                            end),
+                            Rx.distinct() :: any,
+                        });
+                        Text = props.Text:Pipe({
+                            Rx.map(function(text: string?) return text or "" end) :: any,
+                        });
+                        TextColor3 = Color3.fromRGB(255, 255, 255);
+                        TextSize = 20;
+                        TextWrapped = true;
                         ZIndex = 2;
-                        Blend.New "UIListLayout" {
-                            HorizontalAlignment = Enum.HorizontalAlignment.Center;
-                            SortOrder = Enum.SortOrder.Name;
-                            VerticalAlignment = Enum.VerticalAlignment.Center;
+                        Blend.New "UIStroke" {
+                            Color = Color3.fromRGB(43, 73, 112);
+                            Thickness = 2;
                         };
-                        Blend.New "UIPadding" {
-                            PaddingBottom = UDim.new(0, 15);
-                            PaddingLeft = UDim.new(0, 20);
-                            PaddingRight = UDim.new(0, 20);
-                            PaddingTop = UDim.new(0, 20);
-                        };
-                        Blend.New "TextLabel" {
-                            Name = "Text";
-                            Size = UDim2.fromOffset(236, 0);
-                            Position = UDim2.fromOffset(8, 8);
-                            AutomaticSize = Enum.AutomaticSize.Y;
-                            BackgroundTransparency = 1;
-                            FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Italic);
-                            MaxVisibleGraphemes = TypeState:Pipe({
-                                Rx.map(function(state)  
-                                    return state.Visible
-                                end),
-                                Rx.distinct() :: any,
-                            });
-                            Text = props.Text:Pipe({ 
-                                Rx.map(function(text: string?) return text or "" end) :: any,
-                            });
-                            TextColor3 = Color3.fromRGB(255, 255, 255);
-                            TextSize = 16;
-                            TextWrapped = true;
-                            Blend.New "UIStroke" {
-                                Color = Color3.fromRGB(43, 73, 112);
-                                Thickness = 2;
-                            };
-                            [Blend.OnEvent "Destroying"] = function()
-                                MaidObject:DoCleaning()
-                            end;
-                        };
+                        [Blend.OnEvent "Destroying"] = function()
+                            MaidObject:DoCleaning()
+                        end;
                     };
                 }
             })

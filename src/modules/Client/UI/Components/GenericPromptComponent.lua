@@ -28,9 +28,11 @@ local Prompt = function(props: Props)
         ReferenceDepth = 18,
         MinScale = 0,
         MaxScale = 1.5,
+        AnchorToAdornee = true,
         Children = {
             AnimatedFrameComponent({
                 Name = "Prompt";
+                ApplyDeviceScale = true;
                 Position = UDim2.fromScale(0.5, 0.5);
                 AnchorPoint = Vector2.new(0.5, 0.5);
                 Size = UDim2.fromOffset(246, 111);

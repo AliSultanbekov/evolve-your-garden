@@ -14,7 +14,7 @@ local Maid = require("Maid")
 local PackStoreTypesShared = require("PackStoreTypesShared")
 
 -- [ Components ] --
-local PackStoreWindow = require(script.Parent.Components.PackStore._Window)
+local PackStoreWindow = require(script.Parent.Components.PackStore)
 
 -- [ Constants ] --
 

@@ -9,7 +9,6 @@ local require = require(script:FindFirstAncestor("Components").loader).load(scri
 
 -- [ Imports ] --
 local Blend = require("Blend")
-local InventoryTypesClient = require("InventoryTypesClient")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local Observable = require("Observable")
 local ComponentTypes = require("ComponentTypes")
@@ -95,9 +94,9 @@ end
 type Props = {
     ActiveTab: ComponentTypes.Prop<string>,
     Search: Observable.Observable<string>,
-    GetItems: (filter: string?) -> InventoryTypesClient.Items,
-    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
-    OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    GetItems: (filter: string?) -> ReactiveItemTypes.ReactiveItems,
+    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem) -> (),
+    OnItemHovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
     OnItemUnhovered: () -> (),
 }
 type ModuleData = {}

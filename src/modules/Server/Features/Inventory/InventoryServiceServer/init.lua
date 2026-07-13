@@ -21,6 +21,7 @@ local InventoryEnums = require("InventoryEnums")
 local PackActions = require(script.ItemActions._PackActions)
 
 -- [ Constants ] --
+local INVENTORY_CAPACITY = 200
 
 -- [ Variables ] --
 
@@ -32,6 +33,7 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _DataServiceServer: typeof(require("DataServiceServer")),
     _InventoryNetworkServer: typeof(require("InventoryNetworkServer")),
+    _PlayersInventoryItemCount: { [Player]: number }
 }
 
 export type Module = typeof(InventoryServiceServer) & ModuleData
@@ -107,11 +109,28 @@ function InventoryServiceServer.AddRawItems(self: Module, player: Player, rawIte
     self:AddItems(player, Items)
 end
 
-function InventoryServiceServer.AddItems(self: Module, player: Player, items: { [any]: ItemTypes.Item }, transmitDelay: number?)
+function InventoryServiceServer.AddItems(self: Module, player: Player, items: { [any]: ItemTypes.Item }, transmitDelay: number?): InventoryTypesShared.Result
+    local Data = self._DataServiceServer:GetProfile(player).Data
+    local InventoryData = Data.Inventory
+    local ItemCount = self._PlayersInventoryItemCount[player]
+
+    if ItemCount >= INVENTORY_CAPACITY then
+        return InventoryEnums.Result.Fail
+    end
+
+    local NewItemsCount = 0
+    for _, item in items do
+        if InventoryData[item.Id] then
+            NewItemsCount += 1
+        end
+    end
+
+    if NewItemsCount > INVENTORY_CAPACITY then
+        return InventoryEnums.Result.Fail
+    end
+
     local AddedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
     local UpdatedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
-
-    local Data = self._DataServiceServer:GetProfile(player).Data
 
     for _, item in items do
         ItemUtil:OnStorageMode(item, {
@@ -155,13 +174,15 @@ function InventoryServiceServer.AddItems(self: Module, player: Player, items: { 
             self._InventoryNetworkServer:ItemsUpdated(player, { Items = UpdatedItems })
         end)
     end
+
+    return InventoryEnums.Result.Success
 end
 
 function InventoryServiceServer.RemoveItems(self: Module, player: Player, items: { ItemTypes.Item })
+    local Data = self._DataServiceServer:GetProfile(player).Data
+    
     local RemovedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
     local UpdatedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
-
-    local Data = self._DataServiceServer:GetProfile(player).Data
 
     for _, item in items do
         ItemUtil:OnStorageMode(item, {
@@ -171,6 +192,7 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
                 end
 
                 Data.Inventory[item.Id] = nil
+                self._PlayersInventoryItemCount[player] -= 1
                 RemovedItems[item.Id] = item
             end,
             Stackable = function(item: ItemTypes.StackableItem)
@@ -182,6 +204,7 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
 
                 if StoredItem.Amount <= item.Amount then
                     Data.Inventory[item.Id] = nil
+                    self._PlayersInventoryItemCount[player] -= 1
                     RemovedItems[item.Id] = StoredItem
                     UpdatedItems[item.Id] = nil
                 else
@@ -209,6 +232,7 @@ function InventoryServiceServer.Init(self: Module, serviceBag: ServiceBag.Servic
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._DataServiceServer = self._ServiceBag:GetService(require("DataServiceServer"))
     self._InventoryNetworkServer = self._ServiceBag:GetService(require("InventoryNetworkServer"))
+    self._PlayersInventoryItemCount = {}
 end
 
 function InventoryServiceServer.Start(self: Module)
@@ -223,15 +247,21 @@ function InventoryServiceServer.Start(self: Module)
     end)
 
     RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
-        local Maid, _Player = brio:ToMaidAndValue()
+        local Maid, Player = brio:ToMaidAndValue()
+        --local UserId = PlayerToUserId(Player) // might use in future
 
-        --[[self:AddRawItems(Player, {
-            ItemUtil:MakeRawFromName("Snow Blossom")
-        })]]
+        Maid:Add(self._DataServiceServer:OnDataReady(Player, function(Data)
+            local ItemCount = 0
+            for _ in Data.Inventory do
+                ItemCount += 1
+            end
 
-        Maid:Add(function()
-            
-        end)
+            self._PlayersInventoryItemCount[Player] = ItemCount
+
+            return function()
+                self._PlayersInventoryItemCount[Player] = nil
+            end
+        end))
     end)
 end
 

@@ -22,20 +22,20 @@ local GardenConfig = {
         [1] = {
             Slots = 9, 
             Cols = 3, 
-            Spacing = 5,
-            HarvestCap = 5,
+            Spacing = 6,
+            HarvestCap = 20,
         },
         [2] = {
             Slots = 12, 
             Cols = 3, 
-            Spacing = 5,
-            HarvestCap = 5,
+            Spacing = 6,
+            HarvestCap = 20,
         },
         [3] = {
             Slots = 15, 
             Cols = 3, 
-            Spacing = 5,
-            HarvestCap = 5,
+            Spacing = 6,
+            HarvestCap = 20,
         }
     }
 }

@@ -10,6 +10,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local Blend = require("Blend")
 local ComponentTypes = require("ComponentTypes")
+local Rx = require("Rx")
 
 -- [ Components ] --
 
@@ -21,13 +22,41 @@ local ComponentTypes = require("ComponentTypes")
 
 -- [ Module Table ] --
 local HighlightComponent = function(props: Props)
+    local TransparencyAnimation = Blend.Spring(
+        Blend.Computed(props.Adornee, function(adornee)
+            if adornee then
+                return 0.6
+            else
+                return 1
+            end
+        end),
+        10,
+        1.5
+    );
+
+    local HeldAdornee = Rx.combineLatest({
+        Adornee = props.Adornee,
+        Transparency = TransparencyAnimation,
+    }):Pipe({
+        Rx.scan(function(held: Instance?, data: any): Instance?
+            if data.Adornee then
+                return data.Adornee
+            elseif data.Transparency >= 0.99 then
+                return nil
+            end
+            return held
+        end, nil) :: any,
+        Rx.distinct() :: any,
+        Rx.shareReplay(1) :: any,
+    }) :: any
+
     return Blend.New "Highlight" {
         Enabled = props.Enabled;
         FillColor = props.FillColor or Color3.new(1, 1, 1);
-        FillTransparency = props.FillTransparency or 0;
+        FillTransparency = TransparencyAnimation;
         OutlineColor = props.OutlineColor or Color3.new(1, 1, 1);
-        OutlineTransparency = props.OutlineTransparency or 0;
-        Adornee = props.Adornee;
+        OutlineTransparency = TransparencyAnimation;
+        Adornee = HeldAdornee
     }
 end
 

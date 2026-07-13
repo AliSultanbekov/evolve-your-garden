@@ -17,86 +17,100 @@ local InventoryTypesClient = require("InventoryTypesClient")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
+local AnimatedFrameComponent = require("AnimatedFrameComponent")
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Functions ] --
-local function PlantButtons(IsSelected: Observable.Observable<boolean>, ItemCategory: Observable.Observable<ItemTypes.Category>, actions: InventoryTypesClient.Actions)
+local function AnimatedButton(props: {
+    Name: string,
+    LayoutOrder: number?,
+    IsOpen: Observable.Observable<boolean>,
+    Image: string,
+    Text: string,
+    StrokeColor: Color3,
+    OnPressed: (...any) -> ...any,
+})
+    return AnimatedFrameComponent({
+        Name = props.Name;
+        IsOpen = props.IsOpen;
+        Size = UDim2.fromOffset(179, 48);
+        LayoutOrder = props.LayoutOrder;
+        BackgroundTransparency = 1;
+        Children = {
+            GenericButtonComponent({
+                Name = props.Name;
+                Size = UDim2.fromScale(1, 1);
+                Position = UDim2.fromScale(0.5, 0.5);
+                AnchorPoint = Vector2.new(0.5, 0.5);
+                BackgroundTransparency = 1;
+                Image = props.Image;
+                OnPressed = props.OnPressed;
+                Children = {
+                    Blend.New "TextLabel" {
+                        Name = "Name";
+                        Position = UDim2.fromOffset(4, 4);
+                        Size = UDim2.fromOffset(171, 37);
+                        BackgroundTransparency = 1;
+                        FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
+                        Text = props.Text;
+                        TextColor3 = Color3.fromRGB(255, 255, 255);
+                        TextSize = 18;
+                        ZIndex = 2;
+                        Blend.New "UIStroke" {
+                            Color = props.StrokeColor;
+                            LineJoinMode = Enum.LineJoinMode.Miter;
+                            Thickness = 2;
+                        };
+                    };
+                };
+            });
+        };
+    })
+end
+
+local function PlantButtons(
+    isSelected: Observable.Observable<boolean>,
+    itemCategory: Observable.Observable<ItemTypes.Category>,
+    actions: InventoryTypesClient.Actions
+)
     return {
 
     }
 end
 
-local function PackButtons(IsSelected: Observable.Observable<boolean>, ItemCategory: Observable.Observable<ItemTypes.Category>, actions: InventoryTypesClient.Actions)
-    local ShouldShow = Blend.Computed(IsSelected, ItemCategory, function(selected: boolean, category: ItemTypes.Category)
+local function PackButtons(
+    isSelected: Observable.Observable<boolean>,
+    itemCategory: Observable.Observable<ItemTypes.Category>,
+    actions: InventoryTypesClient.Actions
+)
+    local ShouldShow = Blend.Computed(isSelected, itemCategory, function(selected: boolean, category: ItemTypes.Category)
         return selected and category == "Pack"
     end)
 
     return {
-        GenericButtonComponent({
+        AnimatedButton({
             Name = "Open 3";
-            Position = UDim2.fromOffset(55, 51);
-            Size = UDim2.fromOffset(179, 48);
-            AnchorPoint = Vector2.new(0.5, 0.5);
-            BackgroundTransparency = 1;
-            Image = "rbxassetid://97250954730348",
-            Visible = ShouldShow,
-            AnimateVisibility = true,
+            IsOpen = ShouldShow;
+            Image = "rbxassetid://97250954730348";
+            Text = "Open 3";
+            StrokeColor = Color3.fromRGB(14, 100, 13);
             OnPressed = function()
                 actions.Open(3)
-            end,
-            Children = {
-                Blend.New "TextLabel" {
-                    Name = "Name";
-                    Position = UDim2.fromOffset(4, 4);
-                    Size = UDim2.fromOffset(171, 37);
-                    BackgroundTransparency = 1;
-                    FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
-                    Text = "Open 3";
-                    TextColor3 = Color3.fromRGB(255, 255, 255);
-                    TextSize = 18;
-                    ZIndex = 2;
-                    Blend.New "UIStroke" {
-                        Color = Color3.fromRGB(14, 100, 13);
-                        LineJoinMode = Enum.LineJoinMode.Miter;
-                        Thickness = 2;
-                    };
-                };
-            }
-        });
-        GenericButtonComponent({
+            end;
+        }),
+        AnimatedButton({
             Name = "Open 1";
-            Position = UDim2.fromOffset(55, 51);
-            Size = UDim2.fromOffset(179, 48);
-            AnchorPoint = Vector2.new(0.5, 0.5);
-            BackgroundTransparency = 1;
-            Image = "rbxassetid://97250954730348",
-            Visible = ShouldShow,
-            AnimateVisibility = true,
+            IsOpen = ShouldShow;
+            Image = "rbxassetid://97250954730348";
+            Text = "Open 1";
+            StrokeColor = Color3.fromRGB(14, 100, 13);
             OnPressed = function()
                 actions.Open(1)
-            end,
-            Children = {
-                Blend.New "TextLabel" {
-                    Name = "Name";
-                    Position = UDim2.fromOffset(4, 4);
-                    Size = UDim2.fromOffset(171, 37);
-                    BackgroundTransparency = 1;
-                    FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
-                    Text = "Open 1";
-                    TextColor3 = Color3.fromRGB(255, 255, 255);
-                    TextSize = 18;
-                    ZIndex = 2;
-                    Blend.New "UIStroke" {
-                        Color = Color3.fromRGB(14, 100, 13);
-                        LineJoinMode = Enum.LineJoinMode.Miter;
-                        Thickness = 2;
-                    };
-                };
-            }
-        });
+            end;
+        }),
     }
 end
 
@@ -127,34 +141,14 @@ local Buttons = function(props: Props)
                 return UDim.new(0, if selected then 10 else 0)
             end),
         },
-        GenericButtonComponent({
+        AnimatedButton({
             Name = "Close";
-            Position = UDim2.fromOffset(55, 51);
-            Size = UDim2.fromOffset(179, 48);
-            AnchorPoint = Vector2.new(0.5, 0.5);
-            BackgroundTransparency = 1;
             LayoutOrder = 100;
-            Visible = props.IsSelected;
+            IsOpen = props.IsSelected;
             Image = "rbxassetid://101276568553496";
+            Text = "Close";
+            StrokeColor = Color3.fromRGB(130, 40, 40);
             OnPressed = props.OnClose;
-            Children = {
-                Blend.New "TextLabel" {
-                    Name = "Name";
-                    Position = UDim2.fromOffset(4, 4);
-                    Size = UDim2.fromOffset(171, 37);
-                    BackgroundTransparency = 1;
-                    FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
-                    Text = "Close";
-                    TextColor3 = Color3.fromRGB(255, 255, 255);
-                    TextSize = 18;
-                    ZIndex = 2;
-                    Blend.New "UIStroke" {
-                        Color = Color3.fromRGB(130, 40, 40);
-                        LineJoinMode = Enum.LineJoinMode.Miter;
-                        Thickness = 2;
-                    };
-                };
-            }
         }),
         PlantButtons(props.IsSelected, ItemCategory, props.Actions),
         PackButtons(props.IsSelected, ItemCategory, props.Actions)

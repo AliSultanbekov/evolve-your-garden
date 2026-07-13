@@ -18,7 +18,7 @@ local ValueObject = require("ValueObject")
 
 -- [ Components ] --
 local GenericPromptComponent = require("GenericPromptComponent")
-local DialogWindow = require(script.Parent.Components.Dialog._Window)
+local DialogWindow = require(script.Parent.Components.Dialog)
 local Speech = require(script.Parent.Components._Speech)
 
 -- [ Constants ] --
@@ -101,29 +101,60 @@ function NPCUIClient.Start(self: Module)
         end
     end))
 
+    local NPCPoint = self._NPCServiceClient:ObserveClosestNPC():Pipe({
+        Rx.where(function(npc: NPCTypesClient.NPC?)
+            return npc ~= nil
+        end) :: any,
+        Rx.map(function(npc: NPCTypesClient.NPC)
+            return npc.Model.UIPoint
+        end) :: any,
+        Rx.shareReplay(1) :: any,
+    })
+
+    local PromptOpen = Rx.combineLatest({
+        ClosestNPC = self._NPCServiceClient:ObserveClosestNPC(),
+        ActiveTopicId = self._NPCServiceClient:ObserveActiveTopicId(),
+    }):Pipe({
+        Rx.map(function(data)
+            return data.ClosestNPC ~= nil and not data.ActiveTopicId
+        end) :: any,
+    })
+
+    local PromptText = self._NPCServiceClient:ObserveClosestNPC():Pipe({
+        Rx.map(function(npc: NPCTypesClient.NPC?)
+            return if not npc then "Get out of here boy" else "Speak to " .. npc.Name
+        end) :: any,
+    })
+
+    local DialogOpen = Rx.combineLatest({
+        ActiveTopicId = self._NPCServiceClient:ObserveActiveTopicId(),
+        NPCSpeaking = self._NPCSpeaking:Observe(),
+    }):Pipe({
+        Rx.map(function(data)
+            return data.ActiveTopicId ~= nil and not data.NPCSpeaking
+        end) :: any,
+    })
+
+    local SpeechOpen = Rx.combineLatest({
+        ActiveTopicId = self._NPCServiceClient:ObserveActiveTopicId(),
+        NPCSpeaking = self._NPCSpeaking:Observe(),
+    }):Pipe({
+        Rx.map(function(data)
+            return data.ActiveTopicId ~= nil and data.NPCSpeaking
+        end) :: any,
+    })
+
+    local SpeechText = (ActiveTopic :: any):Pipe({
+        Rx.map(function(topic: NPCTypesShared.Topic)
+            return topic.Text
+        end) :: any,
+    })
+
     self._Maid:Add(self._UIServiceClient:MountToScreen("UIs", function() return {
         GenericPromptComponent({
-            Adornee = self._NPCServiceClient:ObserveClosestNPC():Pipe({
-                Rx.where(function(npc: NPCTypesClient.NPC?)
-                    return npc ~= nil
-                end) :: any,
-                Rx.map(function(npc: NPCTypesClient.NPC)
-                    return npc.Model.UIPoint
-                end) :: any
-            }) :: any,
-            IsOpen = Rx.combineLatest({
-                ClosestNPC = self._NPCServiceClient:ObserveClosestNPC(),
-                ActiveTopicId = self._NPCServiceClient:ObserveActiveTopicId(),
-            }):Pipe({
-                Rx.map(function(data)
-                    return data.ClosestNPC ~= nil and not data.ActiveTopicId
-                end) :: any,
-            }) :: any,
-            Text = self._NPCServiceClient:ObserveClosestNPC():Pipe({
-                Rx.map(function(npc: NPCTypesClient.NPC?)
-                    return if not npc then "Get out of here boy" else "Speak to " .. npc.Name 
-                end) :: any
-            }) :: any,
+            Adornee = NPCPoint :: any,
+            IsOpen = PromptOpen :: any,
+            Text = PromptText :: any,
             Use = function()
                 local ClosestNPC = self._NPCServiceClient:GetClosestNPC()
 
@@ -138,23 +169,10 @@ function NPCUIClient.Start(self: Module)
         }),
 
         DialogWindow({
-            IsOpen = Rx.combineLatest({
-                ActiveTopicId = self._NPCServiceClient:ObserveActiveTopicId(),
-                NPCSpeaking = self._NPCSpeaking:Observe(),
-            }):Pipe({
-                Rx.map(function(data)
-                    return data.ActiveTopicId ~= nil and not data.NPCSpeaking
-                end) :: any
-            }) :: any,
-            Adornee = self._NPCServiceClient:ObserveClosestNPC():Pipe({
-                Rx.where(function(npc: NPCTypesClient.NPC): boolean
-                    return npc ~= nil
-                end) :: any,
-                Rx.map(function(npc: NPCTypesClient.NPC)
-                    return npc.Model.UIPoint
-                end) :: any
-            }) :: any,
-            ChooseResponse = function(response: NPCTypesShared.Response)  
+            Adornee = NPCPoint :: any,
+            IsOpen = DialogOpen :: any,
+            Topic = ActiveTopic :: any,
+            ChooseResponse = function(response: NPCTypesShared.Response)
                 local ClosestNPC = self._NPCServiceClient:GetClosestNPC()
 
                 if not ClosestNPC then
@@ -175,34 +193,15 @@ function NPCUIClient.Start(self: Module)
 
                 self._NPCServiceClient:SetActiveTopicId(response.NextTopicId)
             end,
-            Topic = ActiveTopic :: any,
         }),
 
         Speech({
-            Adornee = self._NPCServiceClient:ObserveClosestNPC():Pipe({
-                Rx.where(function(npc: NPCTypesClient.NPC): boolean
-                    return npc ~= nil
-                end) :: any,
-                Rx.map(function(npc: NPCTypesClient.NPC)
-                    return npc.Model.UIPoint
-                end) :: any
-            }) :: any,
-            IsOpen = Rx.combineLatest({
-                ActiveTopicId = self._NPCServiceClient:ObserveActiveTopicId(),
-                NPCSpeaking = self._NPCSpeaking:Observe(),
-            }):Pipe({
-                Rx.map(function(data)
-                    return data.ActiveTopicId ~= nil and data.NPCSpeaking
-                end) :: any
-            }) :: any,
-            Text = (ActiveTopic :: any):Pipe({
-                Rx.map(function(topic: NPCTypesShared.Topic)
-                    return topic.Text
-                end)
-            }) :: any,
+            Adornee = NPCPoint :: any,
+            IsOpen = SpeechOpen :: any,
+            Text = SpeechText :: any,
             OnSpeakingChanged = function(value: boolean)
                 self._NPCSpeaking.Value = value
-            end
+            end,
         })
     } end))
 end

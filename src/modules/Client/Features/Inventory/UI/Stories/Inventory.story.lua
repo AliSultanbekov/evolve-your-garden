@@ -16,7 +16,7 @@ local ItemUtil = require("ItemUtil")
 local ReactiveItemUtil = require("ReactiveItemUtil")
 
 -- [ Components ] --
-local InventoryWindow = require(script.Parent.Parent.Components.Inventory._Window)
+local InventoryWindow = require(script.Parent.Parent.Components._InventoryComponent)
 
 -- [ Constants ] --
 

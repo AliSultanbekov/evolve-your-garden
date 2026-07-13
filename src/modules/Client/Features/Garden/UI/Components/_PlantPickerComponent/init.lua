@@ -11,15 +11,14 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local Blend = require("Blend")
 local Observable = require("Observable")
 local ComponentTypes = require("ComponentTypes")
-local InventoryTypesClient = require("InventoryTypesClient")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 
 -- [ Components ] --
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local CloseButtonComponent = require("CloseButtonComponent")
 local ItemsGridComponent = require("ItemsGridComponent")
+local SearchBarComponent = require("SearchBarComponent")
 
-local SearchBar = require(script._SeachBar)
 local Title = require(script._Title)
 local Background = require(script._Background)
 
@@ -31,6 +30,7 @@ local Background = require(script._Background)
 local Window = function(props: Props)
     return AnimatedFrameComponent({
         Name = "PlantPickerWindow";
+        ApplyDeviceScale = true;
         Position = UDim2.fromScale(0.5, 0.5);
         AnchorPoint = Vector2.new(0.5, 0.5);
         Size = UDim2.fromOffset(1095, 696);
@@ -40,8 +40,14 @@ local Window = function(props: Props)
         Children = {
             Background() :: any;
             Title();
-            SearchBar({
-                OnSearch = props.OnSearch
+            SearchBarComponent({
+                LayoutOrder = 4;
+                Position = UDim2.fromOffset(703, 51);
+                Size = UDim2.fromOffset(306, 64);
+                ZIndex = 5;
+                BackgroundImage = "rbxassetid://129977395166820";
+                SearchBoxSize = UDim2.fromOffset(306, 64);
+                OnSearch = props.OnSearch;
             });
             CloseButtonComponent({
                 Position = UDim2.fromOffset(1020, 51);
@@ -104,9 +110,9 @@ type Props = {
     Search: Observable.Observable<string>,
 
     OnClose: () -> (),
-    GetItems: () -> InventoryTypesClient.Items,
-    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
-    OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    GetItems: () -> ReactiveItemTypes.ReactiveItems,
+    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem) -> (),
+    OnItemHovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
     OnItemUnhovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
     OnSearch: (text: string) -> (),
 }

@@ -25,6 +25,7 @@ local GenericButtonComponent = require("GenericButtonComponent")
 local ButtonsWindow = function(props: Props)
     return AnimatedFrameComponent({
         Name = "Buttons";
+        ApplyDeviceScale = true;
         Position = UDim2.fromScale(0, 0.5);
         Size = UDim2.fromOffset(206, 315);
         AnchorPoint = Vector2.new(0, 0.5);

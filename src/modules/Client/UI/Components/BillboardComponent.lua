@@ -83,7 +83,11 @@ local BillboardComponent = function(props: Props)
         props.Children;
         ScalerComponent({
             Scale = Blend.Computed(OnScreenVector, function(onScreenVector: Vector3)
-                return math.clamp(props.ReferenceDepth / onScreenVector.Z, props.MinScale, props.MaxScale)
+                if props.AnchorPoint then
+                    return math.clamp(props.ReferenceDepth / onScreenVector.Z, props.MinScale, props.MaxScale)
+                else
+                    return 1
+                end
             end);
             ApplyDeviceScale = false
         })
@@ -96,6 +100,7 @@ type Props = {
     Offset: Vector3?,
     AnchorPoint: ComponentTypes.Prop<Vector2>,
     Children: { Observable.Observable<Instance> }?,
+    AnchorToAdornee: boolean?,
     ReferenceDepth: number,
     MinScale: number,
     MaxScale: number,

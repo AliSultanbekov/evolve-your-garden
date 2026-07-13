@@ -15,6 +15,12 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Module Table ] --
 local ImagesConfig = {
+    Merchant = {
+        Buttons = {
+            Active = "rbxassetid://135391757483985",
+            Inactive = "rbxassetid://89659126729280"
+        }
+    },  
     Inventory = {
         RarityImages = {
             Celestial = "rbxassetid://114970135748413",

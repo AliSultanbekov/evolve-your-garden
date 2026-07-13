@@ -18,6 +18,10 @@ local InventoryEnums = {
     Actions = {
         Open = "Open" :: "Open",
         Delete = "Delete" :: "Delete",
+    },
+    Result = {
+        Success = "Success" :: "Success",
+        Fail = "Fail" :: "Fail"
     }
 }
 

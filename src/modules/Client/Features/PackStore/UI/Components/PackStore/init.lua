@@ -17,10 +17,10 @@ local PackStoreTypesShared = require("PackStoreTypesShared")
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local CloseButtonComponent = require("CloseButtonComponent")
 
-local Background = require(script.Parent._Background)
-local TabButtons = require(script.Parent._TabButtons)
-local Tabs = require(script.Parent._Tabs)
-local Title = require(script.Parent._Title)
+local Background = require(script._Background)
+local TabButtons = require(script._TabButtons)
+local Tabs = require(script._Tabs)
+local Title = require(script._Title)
 
 -- [ Constants ] --
 
@@ -32,6 +32,7 @@ local Title = require(script.Parent._Title)
 local Window = function(props: Props)
     return AnimatedFrameComponent({
         Name = "PackStore";
+        ApplyDeviceScale = true;
         Position = UDim2.fromScale(0.5, 0.5);
         AnchorPoint = Vector2.new(0.5, 0.5);
         Size = UDim2.fromOffset(1208, 708);

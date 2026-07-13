@@ -26,7 +26,8 @@ type ModuleData = {
 
     RemoteEvents: {
         PlacePlant: Signal.Signal<Player, GardenTypesShared.PlacePlantRemotePacket>,
-        RemovePlant: Signal.Signal<Player, GardenTypesShared.RemovePlantRemotePacket>
+        RemovePlant: Signal.Signal<Player, GardenTypesShared.RemovePlantRemotePacket>,
+        CollectHarvest: Signal.Signal<Player, GardenTypesShared.CollectHarvestRemotePacket>,
     },
     RemoteFunctions: {
         GetGardens: () -> GardenTypesShared.GetGardensRemotePacket
@@ -38,28 +39,28 @@ export type Module = typeof(GardenNetworkServer) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
-function GardenNetworkServer.GrowthCycle(self: Module, packet: GardenTypesShared.GrowthCycleRemotePacket)
-    local Channel = self._NetworkServiceShared:GetChannel("Garden")
-
-    Channel:FireAllClients("GrowthCycle", packet)
-end
-
 function GardenNetworkServer.HarvestCollected(self: Module, packet: GardenTypesShared.HarvestCollectedRemotePacket)
     local Channel = self._NetworkServiceShared:GetChannel("Garden")
 
     Channel:FireAllClients("HarvestCollected", packet)
 end
 
+function GardenNetworkServer.GrowthCycle(self: Module, packet: GardenTypesShared.GrowthCycleRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:FireAllClients("GrowthCycle", packet)
+end
+
 function GardenNetworkServer.HarvestItemsUpdated(self: Module, player: Player, packet: GardenTypesShared.HarvestItemsUpdatedRemotePacket)
     local Channel = self._NetworkServiceShared:GetChannel("Garden")
 
-    Channel:FireAllClients("HarvestItemsUpdated", packet)
+    Channel:FireClient("HarvestItemsUpdated", player, packet)
 end
 
 function GardenNetworkServer.HarvestItemsAdded(self: Module, player: Player, packet: GardenTypesShared.HarvestItemsAddedRemotePacket)
     local Channel = self._NetworkServiceShared:GetChannel("Garden")
 
-    Channel:FireAllClients("HarvestItemsAdded", packet)
+    Channel:FireClient("HarvestItemsAdded", player, packet)
 end
 
 function GardenNetworkServer.PlantPlaced(self: Module, packet: GardenTypesShared.PlantPlacedRemotePacket)
@@ -97,6 +98,7 @@ function GardenNetworkServer.Init(self: Module, serviceBag: ServiceBag.ServiceBa
     self.RemoteEvents = {
         PlacePlant = Signal.new(),
         RemovePlant = Signal.new(),
+        CollectHarvest = Signal.new(),
     } :: any
 
     self.RemoteFunctions = {
@@ -111,8 +113,12 @@ function GardenNetworkServer.Start(self: Module)
     Channel:DeclareEvent("PlantRemoved")
     Channel:DeclareEvent("GardenClaimed")
     Channel:DeclareEvent("GardenAbandoned")
-    Channel:DeclareMethod("GetGardens")
+    Channel:DeclareEvent("HarvestItemsAdded")
+    Channel:DeclareEvent("HarvestItemsUpdated")
     Channel:DeclareEvent("GrowthCycle")
+    Channel:DeclareMethod("GetGardens")
+    Channel:DeclareEvent("CollectHarvest")
+    Channel:DeclareEvent("HarvestCollected")
 
     Channel:Connect("PlacePlant", function(player: Player, packet: GardenTypesShared.PlacePlantRemotePacket)
         self.RemoteEvents.PlacePlant:Fire(player, packet)
@@ -120,6 +126,10 @@ function GardenNetworkServer.Start(self: Module)
 
     Channel:Connect("RemovePlant", function(player: Player, packet: GardenTypesShared.RemovePlantRemotePacket)
         self.RemoteEvents.RemovePlant:Fire(player, packet)
+    end)
+
+    Channel:Connect("CollectHarvest", function(player: Player, packet: GardenTypesShared.CollectHarvestRemotePacket)
+        self.RemoteEvents.CollectHarvest:Fire(player, packet)
     end)
 end
 

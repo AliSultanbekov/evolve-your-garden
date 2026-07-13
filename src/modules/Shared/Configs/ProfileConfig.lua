@@ -11,6 +11,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local ItemTypes = require("ItemTypes")
 local GardenTypesShared = require("GardenTypesShared")
 local PackStoreTypesShared = require("PackStoreTypesShared")
+local MerchantTypesShared = require("MerchantTypesShared")
 
 -- [ Constants ] --
 
@@ -42,6 +43,9 @@ local ProfileConfig = {
         PackStore = {
             SaleId = "",
             Packs = {}
+        },
+        Merchant = {
+            
         }
     },
     Leaderstats = {}
@@ -63,7 +67,8 @@ export type ProfileTemplate = {
     Garden: {
         Slots: GardenTypesShared.Slots
     },
-    PackStore: PackStoreTypesShared.PackStore
+    PackStore: PackStoreTypesShared.PackStore,
+    Merchant: MerchantTypesShared.Merchant
 }
 
 return ProfileConfig

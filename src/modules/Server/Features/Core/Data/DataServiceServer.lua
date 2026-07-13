@@ -15,6 +15,7 @@ local ProfileStore = require("_ProfileStore")
 local ServiceBag = require("ServiceBag")
 local RxPlayerUtils = require("RxPlayerUtils")
 local Brio = require("Brio")
+local Signal = require("Signal")
 
 -- [ Constants ] --
 
@@ -32,6 +33,8 @@ type Profile = ProfileStore.Profile<ProfileConfig.ProfileTemplate>
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _Profiles: { [Player]: Profile },
+    _ProfileLoaded: Signal.Signal<Player>,
+    _ProfileUnloaded: Signal.Signal<Player>,
     _PlayerStore: ProfileStore.ProfileStore<ProfileConfig.ProfileTemplate>,
     _Leaderstats: { [Player]: { [string]: NumberValue } },
 }
@@ -69,11 +72,13 @@ function DataServiceServer._SetupPlayerProfile(self: Module, player: Player)
 
     Profile.OnSessionEnd:Connect(function()
         self._Profiles[player] = nil
+        self._ProfileUnloaded:Fire(player)
         player:Kick("Profile session end - Please rejoin")
     end)
 
     if player.Parent == Players then
         self._Profiles[player] = Profile
+        self._ProfileLoaded:Fire(player)
         print(`Profile loaded for {player.DisplayName}!`)
     else
         Profile:EndSession()
@@ -121,6 +126,89 @@ function DataServiceServer.GetProfile(self: Module, player: Player): Profile
     return Profile
 end
 
+--[=[
+    Runs `callback(data)` once the player's data is ready - immediately if the
+    profile is already loaded, otherwise when it loads. Never yields.
+
+    `callback` may return a teardown function that runs when the data unloads
+    (player leaves / session ends) or when the returned cleanup is called.
+
+    Returns a cleanup function; call it (or add it to a Maid) to cancel a pending
+    wait and run the teardown.
+
+    @param player Player
+    @param callback (data: ProfileTemplate) -> (() -> ())?
+    @return () -> () -- cleanup
+]=]
+function DataServiceServer.OnDataReady(
+    self: Module,
+    player: Player,
+    callback: (data: ProfileConfig.ProfileTemplate) -> (() -> ())?
+): () -> ()
+    local teardown: (() -> ())? = nil
+    local loadedConn: any = nil
+    local unloadedConn: any = nil
+    local fired = false
+
+    local function runTeardown()
+        if teardown then
+            teardown()
+            teardown = nil
+        end
+    end
+
+    local function onReady()
+        if fired then
+            return
+        end
+
+        local Profile = self._Profiles[player]
+
+        if not Profile then
+            return
+        end
+
+        fired = true
+
+        if loadedConn then
+            loadedConn:Disconnect()
+            loadedConn = nil
+        end
+
+        teardown = callback(Profile.Data)
+
+        unloadedConn = self._ProfileUnloaded:Connect(function(unloadedPlayer: Player)
+            if unloadedPlayer == player then
+                runTeardown()
+            end
+        end)
+    end
+
+    if self._Profiles[player] then
+        onReady()
+    else
+        loadedConn = self._ProfileLoaded:Connect(function(loadedPlayer: Player)
+            if loadedPlayer == player then
+                onReady()
+            end
+        end)
+    end
+
+    return function()
+        if loadedConn then
+            loadedConn:Disconnect()
+            loadedConn = nil
+        end
+
+        if unloadedConn then
+            unloadedConn:Disconnect()
+            unloadedConn = nil
+        end
+
+        runTeardown()
+    end
+end
+
 function DataServiceServer.SyncLeaderstat(self: Module, player: Player, statPath: string)
     local Stat = self._Leaderstats[player] and self._Leaderstats[player][statPath]
 
@@ -134,7 +222,7 @@ function DataServiceServer.SyncLeaderstat(self: Module, player: Player, statPath
     if not Value then
         return
     end
-    
+
     Stat.Value = Value
 end
 
@@ -146,6 +234,8 @@ function DataServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._Leaderstats = {}
     self._Profiles = {}
+    self._ProfileLoaded = Signal.new() :: any
+    self._ProfileUnloaded = Signal.new() :: any
 end
 
 function DataServiceServer.Start(self: Module)
@@ -154,17 +244,17 @@ function DataServiceServer.Start(self: Module)
 
         RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
             local Maid, Player = brio:ToMaidAndValue()
-    
+
             self._Leaderstats[Player] = {}
-    
+
             self:_SetupPlayerProfile(Player)
             self:_CreateLeaderstats(Player)
-    
+
             Maid:Add(function()
                 self._Leaderstats[Player] = nil
-    
+
                 local Profile = self._Profiles[Player]
-    
+
                 if Profile ~= nil then
                     Profile:EndSession()
                 end

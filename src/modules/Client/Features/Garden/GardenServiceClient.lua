@@ -3,6 +3,7 @@
 ]=]
 
 -- [ Roblox Services ] --
+local Players = game:GetService("Players")
 
 -- [ Require ] --
 local require = require(script.Parent.loader).load(script) :: typeof(require)
@@ -17,10 +18,14 @@ local ObservableMap = require("ObservableMap")
 local ReactiveItemUtil = require("ReactiveItemUtil")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local ItemTypes = require("ItemTypes")
+local PlayerToUserId = require("PlayerToUserId")
+local Rx = require("Rx")
 
 -- [ Constants ] --
 
 -- [ Variables ] --
+local LocalPlayer = Players.LocalPlayer
+local LocalUserId = PlayerToUserId(LocalPlayer)
 
 -- [ Module Table ] --
 local GardenServiceClient = {}
@@ -30,6 +35,7 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _GardenNetworkClient: typeof(require("GardenNetworkClient")),
     _Gardens: GardenTypesClient.ReactiveGardens,
+    _UserIdToGardenId: { [string]: GardenTypesShared.GardenId },
     _GardenModels: { [GardenTypesShared.GardenId]: GardenTypesClient.GardenModel },
     _SlotModels: { [GardenTypesShared.GardenId]: { [GardenTypesShared.SlotId]: GardenTypesClient.SlotModel} },
     _SelectedSlotInfo: ValueObject.ValueObject<GardenTypesClient.SlotInfo?>,
@@ -41,11 +47,17 @@ export type Module = typeof(GardenServiceClient) & ModuleData
 -- [ Private Functions ] --
 function GardenServiceClient._SlotToReactiveSlot(self: Module, slot: GardenTypesShared.Slot): GardenTypesClient.ReactiveSlot
     local Plant = if slot.Plant then ReactiveItemUtil:ToReactive(slot.Plant) else nil
+    local Harvest = ObservableMap.new()
+
+    for _, item in slot.Harvest do
+        local ReactiveItem = ReactiveItemUtil:ToReactive(item)
+        Harvest:Set(item.Id, ReactiveItem)
+    end
 
     return {
         Id = slot.Id,
         Plant = ValueObject.new(Plant),
-        Harvest = ObservableMap.new(),
+        Harvest = Harvest,
     }
 end
 
@@ -73,6 +85,43 @@ function GardenServiceClient._SetupGardens(self: Module): GardenTypesClient.Reac
 end
 
 -- [ Public Functions ] --
+function GardenServiceClient.CollectHarvest(self: Module, slotId: GardenTypesShared.SlotId)
+    self._GardenNetworkClient:CollectHarvest({
+        SlotId = slotId
+    })
+end
+
+function GardenServiceClient.ObserveLocalGarden(self: Module)
+    local Owners = {}
+
+    for _, garden in pairs(self._Gardens) do
+        Owners[garden.Id] = garden.Owner:Observe()
+    end
+
+    return Rx.combineLatest(Owners):Pipe({
+        Rx.map(function(data)
+            for gardenId, owner in data do
+                if owner == LocalUserId then
+                    return self:GetGarden(gardenId)
+                end
+            end
+
+            return nil
+        end) :: any
+    }) :: any
+end
+
+function GardenServiceClient.GetLocalGarden(self: Module): GardenTypesClient.ReactiveGarden?
+    local UserId = LocalUserId
+    local GardenId = self._UserIdToGardenId[UserId]
+
+    return self:GetGarden(GardenId)
+end
+
+function GardenServiceClient.GetGarden(self: Module, gardenId: GardenTypesShared.GardenId): GardenTypesClient.ReactiveGarden?
+    return self._Gardens[gardenId]
+end
+
 function GardenServiceClient.GetGardens(self: Module)
     return self._Gardens
 end
@@ -137,6 +186,32 @@ function GardenServiceClient.GetSelectedSlotInfo(self: Module)
     return self._SelectedSlotInfo.Value
 end
 
+function GardenServiceClient.GetSelectedSlot(self: Module): GardenTypesClient.ReactiveSlot?
+    local SelectedSlotInfo = self._SelectedSlotInfo.Value
+
+    if not SelectedSlotInfo then
+        return
+    end
+
+    local SelectedSlot = self:GetSlot(SelectedSlotInfo.GardenId, SelectedSlotInfo.SlotId)
+
+    return SelectedSlot
+end
+
+function GardenServiceClient.ObserveSelectedSlot(self: Module)
+    return self._SelectedSlotInfo:Observe():Pipe({
+        Rx.map(function(slotInfo: GardenTypesClient.SlotInfo?)
+            if not slotInfo then
+                return
+            end
+
+            local Slot = self:GetSlot(slotInfo.GardenId, slotInfo.SlotId)
+
+            return Slot
+        end) :: any
+    }) :: any
+end
+
 function GardenServiceClient.ObserveHoveredSlotInfo(self: Module)
     return self._HoveredSlotInfo:Observe()
 end
@@ -176,6 +251,7 @@ function GardenServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBa
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._GardenNetworkClient = self._ServiceBag:GetService(require("GardenNetworkClient"))
     self._Gardens = self:_SetupGardens()
+    self._UserIdToGardenId = {}
     self._GardenModels = {}
     self._SlotModels = {}
     self._SelectedSlotInfo = ValueObject.new()
@@ -199,20 +275,26 @@ function GardenServiceClient.Start(self: Module)
         Garden.Level.Value = packet.GardenLevel
 
         self:_AddSlotsToMap(Garden.Slots, packet.Slots)
-
-        -- Only clear interaction state if it pointed into THIS garden (e.g. a
-        -- re-claim by a new occupant). Another garden being claimed must not
-        -- wipe your current hover/selection.
         self:_ClearSlotInfoForGarden(packet.GardenId)
+
+        self._UserIdToGardenId[packet.UserId] = packet.GardenId
     end)
 
     self._GardenNetworkClient.RemoteEvents.GardenAbandoned:Connect(function(packet: GardenTypesShared.GardenAbandonedRemotePacket)
         local Garden = self._Gardens[packet.GardenId]
 
+        local Owner = Garden.Owner.Value
+
+        if not Owner then
+            return
+        end
+
         Garden.Owner.Value = nil
         Garden.Level.Value = nil
 
         self:_ClearSlotInfoForGarden(packet.GardenId)
+
+        self._UserIdToGardenId[Owner] = nil
     end)
 
     self._GardenNetworkClient.RemoteEvents.PlantPlaced:Connect(function(packet: GardenTypesShared.PlantPlacedRemotePacket)
@@ -256,6 +338,72 @@ function GardenServiceClient.Start(self: Module)
 
                 ReactiveItemUtil:SyncFromPlain(Plant, plant)
             end
+        end
+    end)
+
+    self._GardenNetworkClient.RemoteEvents.HarvestItemsAdded:Connect(function(packet: GardenTypesShared.HarvestItemsAddedRemotePacket)
+        local Garden = self._Gardens[packet.GardenId]
+
+        if not Garden then
+            return
+        end
+
+        for slotId, items in packet.Harvest do
+            local Slot = Garden.Slots:Get(slotId)
+
+            if not Slot then
+                continue
+            end
+
+            for _, item in items do
+                Slot.Harvest:Set(item.Id, ReactiveItemUtil:ToReactive(item))
+            end
+        end
+    end)
+
+    self._GardenNetworkClient.RemoteEvents.HarvestItemsUpdated:Connect(function(packet: GardenTypesShared.HarvestItemsAddedRemotePacket)
+        local Garden = self._Gardens[packet.GardenId]
+
+        if not Garden then
+            return
+        end
+
+        for slotId, items in packet.Harvest :: { [GardenTypesShared.SlotId]: { [any]: ItemTypes.StackableItem } } do
+            local Slot = Garden.Slots:Get(slotId)
+
+            if not Slot then
+                continue
+            end
+
+            for _, item in items do
+                local ReactiveItem = Slot.Harvest:Get(item.Id) :: ReactiveItemTypes.ReactiveStackableItem?
+
+                if not ReactiveItem then
+                    continue
+                end
+
+                ReactiveItem.Amount.Value = item.Amount
+            end
+        end
+    end)
+
+    self._GardenNetworkClient.RemoteEvents.HarvestCollected:Connect(function(packet: GardenTypesShared.HarvestCollectedRemotePacket)
+        local Garden = self._Gardens[packet.GardenId]
+
+        if not Garden then
+            return
+        end
+
+        local Slot = Garden.Slots:Get(packet.SlotId)
+
+        if not Slot then
+            return
+        end
+
+        local Harvest = Slot.Harvest
+
+        for _, key in Harvest:GetKeyList() do
+            Harvest:Remove(key)
         end
     end)
 end

@@ -16,7 +16,7 @@ local PackStoreTypesClient = require("PackStoreTypesClient")
 local PackStoreTypesShared = require("PackStoreTypesShared")
 
 -- [ Components ] --
-local PackStoreWindow = require(script.Parent.Parent.Components.PackStore._Window)
+local PackStoreWindow = require(script.Parent.Parent.Components.PackStore)
 
 -- [ Constants ] --
 

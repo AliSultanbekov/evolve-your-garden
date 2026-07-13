@@ -10,8 +10,6 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local Blend = require("Blend")
 local ReactiveItemTypes = require("ReactiveItemTypes")
-local ObservableMap = require("ObservableMap")
-local ItemTypes = require("ItemTypes")
 local Observable = require("Observable")
 local ComponentTypes = require("ComponentTypes")
 local Rx = require("Rx")
@@ -180,15 +178,14 @@ type Props = {
         CellSize: UDim2;
         FillDirection: Enum.FillDirection?;
     },
-
-    Items: ObservableMap.ObservableMap<ItemTypes.ItemId, ReactiveItemTypes.ReactiveItem>,
+    Items: ReactiveItemTypes.ReactiveItems,
     Search: Observable.Observable<string>,
-    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
-    OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem) -> (),
+    OnItemHovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
     OnItemUnhovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
 }
-type ModuleData = {}
+type ItemsGridComponentModuleData = {}
 
-export type Module = typeof(ItemsGridComponent) & ModuleData
+export type Module = typeof(ItemsGridComponent) & ItemsGridComponentModuleData
 
 return ItemsGridComponent :: Module

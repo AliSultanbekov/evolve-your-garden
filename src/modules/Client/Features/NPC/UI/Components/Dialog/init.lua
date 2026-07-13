@@ -16,7 +16,7 @@ local NPCTypesShared = require("NPCTypesShared")
 -- [ Components ] --
 local BillboardComponent = require("BillboardComponent")
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
-local ResponseCard = require(script.Parent._ResponseCard)
+local ResponseCard = require(script._ResponseCard)
 
 -- [ Constants ] --
 
@@ -40,10 +40,11 @@ local Window = function(props: Props)
         Children = {
             AnimatedFrameComponent({
                 IsOpen = props.IsOpen,
+                ApplyDeviceScale = true;
                 Name = "DialogResponses";
                 Position = UDim2.fromScale(0.5, 0.5);
                 AnchorPoint = Vector2.new(0, 0.5),
-                Size = UDim2.fromOffset(303, 0);
+                Size = UDim2.fromOffset(286, 0);
                 AutomaticSize = Enum.AutomaticSize.Y;
                 BackgroundTransparency = 1;
                 Children = {

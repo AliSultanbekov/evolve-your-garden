@@ -12,7 +12,6 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local GardenTypesShared = require("GardenTypesShared")
 local ValueObject = require("ValueObject")
 local ReactiveItemTypes = require("ReactiveItemTypes")
-local ItemTypes = require("ItemTypes")
 local ObservableMap = require("ObservableMap")
 
 -- [ Constants ] --
@@ -32,7 +31,7 @@ export type ReactiveGardens = {
 export type ReactiveSlot = {
     Id: GardenTypesShared.SlotId,
     Plant: ValueObject.ValueObject<ReactiveItemTypes.ReactivePlantItem?>,
-    Harvest: ObservableMap.ObservableMap<ItemTypes.ItemId, ReactiveItemTypes.ReactiveItem>,
+    Harvest: ReactiveItemTypes.ReactiveItems,
 }
 export type ReactiveSlots = ObservableMap.ObservableMap<GardenTypesShared.SlotId, ReactiveSlot>
 export type SlotModel = typeof(ReplicatedStorage.Assets.Objects.Garden.Slot)

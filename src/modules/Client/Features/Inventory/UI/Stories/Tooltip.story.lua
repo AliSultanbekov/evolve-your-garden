@@ -15,7 +15,7 @@ local ItemUtil = require("ItemUtil")
 local ReactiveItemUtil = require("ReactiveItemUtil")
 
 -- [ Components ] --
-local TooltipWindow = require(script.Parent.Parent.Components.Tooltip._Window)
+local TooltipWindow = require(script.Parent.Parent.Components._ItemTooltipComponent)
 
 -- [ Constants ] --
 
@@ -27,14 +27,14 @@ local controls = {
 
 -- [ Module Table ] --
 local Tooltip = {
-    summary = "Tooltip window showing item name, rarity, and icon",
+    summary = "Inventory tooltip for the 'Snow Blossom' plant (name, icon, stats). Toggle IsSelected to show the action buttons.",
     controls = controls,
     render = function(props: { target: Instance, controls: typeof(controls), subscribe: any })
         local MaidObject = Maid.new()
 
         local Item = ReactiveItemUtil:ToReactive(ItemUtil:ProcessRawItem({
             Name = "Snow Blossom",
-            Category = "Plant"
+            Category = "Plant",
         }))
 
         local SelectedItem = ValueObject.new(if props.controls.IsOpen then Item else nil)
@@ -51,6 +51,11 @@ local Tooltip = {
                 Item = SelectedItem:Observe(),
                 Position = SelectedPosition:Observe(),
                 IsSelected = IsSelected:Observe(),
+                Actions = {
+                    Open = function(amount: number)
+                        print("[Tooltip story] Open", amount)
+                    end,
+                },
                 OnClose = function()
                     SelectedItem.Value = nil
                 end,

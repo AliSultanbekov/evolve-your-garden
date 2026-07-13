@@ -10,13 +10,11 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local _Blend = require("Blend")
 local Observable = require("Observable")
-local InventoryTypesClient = require("InventoryTypesClient")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local ComponentTypes = require("ComponentTypes")
 
 -- [ Components ] --
 local Title = require(script._Title)
-local SearchBar = require(script._SeachBar)
 local Background = require(script._Background)
 local Tabs = require(script._Tabs)
 local TabButtons = require(script._TabButtons)
@@ -24,6 +22,7 @@ local Buttons = require(script._Buttons)
 
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local CloseButtonComponent = require("CloseButtonComponent")
+local SearchBarComponent = require("SearchBarComponent")
 
 -- [ Constants ] --
 
@@ -35,6 +34,7 @@ local CloseButtonComponent = require("CloseButtonComponent")
 local Window = function(props: Props)
     return AnimatedFrameComponent({
         Name = "Inventory",
+        ApplyDeviceScale = true,
         Size = UDim2.fromOffset(1223, 729);
         Position = UDim2.fromScale(0.5, 0.5);
         AnchorPoint = Vector2.new(0.5, 0.5);
@@ -54,7 +54,13 @@ local Window = function(props: Props)
                 OnItemHovered = props.OnItemHovered;
                 OnItemUnhovered = props.OnItemUnhovered;
             });
-            SearchBar({
+            SearchBarComponent({
+                LayoutOrder = 3;
+                Position = UDim2.fromOffset(831, 9);
+                Size = UDim2.fromOffset(306, 64);
+                ZIndex = 4;
+                BackgroundImage = "rbxassetid://129977395166820";
+                SearchBoxSize = UDim2.fromOffset(306, 64);
                 OnSearch = props.OnSearch;
             });
             Buttons({
@@ -82,7 +88,7 @@ type Props = {
     ActiveTab: ComponentTypes.Prop<string>,
     Search: Observable.Observable<string>,
     
-    GetItems: (filter: string?) -> InventoryTypesClient.Items,
+    GetItems: (filter: string?) -> ReactiveItemTypes.ReactiveItems,
     SwitchTab: (tabName: string) -> (),
     OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
     OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),

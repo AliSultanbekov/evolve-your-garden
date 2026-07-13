@@ -33,9 +33,9 @@ type ModuleData = {
     _Maid: Maid.Maid,
     _HoveredInstance: ValueObject.ValueObject<Instance?>,
     _HoveredPosition: ValueObject.ValueObject<Vector2?>,
-    _MousePosition: ValueObject.ValueObject<Vector2?>,
+    _MousePosition: ValueObject.ValueObject<Vector2>,
     Signals: {
-        MousePressed: Signal.Signal<>,
+        MousePressed: Signal.Signal<(Instance?, Vector2)>,
         MouseReleased: Signal.Signal<>,
     },
     _RaycastParams: RaycastParams,
@@ -53,20 +53,25 @@ function MouseServiceClient._RecreateRaycastParams(self: Module)
     return Params
 end
 
-function MouseServiceClient._UpdateHover(self: Module)
+function MouseServiceClient._RaycastAtPointer(self: Module): RaycastResult?
     local Camera = workspace.CurrentCamera
 
     if not Camera then
-        return
+        return nil
     end
 
-    local MouseLocation = UserInputService:GetMouseLocation()
-    local UnitRay = Camera:ViewportPointToRay(MouseLocation.X, MouseLocation.Y)
-    local Result = Workspace:Raycast(UnitRay.Origin, UnitRay.Direction * RAYCAST_DISTANCE, self._RaycastParams)
+    local Location = self._MousePosition.Value
+    local UnitRay = Camera:ViewportPointToRay(Location.X, Location.Y)
+
+    return Workspace:Raycast(UnitRay.Origin, UnitRay.Direction * RAYCAST_DISTANCE, self._RaycastParams)
+end
+
+function MouseServiceClient._UpdateHover(self: Module)
+    local Result = self:_RaycastAtPointer()
 
     if Result then
         self._HoveredInstance.Value = Result.Instance
-        self._HoveredPosition.Value = Result.Position
+        self._HoveredPosition.Value = self._MousePosition.Value
     else
         self._HoveredInstance.Value = nil
         self._HoveredPosition.Value = nil
@@ -108,11 +113,11 @@ function MouseServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag
     self._Maid = Maid.new()
     self._HoveredInstance = ValueObject.new()
     self._HoveredPosition = ValueObject.new()
-    self._MousePosition = ValueObject.new()
+    self._MousePosition = ValueObject.new(Vector2.new())
     self.Signals = {
         MousePressed = Signal.new(),
         MouseReleased = Signal.new(),
-    }
+    } :: any
     self._RaycastParams = self:_RecreateRaycastParams()
 end
 
@@ -124,15 +129,12 @@ function MouseServiceClient.Start(self: Module)
     local IsMouseMoving = false
 
     self._Maid:Add(UserInputService.InputChanged:Connect(function(input: InputObject)
-        -- NOTE: no gameProcessed guard here on purpose — mouse position must track
-        -- even while the cursor is over UI (tooltips follow the mouse inside menus).
-        -- The gameProcessed guard belongs on clicks (InputBegan/Ended), not movement.
         if input.UserInputType == Enum.UserInputType.MouseMovement then
             IsMouseMoving = true
         end
     end))
 
-    self._Maid:Add(RunService.RenderStepped:Connect(function(dt: number)
+    self._Maid:Add(RunService.RenderStepped:Connect(function()
         if not IsMouseMoving then
             return
         end
@@ -148,9 +150,13 @@ function MouseServiceClient.Start(self: Module)
         if processed then
             return
         end
-        
+
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            self.Signals.MousePressed:Fire()
+            self._MousePosition.Value = UserInputService:GetMouseLocation()
+
+            local Result = self:_RaycastAtPointer()
+
+            self.Signals.MousePressed:Fire(Result and Result.Instance, self._MousePosition.Value)
         end
     end))
 

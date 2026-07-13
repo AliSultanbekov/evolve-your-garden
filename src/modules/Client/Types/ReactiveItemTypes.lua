@@ -76,7 +76,7 @@ export type ReactiveStorageItem = ReactiveItem
 -- ===== The inventory shape on the client =====
 -- Stable map references (per-id ReactiveItem doesn't get replaced; its inner
 -- ValueObjects mutate). ComputedPairs over this never remounts cards.
-export type ReactiveInventory = ObservableMap.ObservableMap<ItemTypes.ItemId, ReactiveItem>
+export type ReactiveItems = ObservableMap.ObservableMap<ItemTypes.ItemId, ReactiveItem>
 
 -- [ Private Functions ] --
 

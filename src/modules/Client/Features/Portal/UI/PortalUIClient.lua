@@ -48,31 +48,35 @@ function PortalUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 end
 
 function PortalUIClient.Start(self: Module)
+    local Adornee = self._PortalServiceClient:ObserveClosestPortal():Pipe({
+        Rx.where(function(portal: PortalTypesClient.Portal?)
+            return portal ~= nil
+        end) :: any,
+        Rx.map(function(portal: PortalTypesClient.Portal)
+            return portal.Model.UIPoint
+        end) :: any,
+    })
+
+    local IsOpen = self._PortalServiceClient:ObserveClosestPortal():Pipe({
+        Rx.map(function(portal: PortalTypesClient.Portal?)
+            return portal ~= nil
+        end) :: any,
+    })
+
     self._Maid:Add(self._UIServiceClient:MountToScreen("UIs", function() return {
         GenericPromptComponent({
-            Adornee = self._PortalServiceClient:ObserveClosestPortal():Pipe({
-                Rx.where(function(portal: PortalTypesClient.Portal?)
-                    return portal ~= nil
-                end) :: any,
-                Rx.map(function(portal: PortalTypesClient.Portal)
-                    return portal.Model.UIPoint
-                end) :: any
-            }) :: any,
-            IsOpen = self._PortalServiceClient:ObserveClosestPortal():Pipe({
-                Rx.map(function(portal: PortalTypesClient.Portal?)
-                    return portal ~= nil
-                end) :: any
-            }) :: any,
+            Adornee = Adornee :: any,
+            IsOpen = IsOpen :: any,
+            Text = "Teleport",
             Use = function()
                 local Portal = self._PortalServiceClient:GetClosestPortal()
 
                 if not Portal then
                     return
                 end
-                
+
                 self._PortalServiceClient:Use(Portal.Id)
             end,
-            Text = "Teleport"
         })
     } end))
 end

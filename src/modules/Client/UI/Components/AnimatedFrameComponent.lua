@@ -43,12 +43,13 @@ local AnimatedFrameComponent = function(props: Props)
         BackgroundColor3 = props.BackgroundColor3;
         BackgroundTransparency = props.BackgroundTransparency;
         AutomaticSize = props.AutomaticSize;
+        LayoutOrder = props.LayoutOrder;
         ZIndex = props.ZIndex;
         Visible = Blend.Computed(Scale, function(scale: number)
             return if scale < 0.01 then false else true
         end);
         [Blend.Children] = {
-            ScalerComponent({ Scale = Scale, ApplyDeviceScale = true });
+            ScalerComponent({ Scale = Scale, ApplyDeviceScale = props.ApplyDeviceScale or false });
             props.Children :: any;
         }
     }
@@ -63,8 +64,10 @@ type Props = {
     BackgroundColor3: ComponentTypes.Prop<Color3>?,
     BackgroundTransparency: ComponentTypes.Prop<number>?,
     ZIndex: ComponentTypes.Prop<number>?,
+    LayoutOrder: ComponentTypes.Prop<number>?,
     AutomaticSize: ComponentTypes.Prop<Enum.AutomaticSize>?,
     Children: { Observable.Observable<Instance> }?,
+    ApplyDeviceScale: boolean?,
     IsOpen: ComponentTypes.Prop<boolean>,
 }
 type ModuleData = {}
