@@ -17,7 +17,6 @@ local ItemTypes = require("ItemTypes")
 
 -- [ Module Table ] --
 local InventoryConfigClient = {
-    -- Display order of the tabs (TabsConfig is a dict, so it can't carry order).
     TabOrder = { "Garden", "Materials", "Items", "Currencies" },
     TabsConfig = {
         ["Garden"] = {

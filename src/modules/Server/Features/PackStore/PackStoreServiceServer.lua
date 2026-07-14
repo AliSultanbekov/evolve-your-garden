@@ -58,8 +58,6 @@ function PackStoreService.BuyPack(self: Module, player: Player, packId: PackStor
         return
     end
 
-    -- StartTime is a Unix timestamp from the backend — compare against wall
-    -- clock, not os.clock() (process uptime).
     if self._CurrentSale.StartTime + PackStoreConfig.SaleDuration <= DateTime.now().UnixTimestamp then
         return
     end
