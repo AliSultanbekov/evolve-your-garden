@@ -67,6 +67,25 @@ function PlantConfig._Init(self: Module)
                 [3] = 120,
                 [4] = 180
             }
+        },
+        ["Daisy"] = {
+            Name = "Daisy",
+            Rarity = "Uncommon",
+            Icon = "rbxassetid://175279732",
+            BaseCycleTime = 5,
+            Level = DEFAULT_LEVEL,
+            Genetics = DEFAULT_GENETICS_CONFIG,
+            Production = {
+                AmountPool = DEFAULT_AMOUNT_POOL,
+                ItemPool = {
+                    ["Snow Blossom Fruit"] = 100
+                }
+            },
+            GrowthStages = {
+                [1] = 0,
+                [2] = 60,
+                [3] = 120,
+            }
         }
     }
 
