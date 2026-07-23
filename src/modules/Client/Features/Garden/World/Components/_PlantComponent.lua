@@ -24,7 +24,7 @@ local PlantUtil = require("PlantUtil")
 -- [ Functions ] --
 local function SetupPlantModel(plantModel: Model, slotModel: GardenTypesClient.SlotModel)
     plantModel.Parent = slotModel
-    plantModel:PivotTo(slotModel.PlantSpawnPoint.WorldCFrame)
+    plantModel:PivotTo(slotModel.PlantSpawnPoint.WorldCFrame * CFrame.Angles(0, math.rad(math.random(0,360)), 0))
 
     return plantModel
 end

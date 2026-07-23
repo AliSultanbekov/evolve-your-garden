@@ -117,7 +117,6 @@ function MerchantServiceServer.Buy(self: Module, player: Player, slotId: Merchan
         return
     end
 
-    -- Grant first (capacity-checked); only take payment once the item fits.
     local BoughtItem = ItemUtil:ProcessRawItem(ItemUtil:MakeRawFromName(Slot.ItemName))
     local Result: InventoryTypesShared.Result = self._InventoryServiceServer:AddItems(player, { BoughtItem })
 
@@ -140,8 +139,6 @@ function MerchantServiceServer.Buy(self: Module, player: Player, slotId: Merchan
 end
 
 function MerchantServiceServer.Sell(self: Module, player: Player, itemId: ItemTypes.ItemId, amount: number)
-    -- Server-authoritative: everything (name, category, price) derives from the
-    -- STORED item at itemId — never from client-declared fields.
     if type(amount) ~= "number" or amount ~= amount or amount <= 0 or amount % 1 ~= 0 then
         return
     end
@@ -175,7 +172,6 @@ function MerchantServiceServer.Sell(self: Module, player: Player, itemId: ItemTy
         Amount = TotalPrice,
     }
 
-    -- GetItem returns a clone, so adjusting Amount only affects the removal request.
     InventoryItem.Amount = amount
 
     self._InventoryServiceServer:RemoveItems(player, { InventoryItem })

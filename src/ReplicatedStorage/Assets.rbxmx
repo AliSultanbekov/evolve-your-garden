@@ -2,7 +2,7 @@
 	<Meta name="ExplicitAutoJoints">true</Meta>
 	<External>null</External>
 	<External>nil</External>
-	<Item class="Folder" referent="RBX5FFD95F4D14A4B82A949FC5383257D7B">
+	<Item class="Folder" referent="RBXBB71214DB84B45C49115F0FBF4920A05">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -11,7 +11,7 @@
 			<int64 name="SourceAssetId">-1</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 		</Properties>
-		<Item class="Folder" referent="RBXC9D71849DC2A49C39B22FF6660904EEA">
+		<Item class="Folder" referent="RBX35527E0C81E8427E9D0DE7D633255D81">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -20,7 +20,7 @@
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			</Properties>
-			<Item class="Folder" referent="RBX397B5027DFCF48569EB2D439178D47FB">
+			<Item class="Folder" referent="RBXE0DCFF2C3A6D47C9A972CE69C1C11FC2">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -29,7 +29,7 @@
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				</Properties>
-				<Item class="Model" referent="RBXC8BEC5A1F404451E9CCE6B65ACF8B082">
+				<Item class="Model" referent="RBX19721FE9D8F2423EA77F6D5CB7320927">
 					<Properties>
 						<token name="LevelOfDetail">0</token>
 						<CoordinateFrame name="ModelMeshCFrame">
@@ -81,7 +81,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						<int64 name="SourceAssetId">102243263392880</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					</Properties>
-					<Item class="MeshPart" referent="RBX0EBEAB21EC0D41E8AF30EAED6390CEED">
+					<Item class="MeshPart" referent="RBX82214BB062FA4F2780E3713B3F2514D1">
 						<Properties>
 							<bool name="DoubleSided">false</bool>
 							<bool name="HasJointOffset">false</bool>
@@ -215,7 +215,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
-						<Item class="SurfaceAppearance" referent="RBXB0723E86489F40E898C8EFBAFB7C6113">
+						<Item class="SurfaceAppearance" referent="RBXC7381991CEE04B0C9625C0A7F1855521">
 							<Properties>
 								<token name="AlphaMode">1</token>
 								<Color3 name="Color">
@@ -249,7 +249,7 @@ MzE4ZThmYmM3]]></BinaryString>
 					</Item>
 				</Item>
 			</Item>
-			<Item class="Folder" referent="RBXFD0FF99E92974EF7B89554B7627DF25D">
+			<Item class="Folder" referent="RBXC3DEE77865D645C790BA9133CA405EB1">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -258,7 +258,7 @@ MzE4ZThmYmM3]]></BinaryString>
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				</Properties>
-				<Item class="Folder" referent="RBXECE2FDA4FA354615838AB4FA5497AC45">
+				<Item class="Folder" referent="RBX357148BFD2CC4832A28150544FF344EB">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -267,7 +267,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					</Properties>
-					<Item class="Model" referent="RBX841C4FF920AD4C3FB24501862587C9AE">
+					<Item class="Model" referent="RBXDD9660F3A0F44E3B88556E130C29B3EB">
 						<Properties>
 							<token name="LevelOfDetail">0</token>
 							<CoordinateFrame name="ModelMeshCFrame">
@@ -318,7 +318,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
-						<Item class="Folder" referent="RBXFAA1A044A142439BB4D24E3E03AD6297">
+						<Item class="Folder" referent="RBX56541AFBAF8B4F178C269F2559430333">
 							<Properties>
 								<BinaryString name="AttributesSerialize"></BinaryString>
 								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -327,7 +327,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
-							<Item class="Model" referent="RBXBD006D01812C434D969C64B6F7B41150">
+							<Item class="Model" referent="RBX96B64E7BF4FE48BB89D6D0FB03B19F08">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -378,7 +378,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBX4D7B1D321A5C45AA895461086E7B7BC0">
+								<Item class="MeshPart" referent="RBX274F035F6AB9418893D87711C1AFF9B8">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -513,7 +513,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXCFFC464E4F974E6B84441F013A033180">
+								<Item class="MeshPart" referent="RBXD7624FBF7F4D461B9A3F6C183C7B181F">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -648,7 +648,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXF126D685CD7E4E04BD8F9D56C4159C8B">
+								<Item class="MeshPart" referent="RBX9AE952586F30454BA0082A664B5B72F8">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -783,7 +783,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX9B35BABEF8824F2E953BB660667B3022">
+								<Item class="MeshPart" referent="RBX518E590B07224EEABB70D3FDC13C4124">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -919,7 +919,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBX295FB18BDBEE4C3AA9676A67A5BC4D08">
+							<Item class="Model" referent="RBX0260A96EB8DB41CE964105697E0245D0">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -970,7 +970,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBXEA50811DED78455AB86C49DD2F656A95">
+								<Item class="MeshPart" referent="RBXA85EB07E60ED4A6AA98C707C4840B4A6">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -1105,7 +1105,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXCEDD77E790244F67969A3BA4DD04A45D">
+								<Item class="MeshPart" referent="RBX55D2C11AD6764DEDAA51CC72209DAEE3">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -1240,7 +1240,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXFD8A2D734BA14E69BEA3F8C162344037">
+								<Item class="MeshPart" referent="RBXD17480EA3F42453E8F9468D5287ABA95">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -1375,7 +1375,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX80857684D415493EB5CE60BBBA654022">
+								<Item class="MeshPart" referent="RBX7F1D93DF261249CAA212B7233D14C0E2">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -1511,7 +1511,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBX8A0D2F56495A46D38B394ED6B10C0380">
+							<Item class="Model" referent="RBX1471838ED54949C48545A0A1F2FC0ADA">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -1562,7 +1562,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBX17DF9F1281E946A9AF3B9C8582BA08F9">
+								<Item class="MeshPart" referent="RBX6010A90CAC8149A885CC2AD7A964EF6D">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -1697,7 +1697,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX6AE6935930334DC598FD8BDB5F8489EB">
+								<Item class="MeshPart" referent="RBX7BA9B4BE205744269E0B4CE302A1D324">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -1832,7 +1832,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX698F3144913D48E485F0019B5379FF8D">
+								<Item class="MeshPart" referent="RBXA3777BB08CAD46D29856B631A5F23649">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -1967,7 +1967,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX06F4EB41F89C4FF58FE52E0CDE69B126">
+								<Item class="MeshPart" referent="RBXBE37649F463644AEAAB1B9BD171CEBEF">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -2103,7 +2103,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBXB7BA8209A6EF4390BD4A103B0631534E">
+							<Item class="Model" referent="RBX7D2AFBED67A748B5A4C3EB7B8C13E7A7">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -2154,7 +2154,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBXF0602A158290455BB8498C3067E3BC54">
+								<Item class="MeshPart" referent="RBX637A5445050E4E248795700ED596FFB6">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -2289,7 +2289,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX8C2FAD9695A94A7A84974CB54E33F349">
+								<Item class="MeshPart" referent="RBX048CC4C1F3BD466F83DF3ED7763FC3F1">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -2424,7 +2424,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX8391D10F3AF242DFAB096DF9702EBE76">
+								<Item class="MeshPart" referent="RBX82B5E6BB84C54A0EBABF71ED55BE4D0D">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -2559,7 +2559,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX40B40677A02E4C4B93E4B18E2E97FBEB">
+								<Item class="MeshPart" referent="RBXC0B46EAD8BF44D6D914B899E50CC48EA">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -2695,7 +2695,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBX28DAC55195AE41EC8839280DCDB24687">
+							<Item class="Model" referent="RBXF55B3F99763745A597CAC4332C2AD7B7">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -2746,7 +2746,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBXA08B2689723446AC868380242169792D">
+								<Item class="MeshPart" referent="RBXC6E1003045E94DE2B4FFB119069755A8">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -2881,7 +2881,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXE98A934D011D4C9BBB9B259DBC93905A">
+								<Item class="MeshPart" referent="RBXD5ADD1DB6D0D4E749E8B1DE77F73EA6D">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -3016,7 +3016,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX586BBB636BCB4E1291B6F448E01524AC">
+								<Item class="MeshPart" referent="RBX597BCE9762E0416F98F79653C2D18847">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -3151,7 +3151,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXCFEB83FF4B82461CA5C01D3247ECE5A8">
+								<Item class="MeshPart" referent="RBX3DD315A0298742F584A4A3472CBCB785">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -3287,7 +3287,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBX66B07167945C473982F027A96DA4A2C8">
+							<Item class="Model" referent="RBXF961310C57664309ADFD69A68D3F5DC2">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -3338,7 +3338,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBX94BF786DBDA64C23898A6F2F5BE5BFAC">
+								<Item class="MeshPart" referent="RBXDE1DA77B9945482A991D8EBCEB59F288">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -3473,7 +3473,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX5EA891BB50654DF5A5934AF7C5AC5002">
+								<Item class="MeshPart" referent="RBXD9580466831E48798DFF04E73271D764">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -3608,7 +3608,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX1E34B52F0D7F47D18BFD9E6461AA77B1">
+								<Item class="MeshPart" referent="RBX01529A190E944E4E90D4B2B75099086A">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -3743,7 +3743,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX54E6919D16B44BE4900489B0B6046DF0">
+								<Item class="MeshPart" referent="RBXA9EA0DA1561A426598B96FDD7333E101">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -3879,7 +3879,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBX1B8671AA3A334D9CB5BB63EED5A939FE">
+							<Item class="Model" referent="RBX0BE088F8B66E4BF0B31B043606FE65E6">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -3930,7 +3930,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBXE5D3AAD8A53645CA9C9922F5C4816DCD">
+								<Item class="MeshPart" referent="RBXF32E62A995374593942A26D1D7B53A41">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -4065,7 +4065,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXC37AFBF0279048449DB4EE39443AD917">
+								<Item class="MeshPart" referent="RBXC95F23C81A4A44E4A9E3FF7A4F6ACFCB">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -4200,7 +4200,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX6E951D1DDB1A4E929F9261FB881173F3">
+								<Item class="MeshPart" referent="RBX020039F38AB44925BC72AC6AD748ED12">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -4335,7 +4335,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX6C7F6F8ED0854E46BC12529FF142B33B">
+								<Item class="MeshPart" referent="RBXFDA73AF0706F4C17AFADCAC17FFCDED3">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -4471,7 +4471,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBX6C16D908B36045D7815F0DF8BB2BAC3E">
+							<Item class="Model" referent="RBX3A1C399B286C41EF9C81D89C150DDCA2">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -4522,7 +4522,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBXBA9E933AD32C463BB18DEE534079D1B8">
+								<Item class="MeshPart" referent="RBX22D68E45BE9B4F0492FEF0679E20C8CC">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -4657,7 +4657,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX77941A9C80D449669AE18D2FA4184995">
+								<Item class="MeshPart" referent="RBXAA266E924C114EA6874523CCB35822A9">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -4792,7 +4792,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX287E89823AD94CA6AAF1953E8B9E9A51">
+								<Item class="MeshPart" referent="RBX752A9BA7F50D47FB90EDADD0FEECA030">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -4927,7 +4927,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX38C89B2B90F6458599DF800B1A1B450F">
+								<Item class="MeshPart" referent="RBXD7280A5107F0470D8A5CA516019589F6">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -5063,7 +5063,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBXA31B2DA8594047AF9BBE9F23266E270E">
+							<Item class="Model" referent="RBXF624E583EF54411BB44FCDBA6F50D3EB">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -5114,7 +5114,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBX76AA72189AA24B558AA2E18915775D42">
+								<Item class="MeshPart" referent="RBXE39C157B95434DC3BB48DA30D3E7ACBD">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -5249,7 +5249,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX8AF7527FC1134937B4E5F2548AD2AC27">
+								<Item class="MeshPart" referent="RBX108070E5C8C84FCAA58608543FC45CB8">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -5384,7 +5384,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX423C4DB7C8C947B299AAF8E48F05BB7E">
+								<Item class="MeshPart" referent="RBX82B20B82107B4411B89192B73460B1AB">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -5519,7 +5519,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX0EC6AE375F994F1780B6BB3A411E1B52">
+								<Item class="MeshPart" referent="RBX4835588CA00F48CB87722BAE93A2EE04">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -5655,7 +5655,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBX3CF3E4D708024924A5236E1DF5B49D66">
+							<Item class="Model" referent="RBXF9B407814DA04717B38F7D3529B9F8F3">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -5706,7 +5706,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="Folder" referent="RBX6380AD23B8ED4470929207864F70FAA3">
+								<Item class="Folder" referent="RBX744F40BC1DC0475EB7CB34F5D0F6CBBE">
 									<Properties>
 										<BinaryString name="AttributesSerialize"></BinaryString>
 										<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -5715,7 +5715,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
-									<Item class="Attachment" referent="RBXABE7ED96818E45968E374AB529E24F5F">
+									<Item class="Attachment" referent="RBX19313B50E7FA4E07AD12E3C0C501888A">
 										<Properties>
 											<CoordinateFrame name="CFrame">
 												<X>0.148884699</X>
@@ -5740,7 +5740,7 @@ MzE4ZThmYmM3]]></BinaryString>
 											<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										</Properties>
 									</Item>
-									<Item class="Attachment" referent="RBX36C9D8750BCD4E94B2E58CC64ABF0805">
+									<Item class="Attachment" referent="RBXCD3D9C7F159840FFA1286D25B4048862">
 										<Properties>
 											<CoordinateFrame name="CFrame">
 												<X>0.148884699</X>
@@ -5765,10 +5765,10 @@ MzE4ZThmYmM3]]></BinaryString>
 											<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										</Properties>
 									</Item>
-									<Item class="Beam" referent="RBX4FED8D795BB44088B8E4C8B774D978CE">
+									<Item class="Beam" referent="RBX95911F47D2FF40F6A075BF72277C1FCF">
 										<Properties>
-											<Ref name="Attachment0">RBXABE7ED96818E45968E374AB529E24F5F</Ref>
-											<Ref name="Attachment1">RBX36C9D8750BCD4E94B2E58CC64ABF0805</Ref>
+											<Ref name="Attachment0">RBX19313B50E7FA4E07AD12E3C0C501888A</Ref>
+											<Ref name="Attachment1">RBXCD3D9C7F159840FFA1286D25B4048862</Ref>
 											<float name="Brightness">1.5</float>
 											<ColorSequence name="Color">0 1 0.894118 0.509804 0 1 1 0.894118 0.509804 0 </ColorSequence>
 											<float name="CurveSize0">0</float>
@@ -5795,7 +5795,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										</Properties>
 									</Item>
 								</Item>
-								<Item class="Model" referent="RBX77FD1D01024E4E9D89CFE59BFC628FAD">
+								<Item class="Model" referent="RBXBF0A38B2A5A744C883A56447040D9DCA">
 									<Properties>
 										<token name="LevelOfDetail">0</token>
 										<CoordinateFrame name="ModelMeshCFrame">
@@ -5846,7 +5846,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
-									<Item class="MeshPart" referent="RBX146DF660A69D4BA4BB1F8F23826B6E0A">
+									<Item class="MeshPart" referent="RBX879B98802F614BEC9EA0F69DF1103ED8">
 										<Properties>
 											<bool name="DoubleSided">false</bool>
 											<bool name="HasJointOffset">false</bool>
@@ -5981,7 +5981,7 @@ MzE4ZThmYmM3]]></BinaryString>
 											<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										</Properties>
 									</Item>
-									<Item class="MeshPart" referent="RBX196577BA187C4442A4023BE2F9C17E45">
+									<Item class="MeshPart" referent="RBX6B48FB4E163144FCA6385EC78D7705D5">
 										<Properties>
 											<bool name="DoubleSided">false</bool>
 											<bool name="HasJointOffset">false</bool>
@@ -6116,7 +6116,7 @@ MzE4ZThmYmM3]]></BinaryString>
 											<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										</Properties>
 									</Item>
-									<Item class="MeshPart" referent="RBX24384ACEFCAA4F34845F700966BF7F85">
+									<Item class="MeshPart" referent="RBXBA2757D22C0E46CFA1820B9C218D6B63">
 										<Properties>
 											<bool name="DoubleSided">false</bool>
 											<bool name="HasJointOffset">false</bool>
@@ -6251,7 +6251,7 @@ MzE4ZThmYmM3]]></BinaryString>
 											<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										</Properties>
 									</Item>
-									<Item class="MeshPart" referent="RBX6C5FCCA82C54425AB9C436C3A7AA7470">
+									<Item class="MeshPart" referent="RBXDE38004BC3EA414BA1370E3C145023FB">
 										<Properties>
 											<bool name="DoubleSided">false</bool>
 											<bool name="HasJointOffset">false</bool>
@@ -6387,7 +6387,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										</Properties>
 									</Item>
 								</Item>
-								<Item class="MeshPart" referent="RBX3C0602C7D66C456BB64B64ACB6FDF700">
+								<Item class="MeshPart" referent="RBXEB315EC5081245D7B3A99F222D6BE64C">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -6522,7 +6522,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX548B4C6B0F8D4B0281D5EB391BD37744">
+								<Item class="MeshPart" referent="RBX5498DCED9FAE434D8F5124996B278B0D">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -6657,7 +6657,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX0E90F1CAB8224B56A685672E142C2608">
+								<Item class="MeshPart" referent="RBX8152A0551C6641D3BC76BE004C24114A">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -6792,7 +6792,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX0496E060A6C24984AF56B59ED43535B0">
+								<Item class="MeshPart" referent="RBX792B1CB57C4F4FDF9B9235440B0799B0">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -6928,7 +6928,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBX385C16D8A7144049B2BCFD4FB1A85096">
+							<Item class="Model" referent="RBXDAAA53EE1B9245108A33D32E1B4433CB">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -6979,7 +6979,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBXA48690B238AC49FA963977621F40F7F6">
+								<Item class="MeshPart" referent="RBX8C8F8EF444CE40EDB7109CC315ACE29C">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -7114,7 +7114,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX0D5104D58C864F958B914E5ABEDD5D10">
+								<Item class="MeshPart" referent="RBXCA800469EC914649887FCE438573A746">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -7249,7 +7249,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXB6A4E5A6B96743C093349AEAB2E8AD76">
+								<Item class="MeshPart" referent="RBXEA538F5F5FAD4F2E9B83E606A941C12B">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -7384,7 +7384,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXD8A0E6ACB73649E2AE7E69EDB6680050">
+								<Item class="MeshPart" referent="RBXA54C75D6F4484509B09A633B2C2F4543">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -7519,7 +7519,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXF9A26836C477435F9225DAC0E9B7D5C0">
+								<Item class="MeshPart" referent="RBX6462D47161034553ABAC1B71B697FE6E">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -7654,7 +7654,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXF0C39D94882F466FB6C55CF7EE9742FB">
+								<Item class="MeshPart" referent="RBXC751447BF0174A87B1ED4AFC417DEAE8">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -7789,7 +7789,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX849F87C627D04BAE9C8AAD0F10C6D71D">
+								<Item class="MeshPart" referent="RBX34D0A32B3BA04C43B91D822DCF01EEA5">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -7925,7 +7925,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBX1C27F4D01DAB470FA58DABC448508F25">
+							<Item class="Model" referent="RBX784CC6D915594B2490483F2518853530">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -7976,7 +7976,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBX514C65B4CBFF47A8AE3229939B5C9E0E">
+								<Item class="MeshPart" referent="RBXE5480F4A74764027B828D9ABA3ECD642">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -8111,7 +8111,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXF63E7052F1C34F2CA4A660F32C6F83B9">
+								<Item class="MeshPart" referent="RBXCECA8AD98EBC4C28B49D2DAFADDE36E5">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -8246,7 +8246,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXF0329185498C4E77B7CC002D5F007078">
+								<Item class="MeshPart" referent="RBXF024D306E0824C03BD53947BA8D6A245">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -8381,7 +8381,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXB4F52A7FE6994435AA532B076BDA200A">
+								<Item class="MeshPart" referent="RBXA3DF6B917DD64B7198C39331C2C010F3">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -8516,7 +8516,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX5599889A9F6B44E4A98CCDFE52C9469A">
+								<Item class="MeshPart" referent="RBX05CB4A5AE288477EA94D6B3A41F74982">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -8651,7 +8651,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX2244E0AD5F9B4A9D8C76DB91A8BFA2A4">
+								<Item class="MeshPart" referent="RBX46F58241EA504B94812088DCF1E31990">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -8786,7 +8786,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX607CB35FE1504741861A98DC3637D1D7">
+								<Item class="MeshPart" referent="RBX003D7CEDFD154F17A68F2630CCFDE68E">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -8922,7 +8922,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Model" referent="RBX87620537A6934510AA6A78BF965ED215">
+							<Item class="Model" referent="RBXB34C7D88461F4CCD99E4E36EA0548BF3">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -8973,7 +8973,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBX48757248541C4531963ACE00B4D50447">
+								<Item class="MeshPart" referent="RBX13F3CD550FB94C5981104AB80F2095FB">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -9108,7 +9108,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX921488CC58254FFA88FDDDF5CE135B0B">
+								<Item class="MeshPart" referent="RBXD1C11D25F4B442088E9165A4800FF075">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -9243,7 +9243,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX18510A52142F4F3BBD5D07961446E0E5">
+								<Item class="MeshPart" referent="RBX5B8F47057DE249D6A5431B2E54C85101">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -9378,7 +9378,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBXA6E7F61FB58D4EE18024C5780689017C">
+								<Item class="MeshPart" referent="RBX901D0FFEEF534021995D6B3BE1E8FB86">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -9513,7 +9513,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX981039DFFA984C3CB7E794F9C6D7E25A">
+								<Item class="MeshPart" referent="RBXD1150D5D37C748598CEAC170E31DF150">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -9648,7 +9648,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX63FED47811C44E1285432624C3048A32">
+								<Item class="MeshPart" referent="RBX082039F211714A37AB077AF8F16C2905">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -9783,7 +9783,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="MeshPart" referent="RBX9EE2939869EA42F29D8FAD947E9BCBE1">
+								<Item class="MeshPart" referent="RBX43052FAC4CC742438439E8E165FDBD1B">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -9919,7 +9919,173 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="MeshPart" referent="RBX001C3C87B0B943F7A05067B966D8125C">
+							<Item class="MeshPart" referent="RBXDFF499AFF9AF409687F8CA21881C46ED">
+								<Properties>
+									<bool name="DoubleSided">false</bool>
+									<bool name="HasJointOffset">false</bool>
+									<bool name="HasSkinnedMesh">false</bool>
+									<Vector3 name="InitialSize">
+										<X>3.22066736</X>
+										<Y>2.7401557</Y>
+										<Z>3.38151026</Z>
+									</Vector3>
+									<Vector3 name="JointOffset">
+										<X>0</X>
+										<Y>0</Y>
+										<Z>0</Z>
+									</Vector3>
+									<Content name="MeshId"><url>rbxassetid://116322421818378</url></Content>
+									<BinaryString name="PhysicsData"></BinaryString>
+									<token name="RenderFidelity">0</token>
+									<Content name="TextureID"><null></null></Content>
+									<int name="VertexCount">0</int>
+									<SharedString name="AeroMeshData">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+									<token name="FluidFidelityInternal">0</token>
+									<bool name="InertiaMigrated">false</bool>
+									<SharedString name="PhysicalConfigData">a/RB5FrgMb8qvmlZhsgnuQ==</SharedString>
+									<Vector3 name="UnscaledCofm">
+										<X>0.0239293743</X>
+										<Y>0.0341900587</Y>
+										<Z>-0.0135536855</Z>
+									</Vector3>
+									<Vector3 name="UnscaledVolInertiaDiags">
+										<X>12.369894</X>
+										<Y>14.4619226</Y>
+										<Z>12.1051159</Z>
+									</Vector3>
+									<Vector3 name="UnscaledVolInertiaOffDiags">
+										<X>-0.915456951</X>
+										<Y>-0.0337322652</Y>
+										<Z>0.104408279</Z>
+									</Vector3>
+									<float name="UnscaledVolume">14.0687752</float>
+									<bool name="Anchored">true</bool>
+									<bool name="AudioCanCollide">true</bool>
+									<float name="BackParamA">-0.5</float>
+									<float name="BackParamB">0.5</float>
+									<token name="BackSurface">0</token>
+									<token name="BackSurfaceInput">0</token>
+									<float name="BottomParamA">-0.5</float>
+									<float name="BottomParamB">0.5</float>
+									<token name="BottomSurface">0</token>
+									<token name="BottomSurfaceInput">0</token>
+									<CoordinateFrame name="CFrame">
+										<X>294.355347</X>
+										<Y>60.1025429</Y>
+										<Z>-19.7167702</Z>
+										<R00>1</R00>
+										<R01>0</R01>
+										<R02>0</R02>
+										<R10>0</R10>
+										<R11>-1</R11>
+										<R12>0</R12>
+										<R20>0</R20>
+										<R21>0</R21>
+										<R22>-1</R22>
+									</CoordinateFrame>
+									<bool name="CanCollide">true</bool>
+									<bool name="CanQuery">true</bool>
+									<bool name="CanTouch">true</bool>
+									<bool name="CastShadow">true</bool>
+									<string name="CollisionGroup">Default</string>
+									<int name="CollisionGroupId">0</int>
+									<Color3uint8 name="Color3uint8">4284045402</Color3uint8>
+									<PhysicalProperties name="CustomPhysicalProperties">
+										<CustomPhysics>false</CustomPhysics>
+									</PhysicalProperties>
+									<bool name="EnableFluidForces">true</bool>
+									<float name="FrontParamA">-0.5</float>
+									<float name="FrontParamB">0.5</float>
+									<token name="FrontSurface">0</token>
+									<token name="FrontSurfaceInput">0</token>
+									<float name="LeftParamA">-0.5</float>
+									<float name="LeftParamB">0.5</float>
+									<token name="LeftSurface">0</token>
+									<token name="LeftSurfaceInput">0</token>
+									<bool name="Locked">false</bool>
+									<bool name="Massless">false</bool>
+									<token name="Material">256</token>
+									<string name="MaterialVariantSerialized"></string>
+									<CoordinateFrame name="PivotOffset">
+										<X>-0.0180188492</X>
+										<Y>0.367890954</Y>
+										<Z>0.0214230046</Z>
+										<R00>-6.12323426e-17</R00>
+										<R01>1</R01>
+										<R02>6.12323426e-17</R02>
+										<R10>-1.22464685e-16</R10>
+										<R11>6.12323426e-17</R11>
+										<R12>-1</R12>
+										<R20>-1</R20>
+										<R21>-6.12323426e-17</R21>
+										<R22>1.22464685e-16</R22>
+									</CoordinateFrame>
+									<float name="Reflectance">0</float>
+									<float name="RightParamA">-0.5</float>
+									<float name="RightParamB">0.5</float>
+									<token name="RightSurface">0</token>
+									<token name="RightSurfaceInput">0</token>
+									<int name="RootPriority">0</int>
+									<Vector3 name="RotVelocity">
+										<X>0</X>
+										<Y>0</Y>
+										<Z>0</Z>
+									</Vector3>
+									<float name="TopParamA">-0.5</float>
+									<float name="TopParamB">0.5</float>
+									<token name="TopSurface">0</token>
+									<token name="TopSurfaceInput">0</token>
+									<float name="Transparency">0</float>
+									<Vector3 name="Velocity">
+										<X>0</X>
+										<Y>0</Y>
+										<Z>0</Z>
+									</Vector3>
+									<Vector3 name="size">
+										<X>3.25942969</X>
+										<Y>2.77313495</Y>
+										<Z>3.42220879</Z>
+									</Vector3>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<string name="Name">Rock_03</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+								</Properties>
+								<Item class="SurfaceAppearance" referent="RBXFE5400043CAF4AD39FC0E30F5243F5DE">
+									<Properties>
+										<token name="AlphaMode">0</token>
+										<Color3 name="Color">
+											<R>1</R>
+											<G>1</G>
+											<B>1</B>
+										</Color3>
+										<Content name="ColorMap"><null></null></Content>
+										<Content name="EmissiveMaskContent">
+											<null></null>
+										</Content>
+										<float name="EmissiveStrength">1</float>
+										<Color3 name="EmissiveTint">
+											<R>1</R>
+											<G>1</G>
+											<B>1</B>
+										</Color3>
+										<Content name="MetalnessMap"><url>rbxassetid://84425024714993</url></Content>
+										<Content name="NormalMap"><null></null></Content>
+										<token name="ResampleMode">0</token>
+										<Content name="RoughnessMap"><url>rbxassetid://100926959368820</url></Content>
+										<Content name="TexturePack"><url>rbxassetid://112112967512191</url></Content>
+										<BinaryString name="AttributesSerialize"></BinaryString>
+										<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+										<bool name="DefinesCapabilities">false</bool>
+										<string name="Name">SurfaceAppearance</string>
+										<int64 name="SourceAssetId">-1</int64>
+										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+									</Properties>
+								</Item>
+							</Item>
+							<Item class="MeshPart" referent="RBXBFD82787ED314AE18196F94A51CD3B1E">
 								<Properties>
 									<bool name="DoubleSided">false</bool>
 									<bool name="HasJointOffset">false</bool>
@@ -10053,7 +10219,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="SurfaceAppearance" referent="RBX3C4C763C420C412D94D7844F17A7545D">
+								<Item class="SurfaceAppearance" referent="RBXB4FF664C367840E29D7A660D7AA5618B">
 									<Properties>
 										<token name="AlphaMode">0</token>
 										<Color3 name="Color">
@@ -10085,7 +10251,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="MeshPart" referent="RBXE1713A77811041618BB3C702136FA760">
+							<Item class="MeshPart" referent="RBXAE8794875AF042BD8F2874D2E4B4C36A">
 								<Properties>
 									<bool name="DoubleSided">false</bool>
 									<bool name="HasJointOffset">false</bool>
@@ -10219,7 +10385,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="SurfaceAppearance" referent="RBX7A7EBA73BC4E4E3B9C59154E32414213">
+								<Item class="SurfaceAppearance" referent="RBX661F48A197F940918BE1833F75D470CE">
 									<Properties>
 										<token name="AlphaMode">0</token>
 										<Color3 name="Color">
@@ -10251,7 +10417,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="MeshPart" referent="RBXCFB1D11E3B7B4E4491694EF5BBCF2B50">
+							<Item class="MeshPart" referent="RBXB81FDFB99E9B49CF8D6B8E31A8DA309F">
 								<Properties>
 									<bool name="DoubleSided">false</bool>
 									<bool name="HasJointOffset">false</bool>
@@ -10385,7 +10551,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="Texture" referent="RBX2B7BDC17B22245F1807054AC02CB3474">
+								<Item class="Texture" referent="RBX5CBC27B0E0BA494480203B8C213728A0">
 									<Properties>
 										<float name="OffsetStudsU">0</float>
 										<float name="OffsetStudsV">0</float>
@@ -10423,7 +10589,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="Texture" referent="RBX82C5F9EEE1C446808CD5ADF818F41AE8">
+								<Item class="Texture" referent="RBX9BEAAAE3DA5B4F2C87D2C0DB15BE517A">
 									<Properties>
 										<float name="OffsetStudsU">0</float>
 										<float name="OffsetStudsV">0</float>
@@ -10461,7 +10627,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="Texture" referent="RBX5DE37CF341B245CC8C1EF76E65FE65F0">
+								<Item class="Texture" referent="RBX1B5C01928DB04754A4E11874CE3A6B20">
 									<Properties>
 										<float name="OffsetStudsU">0</float>
 										<float name="OffsetStudsV">0</float>
@@ -10499,7 +10665,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="Texture" referent="RBX96028DF8C44F4EDA870FC83897932E80">
+								<Item class="Texture" referent="RBX1425F0E0E2FF4A159536F6A729FC81B8">
 									<Properties>
 										<float name="OffsetStudsU">0</float>
 										<float name="OffsetStudsV">0</float>
@@ -10537,7 +10703,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="Texture" referent="RBXC997894822B84EE0ACBC41D9A6D00FBC">
+								<Item class="Texture" referent="RBX554A33813C5248F6A7F991A0C536FB57">
 									<Properties>
 										<float name="OffsetStudsU">0</float>
 										<float name="OffsetStudsV">0</float>
@@ -10575,7 +10741,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
 								</Item>
-								<Item class="Texture" referent="RBX911CCB0A3D2A47F5830B7AC1A865381F">
+								<Item class="Texture" referent="RBX95DD0FB8BB854485A4A38278F7D7B6A3">
 									<Properties>
 										<float name="OffsetStudsU">0</float>
 										<float name="OffsetStudsV">0</float>
@@ -10614,7 +10780,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="MeshPart" referent="RBXC5885C478EF44839ACA017DD0FD4BD73">
+							<Item class="MeshPart" referent="RBXC0C8A89D66694259B23A84EC75B0468C">
 								<Properties>
 									<bool name="DoubleSided">false</bool>
 									<bool name="HasJointOffset">false</bool>
@@ -10749,7 +10915,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
 							</Item>
-							<Item class="MeshPart" referent="RBX09B267C62391496FA1B662269569C255">
+							<Item class="MeshPart" referent="RBXC9C835B65F7D4D10BEAA45B62D414DA9">
 								<Properties>
 									<bool name="DoubleSided">false</bool>
 									<bool name="HasJointOffset">false</bool>
@@ -10884,7 +11050,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
 							</Item>
-							<Item class="MeshPart" referent="RBX8D2D5B6EE0E04DE7906216ED520242C9">
+							<Item class="MeshPart" referent="RBXA2C8CD2FBE9449BEB401D3C7DC8929AE">
 								<Properties>
 									<bool name="DoubleSided">false</bool>
 									<bool name="HasJointOffset">false</bool>
@@ -11019,7 +11185,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
 							</Item>
-							<Item class="MeshPart" referent="RBX5C47EBE3A86746D6B52C1D54478D23C7">
+							<Item class="MeshPart" referent="RBX4D27784BBB3F4042ADF4EAB572596BA4">
 								<Properties>
 									<bool name="DoubleSided">false</bool>
 									<bool name="HasJointOffset">false</bool>
@@ -11154,7 +11320,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
 							</Item>
-							<Item class="MeshPart" referent="RBX4E28B0361D5740268D3D928DCB2BE71D">
+							<Item class="MeshPart" referent="RBXAA549CE746404312950F38B438EF0C92">
 								<Properties>
 									<bool name="DoubleSided">false</bool>
 									<bool name="HasJointOffset">false</bool>
@@ -11289,7 +11455,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
 							</Item>
-							<Item class="MeshPart" referent="RBX0D0AC77DDCC74E0D9153871BE16FA7D9">
+							<Item class="MeshPart" referent="RBX83836F84703143D19DD43D746D8CA04F">
 								<Properties>
 									<bool name="DoubleSided">false</bool>
 									<bool name="HasJointOffset">false</bool>
@@ -11424,7 +11590,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
 							</Item>
-							<Item class="MeshPart" referent="RBX01791F930F94475DBD8709ED982B8838">
+							<Item class="MeshPart" referent="RBXC06D53A4E0AE4194BB77ABD945E30633">
 								<Properties>
 									<bool name="DoubleSided">false</bool>
 									<bool name="HasJointOffset">false</bool>
@@ -11559,7 +11725,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
 							</Item>
-							<Item class="MeshPart" referent="RBX42720A7B722C4E13B4751462D5E1677E">
+							<Item class="MeshPart" referent="RBX0D4E1BE8BEF841E1BDBE09F0C087F72B">
 								<Properties>
 									<bool name="DoubleSided">false</bool>
 									<bool name="HasJointOffset">false</bool>
@@ -11694,174 +11860,8 @@ MzE4ZThmYmM3]]></BinaryString>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
 							</Item>
-							<Item class="MeshPart" referent="RBXA6AEAD124B25438EA1AB5E470A1994DE">
-								<Properties>
-									<bool name="DoubleSided">false</bool>
-									<bool name="HasJointOffset">false</bool>
-									<bool name="HasSkinnedMesh">false</bool>
-									<Vector3 name="InitialSize">
-										<X>3.22066736</X>
-										<Y>2.7401557</Y>
-										<Z>3.38151026</Z>
-									</Vector3>
-									<Vector3 name="JointOffset">
-										<X>0</X>
-										<Y>0</Y>
-										<Z>0</Z>
-									</Vector3>
-									<Content name="MeshId"><url>rbxassetid://116322421818378</url></Content>
-									<BinaryString name="PhysicsData"></BinaryString>
-									<token name="RenderFidelity">0</token>
-									<Content name="TextureID"><null></null></Content>
-									<int name="VertexCount">0</int>
-									<SharedString name="AeroMeshData">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-									<token name="FluidFidelityInternal">0</token>
-									<bool name="InertiaMigrated">false</bool>
-									<SharedString name="PhysicalConfigData">a/RB5FrgMb8qvmlZhsgnuQ==</SharedString>
-									<Vector3 name="UnscaledCofm">
-										<X>0.0239293743</X>
-										<Y>0.0341900587</Y>
-										<Z>-0.0135536855</Z>
-									</Vector3>
-									<Vector3 name="UnscaledVolInertiaDiags">
-										<X>12.369894</X>
-										<Y>14.4619226</Y>
-										<Z>12.1051159</Z>
-									</Vector3>
-									<Vector3 name="UnscaledVolInertiaOffDiags">
-										<X>-0.915456951</X>
-										<Y>-0.0337322652</Y>
-										<Z>0.104408279</Z>
-									</Vector3>
-									<float name="UnscaledVolume">14.0687752</float>
-									<bool name="Anchored">true</bool>
-									<bool name="AudioCanCollide">true</bool>
-									<float name="BackParamA">-0.5</float>
-									<float name="BackParamB">0.5</float>
-									<token name="BackSurface">0</token>
-									<token name="BackSurfaceInput">0</token>
-									<float name="BottomParamA">-0.5</float>
-									<float name="BottomParamB">0.5</float>
-									<token name="BottomSurface">0</token>
-									<token name="BottomSurfaceInput">0</token>
-									<CoordinateFrame name="CFrame">
-										<X>294.355347</X>
-										<Y>60.1025429</Y>
-										<Z>-19.7167702</Z>
-										<R00>1</R00>
-										<R01>0</R01>
-										<R02>0</R02>
-										<R10>0</R10>
-										<R11>-1</R11>
-										<R12>0</R12>
-										<R20>0</R20>
-										<R21>0</R21>
-										<R22>-1</R22>
-									</CoordinateFrame>
-									<bool name="CanCollide">true</bool>
-									<bool name="CanQuery">true</bool>
-									<bool name="CanTouch">true</bool>
-									<bool name="CastShadow">true</bool>
-									<string name="CollisionGroup">Default</string>
-									<int name="CollisionGroupId">0</int>
-									<Color3uint8 name="Color3uint8">4284045402</Color3uint8>
-									<PhysicalProperties name="CustomPhysicalProperties">
-										<CustomPhysics>false</CustomPhysics>
-									</PhysicalProperties>
-									<bool name="EnableFluidForces">true</bool>
-									<float name="FrontParamA">-0.5</float>
-									<float name="FrontParamB">0.5</float>
-									<token name="FrontSurface">0</token>
-									<token name="FrontSurfaceInput">0</token>
-									<float name="LeftParamA">-0.5</float>
-									<float name="LeftParamB">0.5</float>
-									<token name="LeftSurface">0</token>
-									<token name="LeftSurfaceInput">0</token>
-									<bool name="Locked">false</bool>
-									<bool name="Massless">false</bool>
-									<token name="Material">256</token>
-									<string name="MaterialVariantSerialized"></string>
-									<CoordinateFrame name="PivotOffset">
-										<X>-0.0180188492</X>
-										<Y>0.367890954</Y>
-										<Z>0.0214230046</Z>
-										<R00>-6.12323426e-17</R00>
-										<R01>1</R01>
-										<R02>6.12323426e-17</R02>
-										<R10>-1.22464685e-16</R10>
-										<R11>6.12323426e-17</R11>
-										<R12>-1</R12>
-										<R20>-1</R20>
-										<R21>-6.12323426e-17</R21>
-										<R22>1.22464685e-16</R22>
-									</CoordinateFrame>
-									<float name="Reflectance">0</float>
-									<float name="RightParamA">-0.5</float>
-									<float name="RightParamB">0.5</float>
-									<token name="RightSurface">0</token>
-									<token name="RightSurfaceInput">0</token>
-									<int name="RootPriority">0</int>
-									<Vector3 name="RotVelocity">
-										<X>0</X>
-										<Y>0</Y>
-										<Z>0</Z>
-									</Vector3>
-									<float name="TopParamA">-0.5</float>
-									<float name="TopParamB">0.5</float>
-									<token name="TopSurface">0</token>
-									<token name="TopSurfaceInput">0</token>
-									<float name="Transparency">0</float>
-									<Vector3 name="Velocity">
-										<X>0</X>
-										<Y>0</Y>
-										<Z>0</Z>
-									</Vector3>
-									<Vector3 name="size">
-										<X>3.25942969</X>
-										<Y>2.77313495</Y>
-										<Z>3.42220879</Z>
-									</Vector3>
-									<BinaryString name="AttributesSerialize"></BinaryString>
-									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-									<bool name="DefinesCapabilities">false</bool>
-									<string name="Name">Rock_03</string>
-									<int64 name="SourceAssetId">-1</int64>
-									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-								</Properties>
-								<Item class="SurfaceAppearance" referent="RBX470C501DCB5F493D9089737175BB1123">
-									<Properties>
-										<token name="AlphaMode">0</token>
-										<Color3 name="Color">
-											<R>1</R>
-											<G>1</G>
-											<B>1</B>
-										</Color3>
-										<Content name="ColorMap"><null></null></Content>
-										<Content name="EmissiveMaskContent">
-											<null></null>
-										</Content>
-										<float name="EmissiveStrength">1</float>
-										<Color3 name="EmissiveTint">
-											<R>1</R>
-											<G>1</G>
-											<B>1</B>
-										</Color3>
-										<Content name="MetalnessMap"><url>rbxassetid://84425024714993</url></Content>
-										<Content name="NormalMap"><null></null></Content>
-										<token name="ResampleMode">0</token>
-										<Content name="RoughnessMap"><url>rbxassetid://100926959368820</url></Content>
-										<Content name="TexturePack"><url>rbxassetid://112112967512191</url></Content>
-										<BinaryString name="AttributesSerialize"></BinaryString>
-										<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-										<bool name="DefinesCapabilities">false</bool>
-										<string name="Name">SurfaceAppearance</string>
-										<int64 name="SourceAssetId">-1</int64>
-										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-									</Properties>
-								</Item>
-							</Item>
 						</Item>
-						<Item class="Attachment" referent="RBXF62A3F3EBFE04EE2BE51A977D67C2EBF">
+						<Item class="Attachment" referent="RBXAA569F4FBD984CA990CFD33CB815BFE8">
 							<Properties>
 								<CoordinateFrame name="CFrame">
 									<X>0.147796631</X>
@@ -11886,7 +11886,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="Folder" referent="RBX99FF526DCB9B4EF982806282A012A899">
+						<Item class="Folder" referent="RBXBE530396E71D4DE7A1B29A15ECCCA4AB">
 							<Properties>
 								<BinaryString name="AttributesSerialize"></BinaryString>
 								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -11896,7 +11896,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="Folder" referent="RBXD66C396662004DE1A5D8B385BE654C98">
+						<Item class="Folder" referent="RBX123AB12214A64CC8A4F5DE9494261845">
 							<Properties>
 								<BinaryString name="AttributesSerialize"></BinaryString>
 								<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -11906,7 +11906,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="Model" referent="RBXFDCF6E31A4E74938AF1D1CA2BD7C1B20">
+						<Item class="Model" referent="RBX713D9B32576F4DFCA5F84CB0617BCA4D">
 							<Properties>
 								<token name="LevelOfDetail">0</token>
 								<CoordinateFrame name="ModelMeshCFrame">
@@ -11957,7 +11957,57 @@ MzE4ZThmYmM3]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
-							<Item class="Model" referent="RBX7EFAD0FFF5F748BA9C9F6C56969F2BD2">
+							<Item class="Attachment" referent="RBXF861FD3A2B224959882986ECF270FF19">
+								<Properties>
+									<CoordinateFrame name="CFrame">
+										<X>-11.4072876</X>
+										<Y>-1.55982018</Y>
+										<Z>0</Z>
+										<R00>0</R00>
+										<R01>0</R01>
+										<R02>1</R02>
+										<R10>0</R10>
+										<R11>1</R11>
+										<R12>-0</R12>
+										<R20>-1</R20>
+										<R21>0</R21>
+										<R22>0</R22>
+									</CoordinateFrame>
+									<bool name="Visible">false</bool>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<string name="Name">TeleportPoint</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+								</Properties>
+							</Item>
+							<Item class="Attachment" referent="RBX24B162ED65CF43BAB9F508DA6E1D4CA2">
+								<Properties>
+									<CoordinateFrame name="CFrame">
+										<X>-1.27709961</X>
+										<Y>-2.59476185</Y>
+										<Z>0</Z>
+										<R00>1</R00>
+										<R01>0</R01>
+										<R02>0</R02>
+										<R10>0</R10>
+										<R11>1</R11>
+										<R12>0</R12>
+										<R20>0</R20>
+										<R21>0</R21>
+										<R22>1</R22>
+									</CoordinateFrame>
+									<bool name="Visible">false</bool>
+									<BinaryString name="AttributesSerialize"></BinaryString>
+									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+									<bool name="DefinesCapabilities">false</bool>
+									<string name="Name">UIPoint</string>
+									<int64 name="SourceAssetId">-1</int64>
+									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+								</Properties>
+							</Item>
+							<Item class="Model" referent="RBX8248DFD98FDA43F090F8684E5E95DBF0">
 								<Properties>
 									<token name="LevelOfDetail">0</token>
 									<CoordinateFrame name="ModelMeshCFrame">
@@ -12008,7 +12058,7 @@ MzE4ZThmYmM3]]></BinaryString>
 									<int64 name="SourceAssetId">-1</int64>
 									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 								</Properties>
-								<Item class="MeshPart" referent="RBXAE79947E6FD4499CAFEFDDD24433F334">
+								<Item class="MeshPart" referent="RBXE9E9D9D67BA441BC9F97028A1DCF0A05">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -12142,7 +12192,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
-									<Item class="SurfaceAppearance" referent="RBX49F33F199ADB42B9B81A5B7B4F60362E">
+									<Item class="SurfaceAppearance" referent="RBXF63D6F50A0C74431A02BA69B45CB62F6">
 										<Properties>
 											<token name="AlphaMode">0</token>
 											<Color3 name="Color">
@@ -12174,7 +12224,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										</Properties>
 									</Item>
 								</Item>
-								<Item class="MeshPart" referent="RBXE82840AD21874B1AAA2D965539778A37">
+								<Item class="MeshPart" referent="RBX25C926996CD6486890724111F531EBCE">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -12308,7 +12358,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
-									<Item class="SurfaceAppearance" referent="RBXC43407D3FE0B476D97D34DA329689001">
+									<Item class="SurfaceAppearance" referent="RBXDE91630ED3844B759FE97774ECC4D08E">
 										<Properties>
 											<token name="AlphaMode">0</token>
 											<Color3 name="Color">
@@ -12340,7 +12390,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										</Properties>
 									</Item>
 								</Item>
-								<Item class="MeshPart" referent="RBXE69610C016F542929E7A44EEDB59047E">
+								<Item class="MeshPart" referent="RBX0DBF2D0EA20F4E4697CFB33E6285BB9D">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -12474,7 +12524,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
-									<Item class="SurfaceAppearance" referent="RBXC91D29AEF93549FC86259E66D22DF8A6">
+									<Item class="SurfaceAppearance" referent="RBX5B975C5E0F3D4345B9F9CFD2E23BCF77">
 										<Properties>
 											<token name="AlphaMode">0</token>
 											<Color3 name="Color">
@@ -12506,7 +12556,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										</Properties>
 									</Item>
 								</Item>
-								<Item class="MeshPart" referent="RBX81861A1A83B440AC8DB412C13AC8D7AF">
+								<Item class="MeshPart" referent="RBX4337211D40B94B5292AD2C9212EA7342">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -12640,7 +12690,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
-									<Item class="SurfaceAppearance" referent="RBXB714B8F771D34BDAAAB0A300AA5D4A57">
+									<Item class="SurfaceAppearance" referent="RBX578ABF08E85149849BC010E0BD9F3A94">
 										<Properties>
 											<token name="AlphaMode">0</token>
 											<Color3 name="Color">
@@ -12672,7 +12722,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										</Properties>
 									</Item>
 								</Item>
-								<Item class="MeshPart" referent="RBX293702A8075847B8810F60AC37336766">
+								<Item class="MeshPart" referent="RBX25F01F4DE1ED499CAACB130440813A7F">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -12806,7 +12856,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
-									<Item class="SurfaceAppearance" referent="RBXCD95BD2980A94072A91E84000D5C3326">
+									<Item class="SurfaceAppearance" referent="RBX4335894BB7C0408FB91B97426E35A06E">
 										<Properties>
 											<token name="AlphaMode">0</token>
 											<Color3 name="Color">
@@ -12838,7 +12888,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										</Properties>
 									</Item>
 								</Item>
-								<Item class="MeshPart" referent="RBX00E1AFC6E00544EDB9DC81D6109AE8E5">
+								<Item class="MeshPart" referent="RBXABC07F58FA87460A814CC8A4074E02DE">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -12972,7 +13022,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<int64 name="SourceAssetId">-1</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
-									<Item class="SurfaceAppearance" referent="RBXF521B8A04D94400199DE116E0B31FCF9">
+									<Item class="SurfaceAppearance" referent="RBX5CF312B945A641EBA6B77439326F0D05">
 										<Properties>
 											<token name="AlphaMode">0</token>
 											<Color3 name="Color">
@@ -13004,7 +13054,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										</Properties>
 									</Item>
 								</Item>
-								<Item class="Part" referent="RBX94957D07AA4A4EB0993552C695D2EAE9">
+								<Item class="Part" referent="RBX3FBACB8697CD4793B9B2BEDC770308AD">
 									<Properties>
 										<token name="shape">0</token>
 										<token name="formFactorRaw">1</token>
@@ -13102,7 +13152,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										<int64 name="SourceAssetId">16885333452</int64>
 										<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 									</Properties>
-									<Item class="Attachment" referent="RBX2CD27828F1E14470B3E7118CE3499E5B">
+									<Item class="Attachment" referent="RBX4BB0810598FD4B89A436E63D995ECD0D">
 										<Properties>
 											<CoordinateFrame name="CFrame">
 												<X>0</X>
@@ -13126,7 +13176,7 @@ MzE4ZThmYmM3]]></BinaryString>
 											<int64 name="SourceAssetId">-1</int64>
 											<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 										</Properties>
-										<Item class="ParticleEmitter" referent="RBX0702525D866948749F86D4113EACFDBD">
+										<Item class="ParticleEmitter" referent="RBXC2806208C3A64457AE079CB266F14549">
 											<Properties>
 												<Vector3 name="Acceleration">
 													<X>0</X>
@@ -13179,7 +13229,7 @@ MzE4ZThmYmM3]]></BinaryString>
 												<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 											</Properties>
 										</Item>
-										<Item class="ParticleEmitter" referent="RBX43A53B1077DC4F098A7DE254F5429235">
+										<Item class="ParticleEmitter" referent="RBXB4D0DEC0BC2D4A6885D988C1E67523E0">
 											<Properties>
 												<Vector3 name="Acceleration">
 													<X>0</X>
@@ -13232,7 +13282,7 @@ MzE4ZThmYmM3]]></BinaryString>
 												<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 											</Properties>
 										</Item>
-										<Item class="ParticleEmitter" referent="RBXDE537F35060E46F4911E2F02430B9765">
+										<Item class="ParticleEmitter" referent="RBXA18EB6B9B2E746F39F05530EDDC1B0F1">
 											<Properties>
 												<Vector3 name="Acceleration">
 													<X>0</X>
@@ -13285,7 +13335,7 @@ MzE4ZThmYmM3]]></BinaryString>
 												<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 											</Properties>
 										</Item>
-										<Item class="ParticleEmitter" referent="RBX8A46CBB4B3A44B0CA0B693C2A9B677E3">
+										<Item class="ParticleEmitter" referent="RBX84141C114A084701B193B9864809BEF7">
 											<Properties>
 												<Vector3 name="Acceleration">
 													<X>0</X>
@@ -13338,7 +13388,7 @@ MzE4ZThmYmM3]]></BinaryString>
 												<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 											</Properties>
 										</Item>
-										<Item class="ParticleEmitter" referent="RBX2B661FCE20EC4AFEABCB0E51C1D51B36">
+										<Item class="ParticleEmitter" referent="RBX6E21167D1B6A4CA987D227123FCAEF32">
 											<Properties>
 												<Vector3 name="Acceleration">
 													<X>0</X>
@@ -13393,7 +13443,7 @@ MzE4ZThmYmM3]]></BinaryString>
 										</Item>
 									</Item>
 								</Item>
-								<Item class="MeshPart" referent="RBXD0B7FB167F16450983A31C3751768637">
+								<Item class="MeshPart" referent="RBXEAAEC9BBAC3A4C0D9CE6775D6EBEBCAE">
 									<Properties>
 										<bool name="DoubleSided">false</bool>
 										<bool name="HasJointOffset">false</bool>
@@ -13529,60 +13579,10 @@ MzE4ZThmYmM3]]></BinaryString>
 									</Properties>
 								</Item>
 							</Item>
-							<Item class="Attachment" referent="RBX13DB3AE03CDF44B3862DAE017642DBAE">
-								<Properties>
-									<CoordinateFrame name="CFrame">
-										<X>-11.4072876</X>
-										<Y>-1.55982018</Y>
-										<Z>0</Z>
-										<R00>0</R00>
-										<R01>0</R01>
-										<R02>1</R02>
-										<R10>0</R10>
-										<R11>1</R11>
-										<R12>-0</R12>
-										<R20>-1</R20>
-										<R21>0</R21>
-										<R22>0</R22>
-									</CoordinateFrame>
-									<bool name="Visible">false</bool>
-									<BinaryString name="AttributesSerialize"></BinaryString>
-									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-									<bool name="DefinesCapabilities">false</bool>
-									<string name="Name">TeleportPoint</string>
-									<int64 name="SourceAssetId">-1</int64>
-									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-								</Properties>
-							</Item>
-							<Item class="Attachment" referent="RBX5FEF1A6784C7430FBDAD7EA46B97E0C3">
-								<Properties>
-									<CoordinateFrame name="CFrame">
-										<X>-1.27709961</X>
-										<Y>-2.59476185</Y>
-										<Z>0</Z>
-										<R00>1</R00>
-										<R01>0</R01>
-										<R02>0</R02>
-										<R10>0</R10>
-										<R11>1</R11>
-										<R12>0</R12>
-										<R20>0</R20>
-										<R21>0</R21>
-										<R22>1</R22>
-									</CoordinateFrame>
-									<bool name="Visible">false</bool>
-									<BinaryString name="AttributesSerialize"></BinaryString>
-									<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
-									<bool name="DefinesCapabilities">false</bool>
-									<string name="Name">UIPoint</string>
-									<int64 name="SourceAssetId">-1</int64>
-									<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
-								</Properties>
-							</Item>
 						</Item>
 					</Item>
 				</Item>
-				<Item class="Model" referent="RBXDF31D9546AB54722AB98FD13E7B3779F">
+				<Item class="Model" referent="RBX7EA6F65E86DC4C148E1BB64D97AD749D">
 					<Properties>
 						<token name="LevelOfDetail">0</token>
 						<CoordinateFrame name="ModelMeshCFrame">
@@ -13633,7 +13633,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					</Properties>
-					<Item class="Attachment" referent="RBXC049B0F79AF14AC994652CD69E9B6671">
+					<Item class="Attachment" referent="RBX208FC3AA8511440EB67178B50BB5DDD1">
 						<Properties>
 							<CoordinateFrame name="CFrame">
 								<X>0</X>
@@ -13658,7 +13658,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="Attachment" referent="RBX0DFB0FEA39534658864676B40C987878">
+					<Item class="Attachment" referent="RBX19651628194D452BA3ACA6954C1AFB0C">
 						<Properties>
 							<CoordinateFrame name="CFrame">
 								<X>0</X>
@@ -13683,7 +13683,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="Part" referent="RBX23DEAEA0ABD34C508BDC4864F4495B22">
+					<Item class="Part" referent="RBX0BB6E53C7EB244EE9AE9B44BF2CE2C10">
 						<Properties>
 							<token name="shape">1</token>
 							<token name="formFactorRaw">1</token>
@@ -13784,7 +13784,7 @@ MzE4ZThmYmM3]]></BinaryString>
 					</Item>
 				</Item>
 			</Item>
-			<Item class="Folder" referent="RBXECAEE0EAD99F49AE8E088890F5E8DF74">
+			<Item class="Folder" referent="RBXEB15D86F2B4F4B54A34F5F01FB28DDBB">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -13793,7 +13793,7 @@ MzE4ZThmYmM3]]></BinaryString>
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				</Properties>
-				<Item class="Folder" referent="RBX17E29EE324F544DD80393EA2092485F9">
+				<Item class="Folder" referent="RBXAEDFC566CD8245B685E6397C0C83623E">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -13802,7 +13802,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					</Properties>
-					<Item class="Model" referent="RBXD7F12CF3ABD54BA194754F1330019695">
+					<Item class="Model" referent="RBXD6C6C7F6344B49019C1C99449D1055CF">
 						<Properties>
 							<token name="LevelOfDetail">0</token>
 							<CoordinateFrame name="ModelMeshCFrame">
@@ -13853,7 +13853,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
-						<Item class="MeshPart" referent="RBX6F5D8DF402A84AA09097EB00423151EA">
+						<Item class="MeshPart" referent="RBXDD18B449310D4AC687B21F9CC36ACE08">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -13988,7 +13988,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBX6427CB5176934C37A616A6E287D035D2">
+						<Item class="MeshPart" referent="RBX0BA5DA364F7B452FA3087593F8E609F3">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -14123,7 +14123,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBX440569098C514112951C05C4E1074018">
+						<Item class="MeshPart" referent="RBXF7FD4DB16F724E9BACB466C21DD3CBE9">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -14258,7 +14258,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBXCDBB0C990E554EE5A342F976544FE38D">
+						<Item class="MeshPart" referent="RBX05F4B79E27A74D089414538B7145BAE6">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -14393,7 +14393,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBX227F83786B43431283BABB6975AAC11A">
+						<Item class="MeshPart" referent="RBX3262A9DAFAF14EDEA84FFBC4D18D872C">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -14528,7 +14528,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBX67663993AFF449F3BECF7CBB98F944FB">
+						<Item class="MeshPart" referent="RBX6583EFD90A4946C0A5C59C6B4764D19E">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -14663,7 +14663,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBX3C5490880B08487CBF4F4368C71FCCB5">
+						<Item class="MeshPart" referent="RBX576393F2E41041C38772FEA9006D45FB">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -14798,7 +14798,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBXF65856BC9E9A43C48A762178AB76CBBD">
+						<Item class="MeshPart" referent="RBX9651D6B25C494E5F9D398F741A325118">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -14933,7 +14933,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBX2C5F4D428A6E4309A505F97BE57D1831">
+						<Item class="MeshPart" referent="RBX7D3A0E91F9564C1BAA8E5E894E721A28">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -15068,7 +15068,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBX51C22DC22A634487B225E310DB7397ED">
+						<Item class="MeshPart" referent="RBX37FD6D0157C04CD7B141B26AE646C3FD">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -15203,7 +15203,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBXA05800C470B04CF7853FE458A90CF240">
+						<Item class="MeshPart" referent="RBX92692132526F4397AADDAF91F4255CA6">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -15339,7 +15339,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							</Properties>
 						</Item>
 					</Item>
-					<Item class="Model" referent="RBX5EBF9BD51532462F8FDCB402A3777A13">
+					<Item class="Model" referent="RBXF1517E08140B4AD695B34D468EB7BAE2">
 						<Properties>
 							<token name="LevelOfDetail">0</token>
 							<CoordinateFrame name="ModelMeshCFrame">
@@ -15390,7 +15390,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
-						<Item class="MeshPart" referent="RBX0744E79F7C774FB285FE0B55F903593A">
+						<Item class="MeshPart" referent="RBX49AAF256FFAC47FE9FD0D7ED30773EB6">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -15526,7 +15526,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							</Properties>
 						</Item>
 					</Item>
-					<Item class="Model" referent="RBXE681293D4470494FBFDE28C1FE1AB037">
+					<Item class="Model" referent="RBXECB504CCE19444048B4AB0A4E207F0E5">
 						<Properties>
 							<token name="LevelOfDetail">0</token>
 							<CoordinateFrame name="ModelMeshCFrame">
@@ -15577,7 +15577,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
-						<Item class="MeshPart" referent="RBX8CA655CB288E46A38655667F92821682">
+						<Item class="MeshPart" referent="RBXEEB328800FA34E21ADC0EB370E1EF4F6">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -15712,7 +15712,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBXB7E93873CDF4498B9546656FCFE31824">
+						<Item class="MeshPart" referent="RBX8A90C9903B81408E89A2418801BEF586">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -15847,7 +15847,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBX195A7DB39C3F4240AF2D02B7FF8B0B6E">
+						<Item class="MeshPart" referent="RBX5C2AFEF2D34045C49482347EA700D909">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -15982,7 +15982,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBX82605A37F7724B0484BF6968D9C3E98F">
+						<Item class="MeshPart" referent="RBXEE7D98CAE393493D9C341027346AE302">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -16117,7 +16117,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBX4C1F9C1824534212B5C74A76A2F1D74C">
+						<Item class="MeshPart" referent="RBXA46620629A084D7AA0B80FCC0DD3AA85">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -16252,7 +16252,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBXD359423204DD4D69850B932BC13AA413">
+						<Item class="MeshPart" referent="RBX5654FC15B63C443DBB0DDB4C7CB24F37">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -16387,7 +16387,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBXAB88D094206D4FF88141A17A013CA564">
+						<Item class="MeshPart" referent="RBXF4449EB55C5C48488A9E45826A46781A">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -16522,7 +16522,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBXC665015A843842B6B5C17B03C848D5CC">
+						<Item class="MeshPart" referent="RBX0EBB2DEECCC54C1DA669019DEA6E8A45">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -16657,7 +16657,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBXCF4C8CEFA9984F9688F8BD78823933F7">
+						<Item class="MeshPart" referent="RBXA9EB437994654786AA8422EED989BA22">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -16792,7 +16792,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
 						</Item>
-						<Item class="MeshPart" referent="RBX26CF2C4A725A4A30B4344652D9A24892">
+						<Item class="MeshPart" referent="RBXE44C1E7A64E144A1BD2EBE9148FE20CC">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -16928,7 +16928,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							</Properties>
 						</Item>
 					</Item>
-					<Item class="Model" referent="RBX5765724A586D4C5AA8BB48F5064D90CC">
+					<Item class="Model" referent="RBXFE6AD8CF47454FC98633BF9939AB0CC2">
 						<Properties>
 							<token name="LevelOfDetail">0</token>
 							<CoordinateFrame name="ModelMeshCFrame">
@@ -16979,7 +16979,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
-						<Item class="MeshPart" referent="RBX6B28C6258ED24DC2813D809314DD9F70">
+						<Item class="MeshPart" referent="RBX71324353D9224B16BC373FF6AC7CA58A">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -17116,7 +17116,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						</Item>
 					</Item>
 				</Item>
-				<Item class="Folder" referent="RBX115B99468F9C43808A3C67799860FBDC">
+				<Item class="Folder" referent="RBX8D1FE5ED768948F8BA7900BD512814DE">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -17125,7 +17125,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					</Properties>
-					<Item class="Model" referent="RBX0105AE92BAC54B7C842D5C941EF05507">
+					<Item class="Model" referent="RBXF6FCB9EF1DDE4AD7BB6E69AE353A6852">
 						<Properties>
 							<token name="LevelOfDetail">0</token>
 							<CoordinateFrame name="ModelMeshCFrame">
@@ -17160,10 +17160,10 @@ MzE4ZThmYmM3]]></BinaryString>
 									<Z>5.97098923</Z>
 									<R00>0</R00>
 									<R01>0</R01>
-									<R02>0.999999881</R02>
+									<R02>1</R02>
 									<R10>0</R10>
-									<R11>0.999999881</R11>
-									<R12>0</R12>
+									<R11>1</R11>
+									<R12>-0</R12>
 									<R20>-1</R20>
 									<R21>0</R21>
 									<R22>0</R22>
@@ -17176,7 +17176,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
-						<Item class="MeshPart" referent="RBX30E96DEC438D4DE691ECD18CAB2DF3A7">
+						<Item class="MeshPart" referent="RBXAEAB5BA8E59B46B2AE8FF9859E130E18">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -17310,7 +17310,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
-							<Item class="SurfaceAppearance" referent="RBX00FA9A57E0A94D40900ABA98F86D5170">
+							<Item class="SurfaceAppearance" referent="RBX14219F0979CA42BAB98B6F854CC08E80">
 								<Properties>
 									<token name="AlphaMode">0</token>
 									<Color3 name="Color">
@@ -17343,7 +17343,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							</Item>
 						</Item>
 					</Item>
-					<Item class="Model" referent="RBX4CE15FD209BE484FBFA54CB8EE6EBCAE">
+					<Item class="Model" referent="RBX23E8A9A0FE964EE7A5B03ED8E2DF4E6A">
 						<Properties>
 							<token name="LevelOfDetail">0</token>
 							<CoordinateFrame name="ModelMeshCFrame">
@@ -17378,10 +17378,10 @@ MzE4ZThmYmM3]]></BinaryString>
 									<Z>2.17430115</Z>
 									<R00>0</R00>
 									<R01>0</R01>
-									<R02>0.999999881</R02>
+									<R02>1</R02>
 									<R10>0</R10>
-									<R11>0.999999881</R11>
-									<R12>0</R12>
+									<R11>1</R11>
+									<R12>-0</R12>
 									<R20>-1</R20>
 									<R21>0</R21>
 									<R22>0</R22>
@@ -17394,7 +17394,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
-						<Item class="MeshPart" referent="RBXB2CF849D76BF4DACA9FA0898F87DDFE9">
+						<Item class="MeshPart" referent="RBXF25B41AE223441C7B163987447B3B36A">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -17528,7 +17528,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
-							<Item class="SurfaceAppearance" referent="RBX90B55448BDE746A9BACBA600AE438E1A">
+							<Item class="SurfaceAppearance" referent="RBX91EA8C1CED654FE68F919AE82729C046">
 								<Properties>
 									<token name="AlphaMode">0</token>
 									<Color3 name="Color">
@@ -17561,7 +17561,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							</Item>
 						</Item>
 					</Item>
-					<Item class="Model" referent="RBXBF863F60CBDE4E92A4137CFAF0B08DFF">
+					<Item class="Model" referent="RBX4B9C9A9E8A224E3784E4C10B1A921E9E">
 						<Properties>
 							<token name="LevelOfDetail">0</token>
 							<CoordinateFrame name="ModelMeshCFrame">
@@ -17596,10 +17596,10 @@ MzE4ZThmYmM3]]></BinaryString>
 									<Z>-1.66630173</Z>
 									<R00>0</R00>
 									<R01>0</R01>
-									<R02>0.999999881</R02>
+									<R02>1</R02>
 									<R10>0</R10>
-									<R11>0.999999881</R11>
-									<R12>0</R12>
+									<R11>1</R11>
+									<R12>-0</R12>
 									<R20>-1</R20>
 									<R21>0</R21>
 									<R22>0</R22>
@@ -17612,7 +17612,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<int64 name="SourceAssetId">-1</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
-						<Item class="MeshPart" referent="RBX31D81D4BB7A04CC3B5C08C3D6A5FD382">
+						<Item class="MeshPart" referent="RBX75D12843918A497D8C450B1EAE65C650">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -17746,7 +17746,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
-							<Item class="SurfaceAppearance" referent="RBX01E619344CB74C9A96CDC830B6D9036D">
+							<Item class="SurfaceAppearance" referent="RBX734B707B71924CB394D7FA622C20C7E8">
 								<Properties>
 									<token name="AlphaMode">0</token>
 									<Color3 name="Color">
@@ -17778,7 +17778,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								</Properties>
 							</Item>
 						</Item>
-						<Item class="MeshPart" referent="RBX11785B74EB69438997A99EB229CBFDB9">
+						<Item class="MeshPart" referent="RBXC7E471DBFEC74046B81B88E490393975">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -17912,7 +17912,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
-							<Item class="SurfaceAppearance" referent="RBX93C0DD3723324E52B0F79BB01E2E2130">
+							<Item class="SurfaceAppearance" referent="RBXBD73CE337431424F8ACBDF2687DCA81B">
 								<Properties>
 									<token name="AlphaMode">0</token>
 									<Color3 name="Color">
@@ -17944,7 +17944,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								</Properties>
 							</Item>
 						</Item>
-						<Item class="MeshPart" referent="RBX135B2E77F9B740DFAB87FB476E250A4C">
+						<Item class="MeshPart" referent="RBXEE0D6DE6F45647369B908F49CD7B56C9">
 							<Properties>
 								<bool name="DoubleSided">false</bool>
 								<bool name="HasJointOffset">false</bool>
@@ -18078,7 +18078,7 @@ MzE4ZThmYmM3]]></BinaryString>
 								<int64 name="SourceAssetId">-1</int64>
 								<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 							</Properties>
-							<Item class="SurfaceAppearance" referent="RBX49F9E025DDE9475EB45F3072147F5DFC">
+							<Item class="SurfaceAppearance" referent="RBX8492B5F3517B4B49B61261E658C65E6E">
 								<Properties>
 									<token name="AlphaMode">0</token>
 									<Color3 name="Color">
@@ -18114,7 +18114,7 @@ MzE4ZThmYmM3]]></BinaryString>
 				</Item>
 			</Item>
 		</Item>
-		<Item class="Folder" referent="RBXD1C3EB4E0D8A45178BDA5CE69E49A3FF">
+		<Item class="Folder" referent="RBXC040E87B405F4FF2A474AD72319E696A">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -18123,7 +18123,7 @@ MzE4ZThmYmM3]]></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			</Properties>
-			<Item class="Folder" referent="RBX62421EE1530D4AE283314C51B3457047">
+			<Item class="Folder" referent="RBX57D5F111E79D4BA8BFC06B7F5A17612D">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -18132,7 +18132,7 @@ MzE4ZThmYmM3]]></BinaryString>
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				</Properties>
-				<Item class="Folder" referent="RBX04AA44184D15436B9BBE6D40FC826B92">
+				<Item class="Folder" referent="RBX625E942FB126413483611C7476A2BD33">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -18141,7 +18141,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					</Properties>
-					<Item class="Atmosphere" referent="RBX6E686FD11E4E4210B0ED048CAE49865D">
+					<Item class="Atmosphere" referent="RBX738876370A374876948FE35116DFE277">
 						<Properties>
 							<Color3 name="Color">
 								<R>1</R>
@@ -18165,7 +18165,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="Sky" referent="RBX59C255D5A9BE43C69E983EB1384CD912">
+					<Item class="Sky" referent="RBXAACA909B02C847A691D77CC00B8825AA">
 						<Properties>
 							<bool name="CelestialBodiesShown">true</bool>
 							<float name="MoonAngularSize">11</float>
@@ -18192,7 +18192,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="BloomEffect" referent="RBXB225FC59125B4676B94837B2F2A08FD3">
+					<Item class="BloomEffect" referent="RBX1ADEB68BA2F74B379A0E47EE45A970FE">
 						<Properties>
 							<float name="Intensity">0.5</float>
 							<float name="Size">0</float>
@@ -18206,7 +18206,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="ColorCorrectionEffect" referent="RBX3B58B199632943998444A029B3B5BC57">
+					<Item class="ColorCorrectionEffect" referent="RBXA3ABCE862ABA4E2EB1C31A8988CBF979">
 						<Properties>
 							<float name="Brightness">0.200000003</float>
 							<float name="Contrast">0.300000012</float>
@@ -18225,7 +18225,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="DepthOfFieldEffect" referent="RBX853351A17319433380A627D3499D49A6">
+					<Item class="DepthOfFieldEffect" referent="RBX434733FEDF4045DA8FDC65B5516CB156">
 						<Properties>
 							<float name="FarIntensity">0</float>
 							<float name="FocusDistance">500</float>
@@ -18241,7 +18241,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						</Properties>
 					</Item>
 				</Item>
-				<Item class="Model" referent="RBXE2C27B7BB05D41A89EB62BFCD44B5327">
+				<Item class="Model" referent="RBXC356895D53BA4F648ACACCB0E653B04B">
 					<Properties>
 						<token name="LevelOfDetail">0</token>
 						<CoordinateFrame name="ModelMeshCFrame">
@@ -18292,7 +18292,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					</Properties>
-					<Item class="ParticleEmitter" referent="RBX65F0973784244BAAB692290846A571E4">
+					<Item class="ParticleEmitter" referent="RBX349545A5724C48DDA6FA5A8E6986F757">
 						<Properties>
 							<Vector3 name="Acceleration">
 								<X>0</X>
@@ -18345,7 +18345,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="ParticleEmitter" referent="RBX0AC016BC4ED347B28F94A057771CE22A">
+					<Item class="ParticleEmitter" referent="RBXE998E2AC26AF4191A7800576D788985E">
 						<Properties>
 							<Vector3 name="Acceleration">
 								<X>0</X>
@@ -18398,7 +18398,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="Part" referent="RBX68832A26523A483DBCCE66724D485FD3">
+					<Item class="Part" referent="RBXDF80625488CC45EEA675AF2BF4428ECB">
 						<Properties>
 							<token name="shape">1</token>
 							<token name="formFactorRaw">1</token>
@@ -18496,7 +18496,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<int64 name="SourceAssetId">4999026866</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
-						<Item class="ParticleEmitter" referent="RBX1B63F31FE54A44CEB4451AF33EEE2ADA">
+						<Item class="ParticleEmitter" referent="RBX9954EE237F304FE5AF931F71B84F88D2">
 							<Properties>
 								<Vector3 name="Acceleration">
 									<X>0</X>
@@ -18550,7 +18550,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							</Properties>
 						</Item>
 					</Item>
-					<Item class="Part" referent="RBX2307D61B9F8140AC9E35EA085AF1BDAD">
+					<Item class="Part" referent="RBX9D1B4D9152AA40B78033F664E6612109">
 						<Properties>
 							<token name="shape">1</token>
 							<token name="formFactorRaw">1</token>
@@ -18648,7 +18648,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<int64 name="SourceAssetId">4999026866</int64>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
-						<Item class="ParticleEmitter" referent="RBX1421C913C8BF4AB4B65DF294B5B73696">
+						<Item class="ParticleEmitter" referent="RBX58AECDF1142F4D68A88C2E719AC21079">
 							<Properties>
 								<Vector3 name="Acceleration">
 									<X>0</X>
@@ -18704,7 +18704,7 @@ MzE4ZThmYmM3]]></BinaryString>
 					</Item>
 				</Item>
 			</Item>
-			<Item class="Folder" referent="RBX20209D482BB8403F938F5DBFBDB7EF4E">
+			<Item class="Folder" referent="RBXD658F854EF2342E89F9E5DF96DBA2B21">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -18713,7 +18713,7 @@ MzE4ZThmYmM3]]></BinaryString>
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				</Properties>
-				<Item class="Folder" referent="RBXFFE433AB3CA742A2A276064E67CC59C6">
+				<Item class="Folder" referent="RBX0887BF0A0AD541E0A5A0ADC0433E0839">
 					<Properties>
 						<BinaryString name="AttributesSerialize"></BinaryString>
 						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -18722,7 +18722,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						<int64 name="SourceAssetId">-1</int64>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					</Properties>
-					<Item class="ColorCorrectionEffect" referent="RBX51798C6903ED4B84854AD1BD0FE6746F">
+					<Item class="ColorCorrectionEffect" referent="RBX46525A2EBCF8438B953EB5EA038C3A34">
 						<Properties>
 							<float name="Brightness">0.300000012</float>
 							<float name="Contrast">0.400000006</float>
@@ -18741,7 +18741,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="BloomEffect" referent="RBX9D17B65CED024204A3AA246575BA1D8C">
+					<Item class="BloomEffect" referent="RBX3696FA4007BD4A5ABC60873FA238B487">
 						<Properties>
 							<float name="Intensity">0.5</float>
 							<float name="Size">0</float>
@@ -18755,7 +18755,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="Sky" referent="RBX7D348EB2878E496CAF0706BC6433669E">
+					<Item class="Sky" referent="RBXE2BE3CC00ECA4B548EFDAFAD165324B9">
 						<Properties>
 							<bool name="CelestialBodiesShown">true</bool>
 							<float name="MoonAngularSize">11</float>
@@ -18782,7 +18782,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="DepthOfFieldEffect" referent="RBX8EEBE9CBABF84C3C9F3AF925E111494B">
+					<Item class="DepthOfFieldEffect" referent="RBX379F093F422A4B079AB58A4A311CEB9C">
 						<Properties>
 							<float name="FarIntensity">0</float>
 							<float name="FocusDistance">500</float>
@@ -18797,7 +18797,7 @@ MzE4ZThmYmM3]]></BinaryString>
 							<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 						</Properties>
 					</Item>
-					<Item class="Atmosphere" referent="RBXBFCC4E7B51A8431883D0DA0FC6561137">
+					<Item class="Atmosphere" referent="RBX9DD349B9CD754D0DBB6C99343E12CE15">
 						<Properties>
 							<Color3 name="Color">
 								<R>0.635294139</R>
@@ -18824,7 +18824,7 @@ MzE4ZThmYmM3]]></BinaryString>
 				</Item>
 			</Item>
 		</Item>
-		<Item class="Folder" referent="RBXDFB9FEDF5D1D4C97B801B71FA1463A77">
+		<Item class="Folder" referent="RBXAFF55F351F834B3C9B1785F04D394C6F">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -18833,7 +18833,7 @@ MzE4ZThmYmM3]]></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			</Properties>
-			<Item class="Folder" referent="RBX548C3EAC48984199981AC4412B5759F3">
+			<Item class="Folder" referent="RBXAC2B2388B030455FAA0EE22E7C9BE834">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -18842,7 +18842,7 @@ MzE4ZThmYmM3]]></BinaryString>
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				</Properties>
-				<Item class="ParticleEmitter" referent="RBX78D236043BFC4816A7B5E51E3D142569">
+				<Item class="ParticleEmitter" referent="RBXA9B6A20B98594F17A297C86C30978ED0">
 					<Properties>
 						<Vector3 name="Acceleration">
 							<X>0</X>
@@ -18895,7 +18895,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					</Properties>
 				</Item>
-				<Item class="ParticleEmitter" referent="RBX535E4EC10404467AA15FB04201D30D44">
+				<Item class="ParticleEmitter" referent="RBX7B405B01104743859B3E7F116DCE3978">
 					<Properties>
 						<Vector3 name="Acceleration">
 							<X>0</X>
@@ -18948,7 +18948,7 @@ MzE4ZThmYmM3]]></BinaryString>
 						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 					</Properties>
 				</Item>
-				<Item class="ParticleEmitter" referent="RBX944F7052542F4C5AB08EDEA15E25DABA">
+				<Item class="ParticleEmitter" referent="RBX8D1B20695E6C402188E529B3F8DBB5BB">
 					<Properties>
 						<Vector3 name="Acceleration">
 							<X>0</X>
@@ -19003,7 +19003,7 @@ MzE4ZThmYmM3]]></BinaryString>
 				</Item>
 			</Item>
 		</Item>
-		<Item class="Folder" referent="RBX19647414466644A5AEB29122034A4002">
+		<Item class="Folder" referent="RBXE22BF3B6EBB54A1B8316244D4379F04D">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -19012,7 +19012,7 @@ MzE4ZThmYmM3]]></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			</Properties>
-			<Item class="Folder" referent="RBXEDC92962379B4235B269E5BCE64579FF">
+			<Item class="Folder" referent="RBX02E6F602DF7741669F16DB9E39F74B0B">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
@@ -19021,7 +19021,7 @@ MzE4ZThmYmM3]]></BinaryString>
 					<int64 name="SourceAssetId">-1</int64>
 					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 				</Properties>
-				<Item class="Sound" referent="RBXDDFDBA6A4EE048C68C72B1E2A268D849">
+				<Item class="Sound" referent="RBX99AE2B198E7E47DC979668539399C684">
 					<Properties>
 						<bool name="AcousticSimulationEnabled">true</bool>
 						<NumberRange name="LoopRegion">0 60000 </NumberRange>

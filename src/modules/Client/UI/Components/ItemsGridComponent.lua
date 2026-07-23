@@ -148,8 +148,8 @@ type Props = {
     },
     Items: ReactiveItemTypes.ReactiveItems,
     Search: Observable.Observable<string>,
-    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem) -> (),
-    OnItemHovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
+    OnItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    OnItemHovered: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
     OnItemUnhovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
 }
 type ItemsGridComponentModuleData = {}

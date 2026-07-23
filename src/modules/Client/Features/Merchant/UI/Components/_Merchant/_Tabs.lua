@@ -16,7 +16,6 @@ local MerchantTypesClient = require("MerchantTypesClient")
 -- [ Components ] --
 local ItemsGridComponent = require("ItemsGridComponent")
 local BuySlot = require(script.Parent._BuySlot)
-local RefreshTime = require(script.Parent._RefreshTime)
 
 -- [ Constants ] --
 
@@ -86,18 +85,9 @@ local Tabs = function(props: Props)
                 };
                 Items = props.Items,
                 Search = props.Search;
-                OnItemPressed = function(item: ReactiveItemTypes.ReactiveItem)
-                    -- Sell the whole stack; the server validates sellability/amount.
-                    local Stackable = item :: ReactiveItemTypes.ReactiveStackableItem
-
-                    props.Sell(item.Id, Stackable.Amount.Value)
-                end;
-                OnItemHovered = function()
-
-                end;
-                OnItemUnhovered = function()
-
-                end;
+                OnItemPressed = props.ItemPressed;
+                OnItemHovered = props.ItemHovered;
+                OnItemUnhovered = props.ItemUnhovered;
             })
         };
         Blend.New "Frame" {
@@ -146,13 +136,6 @@ local Tabs = function(props: Props)
                     BuySlots;
                 };
             };
-            RefreshTime({
-                Position = UDim2.new(0.5, 0, 0, 480);
-                AnchorPoint = Vector2.new(0.5, 0);
-                Size = UDim2.fromOffset(400, 40);
-                ZIndex = 2;
-                LastRefresh = props.LastRefresh;
-            });
         };
     }
 end
@@ -164,8 +147,11 @@ type Props = {
     Search: Observable.Observable<string>,
     BuySlots: MerchantTypesClient.ReactiveSlots,
     LastRefresh: Observable.Observable<number?>,
+
     Buy: (slotId: string) -> (),
-    Sell: (itemId: string, amount: number) -> (),
+    ItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    ItemHovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
+    ItemUnhovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
 }
 type ModuleData = {}
 

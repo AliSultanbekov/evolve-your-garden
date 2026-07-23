@@ -13,7 +13,7 @@ local Maid = require("Maid")
 local NPCTypesClient = require("NPCTypesClient")
 local NPCTypesShared = require("NPCTypesShared")
 local Rx = require("Rx")
-local DialogsConfig = require("DialogsConfig")
+local NPCsConfig = require("NPCsConfig")
 local ValueObject = require("ValueObject")
 
 -- [ Components ] --
@@ -41,12 +41,14 @@ export type Module = typeof(NPCUIClient) & ModuleData
 
 -- [ Private Functions ] --
 function NPCUIClient._GetActiveTopic(self: Module, npcName: string, topicId: NPCTypesShared.TopicId)
-    return DialogsConfig.Dialogs[npcName].Topics[topicId]
+    return NPCsConfig.Dialogs[npcName].Topics[topicId]
 end
 
 function NPCUIClient._UseAction(self: Module, action: string)
     if action == "OpenUI_PackStore" then
         self._UIServiceClient:OpenUI("PackStore")
+    elseif action == "OpenUI_Merchant" then
+        self._UIServiceClient:OpenUI("Merchant")
     end
 end
 
@@ -162,7 +164,7 @@ function NPCUIClient.Start(self: Module)
                     return
                 end
 
-                local StartTopicId = DialogsConfig.Dialogs[ClosestNPC.Name].StartTopicId
+                local StartTopicId = NPCsConfig.Dialogs[ClosestNPC.Name].StartTopicId
 
                 self._NPCServiceClient:SetActiveTopicId(StartTopicId)
             end,

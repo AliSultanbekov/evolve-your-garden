@@ -1,5 +1,5 @@
 --[=[
-    @class DialogsConfig
+    @class NPCsConfig
 ]=]
 
 -- [ Roblox Services ] --
@@ -15,10 +15,10 @@ local NPCTypesShared = require("NPCTypesShared")
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local DialogsConfig = {}
+local NPCsConfig = {}
 
 -- [ Private Functions ] --
-function DialogsConfig._Init(self: Module)
+function NPCsConfig._Init(self: Module)
     self.Dialogs = {
         ["Bob"] = {
             StartTopicId = "Start",
@@ -41,6 +41,28 @@ function DialogsConfig._Init(self: Module)
                     Responses = {},
                 }
             }
+        },
+        ["Martin"] = {
+            StartTopicId = "Start",
+            Topics = {
+                ["Start"] = {
+                    Id = "Start",
+                    Text = "Hello there!",
+                    Responses = {
+                        ["1"] = {
+                            Id = "1",
+                            Text = "Let me just look around",
+                            NextTopicId = "ShowStore"
+                        }
+                    }
+                },
+                ["ShowStore"] = {
+                    Id = "ShowStore",
+                    Text = "Alright, here!",
+                    Action = "OpenUI_Merchant",
+                    Responses = {},
+                }
+            }
         }
     }
 end
@@ -54,8 +76,8 @@ type ModuleData = {
     }
 }
 
-export type Module = typeof(DialogsConfig) & ModuleData
+export type Module = typeof(NPCsConfig) & ModuleData
 
-(DialogsConfig :: any):_Init()
+(NPCsConfig :: any):_Init()
 
-return DialogsConfig :: Module
+return NPCsConfig :: Module

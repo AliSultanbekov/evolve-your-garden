@@ -97,7 +97,7 @@ type Props = {
     GetItems: (filter: string?) -> ReactiveItemTypes.ReactiveItems,
     OnItemPressed: (item: ReactiveItemTypes.ReactiveItem) -> (),
     OnItemHovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
-    OnItemUnhovered: () -> (),
+    OnItemUnhovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
 }
 type ModuleData = {}
 

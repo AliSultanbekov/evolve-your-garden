@@ -31,7 +31,8 @@ local GenericButtonComponent = function(props: Props)
         Blend.Computed(IsPressed, function(pressed: boolean)
             return if pressed then 0.9 else 1
         end),
-        35
+        35,
+        0.35
     )
 
     local ButtonInstance: GuiButton

@@ -9,6 +9,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
+local ComponentTypes = require("ComponentTypes")
 
 -- [ Components ] --
 
@@ -51,7 +52,7 @@ local SearchBarComponent = function(props: Props)
             TextWrapped = true;
             ZIndex = 2;
             Blend.New "UIStroke" {
-                Color = Color3.fromRGB(43, 73, 112);
+                Color = props.TextBoxStrokeColor;
                 Thickness = 3;
             };
             [Blend.OnChange "Text"] = function(text: string)
@@ -66,12 +67,14 @@ type Props = {
     Size: UDim2,
     BackgroundImage: string,
     SearchBoxSize: UDim2,
-    OnSearch: (text: string) -> (),
-    Position: UDim2?,
+    Position: ComponentTypes.Prop<UDim2>,
     SearchBoxPosition: UDim2?,
     LayoutOrder: number?,
     ZIndex: number?,
     PlaceholderText: string?,
+    TextBoxStrokeColor: Color3?,
+
+    OnSearch: (text: string) -> (),
 }
 type ModuleData = {}
 

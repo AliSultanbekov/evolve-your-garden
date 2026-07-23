@@ -16,9 +16,10 @@ local MerchantTypesClient = require("MerchantTypesClient")
 -- [ Components ] --
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local CloseButtonComponent = require("CloseButtonComponent")
-local SearchBarComponent = require("SearchBarComponent")
 local Tabs = require(script._Tabs)
 local TabButtons = require(script._TabButtons)
+local RefreshTime = require(script._RefreshTime)
+local SearchBar = require(script._SearchBar)
 
 -- [ Constants ] --
 
@@ -75,6 +76,10 @@ local Merchant = function(props: Props)
         IsOpen = props.IsOpen;
         
         Children = {
+            SearchBar({
+                OnSearch = props.OnSearch,
+                ActiveTab = props.ActiveTab
+            });
             TabButtons({
                 ActiveTab = props.ActiveTab,
                 SwitchTab = props.SwitchTab,
@@ -86,19 +91,14 @@ local Merchant = function(props: Props)
                 BuySlots = props.BuySlots,
                 LastRefresh = props.LastRefresh,
                 Buy = props.Buy,
-                Sell = props.Sell
+                ItemPressed = props.ItemPressed,
+                ItemHovered = props.ItemHovered,
+                ItemUnhovered = props.ItemUnhovered
             });
             Title();
-            -- NOTE: header gap between Title (ends x=413) and TabButtons (starts
-            -- x=619) — reposition/resize freely when the design gets a real slot.
-            SearchBarComponent({
-                LayoutOrder = 4;
-                Position = UDim2.fromOffset(419, 9);
-                Size = UDim2.fromOffset(194, 64);
-                ZIndex = 3;
-                BackgroundImage = "rbxassetid://129977395166820";
-                SearchBoxSize = UDim2.fromOffset(194, 64);
-                OnSearch = props.OnSearch;
+            RefreshTime({
+                LastRefresh = props.LastRefresh,
+                ActiveTab = props.ActiveTab
             });
             CloseButtonComponent({
                 Name = "Close";
@@ -137,9 +137,11 @@ type Props = {
 
     SwitchTab: (tab: string) -> (),
     Buy: (slotId: string) -> (),
-    Sell: (itemId: string, amount: number) -> (),
     OnSearch: (text: string) -> (),
     OnClose: () -> (),
+    ItemPressed: (item: ReactiveItemTypes.ReactiveItem, position: UDim2) -> (),
+    ItemHovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
+    ItemUnhovered: (item: ReactiveItemTypes.ReactiveItem) -> (),
 }
 type ModuleData = {}
 

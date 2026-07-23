@@ -34,6 +34,7 @@ type ModuleData = {
     _MouseServiceClient: typeof(require("MouseServiceClient")),
     _Maid: Maid.Maid,
     _ActiveTab: ValueObject.ValueObject<string>,
+    _SelectedItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>,
     _SelectedItemPosition: ValueObject.ValueObject<UDim2?>,
     _HoveredItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>,
     _Search: ValueObject.ValueObject<string>,
@@ -46,14 +47,14 @@ export type Module = typeof(InventoryUIClient) & ModuleData
 function InventoryUIClient._SetupTooltip(self: Module)
     local DisplayItem = Rx.combineLatest({
         HoveredItem = self._HoveredItem:Observe(),
-        SelectedItem = self._InventoryServiceClient:ObserveSelectedItem(),
+        SelectedItem = self._SelectedItem:Observe(),
     }):Pipe({
         Rx.map(function(data)
             return data.SelectedItem or data.HoveredItem
         end) :: any,
     }) :: any
 
-    local IsSelected = self._InventoryServiceClient:ObserveSelectedItem():Pipe({
+    local IsSelected = self._SelectedItem:Observe():Pipe({
         Rx.map(function(isSelected)
             return isSelected ~= nil
         end) :: any
@@ -85,14 +86,20 @@ function InventoryUIClient._SetupTooltip(self: Module)
             
             Actions = {
                 Open = function(amount: number)
-                    self._InventoryServiceClient:UseAction(InventoryEnums.Actions.Open, {
+                    local Selected = self._SelectedItem.Value
+
+                    if not Selected then
+                        return
+                    end
+
+                    self._InventoryServiceClient:UseItemAction(Selected, InventoryEnums.Actions.Open, {
                         Amount = amount
                     })
                 end
             },
 
             OnClose = function()
-                self._InventoryServiceClient:SelectItem(nil)
+                self._SelectedItem.Value = nil
             end,
         })
     } end))
@@ -104,8 +111,22 @@ function InventoryUIClient._SetupInventory(self: Module)
     self._Maid:Add(self._UIServiceClient:ObserveUI("Inventory"):Subscribe(function(open: boolean)
         if open == false then
             self._HoveredItem.Value = nil
-            self._InventoryServiceClient:SelectItem(nil)
+            self._SelectedItem.Value = nil
             self._DeleteMode.Value = false
+        end
+    end))
+
+    self._Maid:Add(self._SelectedItem:Observe():Pipe({
+        Rx.switchMap(function(item: ReactiveItemTypes.ReactiveItem?)
+            if not item then
+                return Rx.of(true) :: any
+            end
+
+            return self._InventoryServiceClient:GetItems():ObserveAtKey(item.Id)
+        end) :: any,
+    }):Subscribe(function(storedItem)
+        if storedItem == nil then
+            self._SelectedItem.Value = nil
         end
     end))
 
@@ -119,9 +140,13 @@ function InventoryUIClient._SetupInventory(self: Module)
             SwitchTab = function(tabName: string)
                 self._ActiveTab.Value = tabName
                 self._HoveredItem.Value = nil
-                self._InventoryServiceClient:SelectItem(nil)
+                self._SelectedItem.Value = nil
             end,
             GetItems = function(filter: string?)
+                if not filter then
+                    return self._InventoryServiceClient:GetItems()
+                end
+                
                 return self._InventoryServiceClient:GetItemsByTab(filter)
             end,
             OnItemPressed = function(item: ReactiveItemTypes.ReactiveItem, position: UDim2)
@@ -130,11 +155,11 @@ function InventoryUIClient._SetupInventory(self: Module)
                     return
                 end
 
-                self._InventoryServiceClient:SelectItem(item)
+                self._SelectedItem.Value = item
                 self._SelectedItemPosition.Value = position
             end,
             OnItemHovered = function(item: ReactiveItemTypes.ReactiveItem)
-                if not self._InventoryServiceClient:GetSelectedItem() then
+                if not self._SelectedItem.Value then
                     self._HoveredItem.Value = item
                 end
             end,
@@ -150,10 +175,9 @@ function InventoryUIClient._SetupInventory(self: Module)
             OnDeleteMode = function()
                 self._DeleteMode.Value = not self._DeleteMode.Value
 
-                -- Entering delete mode shouldn't keep a selection/tooltip open.
                 if self._DeleteMode.Value then
                     self._HoveredItem.Value = nil
-                    self._InventoryServiceClient:SelectItem(nil)
+                    self._SelectedItem.Value = nil
                 end
             end
         })
@@ -172,6 +196,7 @@ function InventoryUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._MouseServiceClient = self._ServiceBag:GetService(require("MouseServiceClient"))
     self._Maid = Maid.new()
     self._ActiveTab = ValueObject.new("Garden")
+    self._SelectedItem = ValueObject.new(nil)
     self._SelectedItemPosition = ValueObject.new(nil)
     self._HoveredItem = ValueObject.new(nil)
     self._Search = ValueObject.new("")

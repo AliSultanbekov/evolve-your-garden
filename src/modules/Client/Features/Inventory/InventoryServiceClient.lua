@@ -16,7 +16,6 @@ local ObservableMap = require("ObservableMap")
 local InventoryTypesClient = require("InventoryTypesClient")
 local InventoryConfigClient = require("InventoryConfigClient")
 local ReactiveItemTypes = require("ReactiveItemTypes")
-local ValueObject = require("ValueObject")
 local ItemConfig = require("ItemConfig")
 
 -- [ Constants ] --
@@ -32,7 +31,6 @@ type ModuleData = {
     _InventoryNetworkClient: typeof(require("InventoryNetworkClient")),
     _Items: ReactiveItemTypes.ReactiveItems,
     _FilteredItems: InventoryTypesClient.FilteredItems,
-    _SelectedItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>
 }
 
 export type Module = typeof(InventoryServiceClient) & ModuleData
@@ -64,36 +62,12 @@ function InventoryServiceClient._ProcessItems(self: Module, items: { [any]: Item
 end
 
 -- [ Public Functions ] --
-function InventoryServiceClient.UseAction(self: Module, action: string, params: { [string]: any }?)
-    if not self._SelectedItem.Value then
-        return
-    end
-
-    self._InventoryNetworkClient:UseAction({
-        Action = action,
-        ItemId = self._SelectedItem.Value.Id,
-        Params = params
-    })
-end
-
 function InventoryServiceClient.UseItemAction(self: Module, item: ReactiveItemTypes.ReactiveItem, action: string, params: { [string]: any }?)
     self._InventoryNetworkClient:UseAction({
         Action = action,
         ItemId = item.Id,
         Params = params
     })
-end
-
-function InventoryServiceClient.SelectItem(self: Module, item: ReactiveItemTypes.ReactiveItem?)
-    self._SelectedItem.Value = item
-end
-
-function InventoryServiceClient.GetSelectedItem(self: Module)
-    return self._SelectedItem.Value
-end
-
-function InventoryServiceClient.ObserveSelectedItem(self: Module)
-    return self._SelectedItem:Observe()
 end
 
 function InventoryServiceClient.GetItemsByCategory(self: Module, category: ItemTypes.Category)
@@ -117,7 +91,6 @@ function InventoryServiceClient.Init(self: Module, serviceBag: ServiceBag.Servic
     self._InventoryNetworkClient = self._ServiceBag:GetService(require("InventoryNetworkClient"))
     self._Items = ObservableMap.new()
     self._FilteredItems = {}
-    self._SelectedItem = ValueObject.new(nil)
 
     self:_SetupFilteredItems()
 end

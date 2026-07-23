@@ -227,20 +227,21 @@ function GardenServiceServer.AddHarvestItems(self: Module, player: Player, harve
                 end,
                 ["Stackable"] = function(item: ItemTypes.StackableItem)
                     local StoredItem = SlotData.Harvest[item.Id] :: ItemTypes.StackableItem
-    
+
                     if StoredItem then
                         if StoredItem.Amount >= ItemConfig.MaxAmount then
                             return
                         end
-                        
+
                         local NewAmount = StoredItem.Amount + item.Amount
-                        
+
                         if NewAmount >= ItemConfig.MaxAmount then
                             NewAmount = ItemConfig.MaxAmount
                         end
 
-                        StoredItem.Amount += item.Amount
-                        
+                        local StoredStackable: ItemTypes.Stackable = StoredItem
+                        StoredStackable.Amount = NewAmount
+
                         if not AddedItemsHarvest[slotId] or not AddedItemsHarvest[slotId][item.Id] then
                             if not UpdatedItemsHarvest[slotId] then
                                 UpdatedItemsHarvest[slotId] = {}
@@ -254,7 +255,9 @@ function GardenServiceServer.AddHarvestItems(self: Module, player: Player, harve
                         end
 
                         if item.Amount > ItemConfig.MaxAmount then
-                            item.Amount = ItemConfig.MaxAmount
+                            -- Stackable view: Luau can't wite through a union of tables.
+                            local ItemStackable: ItemTypes.Stackable = item
+                            ItemStackable.Amount = ItemConfig.MaxAmount
                         end
 
                         SlotData.Harvest[item.Id] = item

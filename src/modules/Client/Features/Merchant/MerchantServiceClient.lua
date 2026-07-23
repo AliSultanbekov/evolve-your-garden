@@ -102,13 +102,11 @@ function MerchantServiceClient.Init(self: Module, serviceBag: ServiceBag.Service
 end
 
 function MerchantServiceClient.Start(self: Module)
-    -- Push path: server fires Refreshed on data-ready and every restock.
     self._MerchantNetworkClient.RemoteEvents.Refreshed:Connect(function(packet: MerchantTypesShared.RefreshedRemotePacket)
         self._LastRefresh.Value = packet.LastRefresh
         self:UpdateBuySlots(packet.BuySlots)
     end)
 
-    -- Authoritative stock after a purchase.
     self._MerchantNetworkClient.RemoteEvents.Bought:Connect(function(packet: MerchantTypesShared.BoughtRemotePacket)
         local ReactiveSlot = self._BuySlots[packet.SlotId]
 
@@ -119,8 +117,6 @@ function MerchantServiceClient.Start(self: Module)
         ReactiveSlot.Left.Value = packet.Left
     end)
 
-    -- Catch-up fetch: BuySlots may be nil if we resolve before the server's
-    -- first refresh — the Refreshed push covers that case.
     self._MerchantNetworkClient:GetSlots():Then(function(packet: MerchantTypesShared.GetBuySlotsRemotePacket)
         if not packet.BuySlots then
             return

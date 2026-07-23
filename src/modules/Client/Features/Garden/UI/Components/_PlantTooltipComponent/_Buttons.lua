@@ -14,67 +14,19 @@ local ReactiveItemTypes = require("ReactiveItemTypes")
 local InventoryTypesClient = require("InventoryTypesClient")
 
 -- [ Components ] --
-local GenericButtonComponent = require("GenericButtonComponent")
-local AnimatedFrameComponent = require("AnimatedFrameComponent")
+local AnimatedButtonComponent = require("AnimatedButtonComponent")
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Functions ] --
-local function AnimatedButton(props: {
-    Name: string,
-    LayoutOrder: number?,
-    IsOpen: Observable.Observable<boolean>,
-    Image: string,
-    Text: string,
-    StrokeColor: Color3,
-    OnPressed: (...any) -> ...any,
-})
-    return AnimatedFrameComponent({
-        Name = props.Name;
-        IsOpen = props.IsOpen;
-        Size = UDim2.fromOffset(118, 48);
-        LayoutOrder = props.LayoutOrder;
-        BackgroundTransparency = 1;
-        Children = {
-            GenericButtonComponent({
-                Name = props.Name;
-                Size = UDim2.fromScale(1, 1);
-                Position = UDim2.fromScale(0.5, 0.5);
-                AnchorPoint = Vector2.new(0.5, 0.5);
-                BackgroundTransparency = 1;
-                Image = props.Image;
-                OnPressed = props.OnPressed;
-                Children = {
-                    Blend.New "TextLabel" {
-                        Name = "Name";
-                        Position = UDim2.fromOffset(4, 4);
-                        Size = UDim2.fromOffset(110, 37);
-                        BackgroundTransparency = 1;
-                        FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
-                        Text = props.Text;
-                        TextColor3 = Color3.fromRGB(255, 255, 255);
-                        TextSize = 18;
-                        ZIndex = 2;
-                        Blend.New "UIStroke" {
-                            Color = props.StrokeColor;
-                            LineJoinMode = Enum.LineJoinMode.Miter;
-                            Thickness = 2;
-                        };
-                    };
-                };
-            });
-        };
-    })
-end
-
 local function PlantButtons(
     IsSelected: Observable.Observable<boolean>,
     actions: InventoryTypesClient.Actions
 )
     return {
-        AnimatedButton({
+        AnimatedButtonComponent({
             Name = "Harvest";
             IsOpen = IsSelected;
             Image = "rbxassetid://97250954730348";
@@ -84,7 +36,7 @@ local function PlantButtons(
                 actions.Harvest()
             end;
         }),
-        AnimatedButton({
+        AnimatedButtonComponent({
             Name = "Info";
             IsOpen = IsSelected;
             Image = "rbxassetid://138905656018275";
@@ -98,7 +50,7 @@ local function PlantButtons(
                 end
             end;
         }),
-        AnimatedButton({
+        AnimatedButtonComponent({
             Name = "DigUp";
             IsOpen = IsSelected;
             Image = "rbxassetid://102732472413370";
@@ -134,7 +86,7 @@ local Buttons = function(props: Props)
                 return UDim.new(0, if selected then 3    else 0)
             end),
         },
-        AnimatedButton({
+        AnimatedButtonComponent({
             Name = "Close";
             LayoutOrder = 100;
             IsOpen = props.IsSelected;

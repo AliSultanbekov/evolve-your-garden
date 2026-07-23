@@ -31,7 +31,7 @@ local AnimatedFrameComponent = function(props: Props)
             return if open then 35 else 50
         end),
         Blend.Computed(props.IsOpen, function(open: boolean)
-            return if open then 1.5 else 1
+            return if open then 0.4 else 1
         end)
     )
 

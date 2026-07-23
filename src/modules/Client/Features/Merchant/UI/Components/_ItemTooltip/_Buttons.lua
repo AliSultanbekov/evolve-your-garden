@@ -25,9 +25,6 @@ local BUTTON_SIZE = UDim2.fromOffset(179, 48)
 
 -- [ Functions ] --
 
--- Intentionally empty for now: there is no plant action usable from the
--- inventory yet (planting goes through the garden slot picker, not here).
--- Add buttons once a plant UseAction exists server-side.
 local function PlantButtons(
     isSelected: Observable.Observable<boolean>,
     itemCategory: Observable.Observable<ItemTypes.Category>,
@@ -100,6 +97,18 @@ local Buttons = function(props: Props)
                 return UDim.new(0, if selected then 10 else 0)
             end),
         },
+        AnimatedButtonComponent({
+            Name = "Sell";
+            LayoutOrder = 1;
+            IsOpen = props.IsSelected;
+            Size = BUTTON_SIZE;
+            Image = "rbxassetid://97250954730348";
+            Text = "Sell";
+            StrokeColor = Color3.fromRGB(14, 100, 13);
+            OnPressed = function()
+                props.Actions.Sell()
+            end;
+        }),
         AnimatedButtonComponent({
             Name = "Close";
             LayoutOrder = 100;

@@ -50,9 +50,9 @@ local Window = function(props: Props)
                 ActiveTab = props.ActiveTab;
                 Search = props.Search;
                 GetItems = props.GetItems;
-                OnItemPressed = props.OnItemPressed;
-                OnItemHovered = props.OnItemHovered;
-                OnItemUnhovered = props.OnItemUnhovered;
+                OnItemPressed = props.OnItemPressed :: any;
+                OnItemHovered = props.OnItemHovered :: any;
+                OnItemUnhovered = props.OnItemUnhovered :: any;
             });
             SearchBarComponent({
                 LayoutOrder = 3;

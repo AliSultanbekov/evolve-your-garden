@@ -155,7 +155,9 @@ function InventoryServiceServer.AddItems(self: Module, player: Player, items: { 
                 local StoredItem = Data.Inventory[item.Id] :: ItemTypes.StackableItem
 
                 if StoredItem then
-                    StoredItem.Amount += item.Amount
+                    -- Stackable view: Luau can't write through a union of tables.
+                    local StoredStackable: ItemTypes.Stackable = StoredItem
+                    StoredStackable.Amount += item.Amount
 
                     if not AddedItems[item.Id] then
                         UpdatedItems[item.Id] = StoredItem
@@ -223,7 +225,9 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
                     RemovedItems[item.Id] = StoredItem
                     UpdatedItems[item.Id] = nil
                 else
-                    StoredItem.Amount -= item.Amount
+                    -- Stackable view: Luau can't write through a union of tables.
+                    local StoredStackable: ItemTypes.Stackable = StoredItem
+                    StoredStackable.Amount -= item.Amount
                     UpdatedItems[item.Id] = StoredItem
                 end
             end,

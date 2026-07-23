@@ -72,6 +72,10 @@ export type Item = PlantItem | MaterialItem | PackItem | CurrencyItem
 -- Unions of concrete items that share a storage mode.
 -- These ARE Items (not structural views), so they round-trip into Inventory: { [ID]: Item }.
 -- Keep in sync with ItemConfig.CategoryToStorageMode whenever you add a category.
+-- NOTE: Luau can't type-check property WRITES through a union of tables — to
+-- mutate Amount, alias through the Stackable view first:
+--   local View: ItemTypes.Stackable = stackableItem
+--   View.Amount += n
 export type UniqueItem = PlantItem
 export type StackableItem = MaterialItem | PackItem | CurrencyItem
 export type StorageItem = Item

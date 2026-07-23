@@ -49,16 +49,6 @@ local ButtonsWindow = function(props: Props)
                     props.OnToggleUI("Inventory")
                 end
             });
-            GenericButtonComponent({
-                Name = "PackStore";
-                Size = UDim2.fromOffset(98, 102);
-                AnchorPoint = Vector2.new(0.5, 0.5);
-                BackgroundTransparency = 1;
-                Image = "rbxassetid://92761967690607";
-                OnPressed = function()
-                    props.OnToggleUI("PackStore")
-                end
-            });
         };
         IsOpen = props.IsOpen
     })
