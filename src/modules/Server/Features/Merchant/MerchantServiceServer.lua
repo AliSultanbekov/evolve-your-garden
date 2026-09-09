@@ -1,4 +1,3 @@
-local RunService = game:GetService("RunService")
 --[=[
     @class MerchantServiceServer
 ]=]
@@ -211,16 +210,20 @@ function MerchantServiceServer.Start(self: Module)
         local Maid: Maid.Maid, Player: Player = brio:ToMaidAndValue()
 
         Maid:Add(self._DataServiceServer:OnDataReady(Player, function(data: ProfileConfig.ProfileTemplate)
-            local Conn = RunService.Heartbeat:Connect(function(dt: number)
-                if data.Merchant.LastRefresh and (data.Merchant.LastRefresh + MerchantConfig.RefreshTime >= DateTime.now().UnixTimestamp) then
-                    return
-                end
+            local Running = true
 
-                self:Refresh(Player)
+            task.spawn(function()
+                while Running do
+                    if not (data.Merchant.LastRefresh and (data.Merchant.LastRefresh + MerchantConfig.RefreshTime >= DateTime.now().UnixTimestamp)) then
+                        self:Refresh(Player)
+                    end
+
+                    task.wait(1)
+                end
             end)
 
             return function()
-                Conn:Disconnect()
+                Running = false
             end
         end))
     end)

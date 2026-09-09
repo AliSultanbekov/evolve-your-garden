@@ -91,20 +91,17 @@ function PackStoreService.BuyPack(self: Module, player: Player, packId: PackStor
         return
     end
 
-    -- Grant first (capacity-checked); only take payment and stock once the
-    -- pack actually fits in the inventory.
     local PackItem = ItemUtil:ProcessRawItem({
         Category = "Pack",
         Name = Pack.Name,
         Amount = 1,
     })
-    local Result: InventoryTypesShared.Result = self._InventoryServiceServer:AddItems(player, { PackItem })
+    local Result: InventoryTypesShared.Result = self._InventoryServiceServer:AddItems(player, { PackItem }, true)
 
     if Result == "Fail" then
         return
     end
 
-    -- GetItem returns a clone, so adjusting Amount only affects the removal request.
     CurrencyItem.Amount = PackPrice
 
     self._InventoryServiceServer:RemoveItems(player, {CurrencyItem})
@@ -136,7 +133,7 @@ function PackStoreService.Refresh(
 
         local Packs: { [PackStoreTypesShared.PackId]: PackStoreTypesShared.Pack} = {}
 
-        for _, pack in globalPacks do
+        for _, pack in table.clone(globalPacks) do
             Packs[pack.Id] = pack
         end
 
@@ -192,31 +189,35 @@ function PackStoreService.Start(self: Module)
         }
     end
     
+    self._PackStoreNetworkServer.RemoteEvents.BuyPack:Connect(function(player: Player, packet: PackStoreTypesShared.BuyPackRemotePacket)
+        self:BuyPack(player, packet.PackId)
+    end)
+
     task.spawn(function()
-        local Packet = self._JavaBackendServiceServer:GetPackStoreCurrentSale()
-    
-        self:Refresh(Packet.SaleId, Packet.Packs, Packet.StartTime, Players:GetPlayers())
-    
+        local Ok, Packet = pcall(function()
+            return self._JavaBackendServiceServer:GetPackStoreCurrentSale()
+        end)
+
+        if Ok and Packet then
+            self:Refresh(Packet.SaleId, Packet.Packs, Packet.StartTime, Players:GetPlayers())
+        else
+            warn("[PackStoreService] Failed to fetch current sale from backend:", Packet)
+        end
+
         self._JavaBackendServiceServer:SubsribeToPackStoreRefreshed(function(packet)
             self:Refresh(packet.SaleId, packet.Packs, packet.StartTime, Players:GetPlayers())
         end)
-    
+
         RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
             local Maid, Player = brio:ToMaidAndValue()
-    
-            local PlayerData = self._DataServiceServer:GetData(Player)
-    
-            if PlayerData.PackStore.SaleId ~= self._CurrentSale.SaleId then
-                self:Refresh(self._CurrentSale.SaleId, self._CurrentSale.GlobalPacks, self._CurrentSale.StartTime, { Player })
-            end
-    
-            Maid:Add(function()
-                
-            end)
-        end)
 
-        self._PackStoreNetworkServer.RemoteEvents.BuyPack:Connect(function(player: Player, packet: PackStoreTypesShared.BuyPackRemotePacket)
-            self:BuyPack(player, packet.PackId)
+            Maid:Add(self._DataServiceServer:OnDataReady(Player, function(data)
+                if data.PackStore.SaleId ~= self._CurrentSale.SaleId then
+                    self:Refresh(self._CurrentSale.SaleId, self._CurrentSale.GlobalPacks, self._CurrentSale.StartTime, { Player })
+                end
+
+                return
+            end))
         end)
     end)
 end

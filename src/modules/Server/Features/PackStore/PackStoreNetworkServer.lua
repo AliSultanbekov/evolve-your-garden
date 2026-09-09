@@ -75,8 +75,14 @@ function PackStoreNetworkServer.Start(self: Module)
     Channel:DeclareEvent("Refreshed")
     Channel:DeclareEvent("PackBought")
 
+    -- Remoting passes client payloads through verbatim — validate shape here
+    -- so service handlers can assume well-formed packets.
     Channel:Connect("BuyPack", function(player: Player, packet: PackStoreTypesShared.BuyPackRemotePacket)
-        self.RemoteEvents.BuyPack:Fire(player, packet)  
+        if typeof(packet) ~= "table" or typeof(packet.PackId) ~= "string" then
+            return
+        end
+
+        self.RemoteEvents.BuyPack:Fire(player, packet)
     end)
 
     Channel:Bind("GetCurrentSale", function(player: Player)

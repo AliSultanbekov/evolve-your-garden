@@ -81,11 +81,21 @@ function MerchantNetworkServer.Start(self: Module)
         return self.RemoteFunctions.GetBuySlots(player)
     end)
 
+    -- Remoting passes client payloads through verbatim — validate shape here
+    -- so service handlers can assume well-formed packets.
     Channel:Connect("Buy", function(player: Player, packet: MerchantTypesShared.BuyRemotePacket)
+        if typeof(packet) ~= "table" or typeof(packet.SlotId) ~= "string" then
+            return
+        end
+
         self.RemoteEvents.Buy:Fire(player, packet)
     end)
 
     Channel:Connect("Sell", function(player: Player, packet: MerchantTypesShared.SellRemotePacket)
+        if typeof(packet) ~= "table" or typeof(packet.ItemId) ~= "string" or typeof(packet.Amount) ~= "number" then
+            return
+        end
+
         self.RemoteEvents.Sell:Fire(player, packet)
     end)
 end

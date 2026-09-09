@@ -55,16 +55,16 @@ function WeatherServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceB
 end
 
 function WeatherServiceServer.Start(self: Module)
+    self._WeatherNetworkServer.RemoteFunctions["GetCurrentWeather"] = function()
+        return { Weather = self._CurrentWeather }
+    end
+    
     task.spawn(function()
         self:SelectWeather(self._JavaBackendServiceServer:GetWeather())
 
         self._JavaBackendServiceServer:SubsribeToWeather(function(packet)
             self:SelectWeather(packet)
         end)
-
-        self._WeatherNetworkServer.RemoteFunctions["GetCurrentWeather"] = function()
-            return { Weather = self._CurrentWeather }
-        end
     end)
 end
 

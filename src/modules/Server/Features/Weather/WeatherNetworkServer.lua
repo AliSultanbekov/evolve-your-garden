@@ -61,8 +61,11 @@ function WeatherNetworkServer.Start(self: Module)
     local Channel = self._NetworkServiceShared:GetChannel("Weather")
 
     Channel:DeclareEvent("WeatherSelected")
-    
     Channel:DeclareMethod("GetCurrentWeather")
+
+    Channel:Bind("GetCurrentWeather", function(player: Player, packet: WeatherTypesShared.GetCurrentWeatherRemotePacket)
+        return self.RemoteFunctions.GetCurrentWeather()
+    end)
 end
 
 return WeatherNetworkServer :: Module

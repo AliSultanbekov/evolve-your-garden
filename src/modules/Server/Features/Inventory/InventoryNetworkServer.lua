@@ -86,7 +86,17 @@ function InventoryNetworkServer.Start(self: Module)
         return self.RemoteFunctions.GetItems(player)
     end)
 
-    Channel:Connect("UseAction", function(player: Player, packet: InventoryTypesShared.UseActionRemotePacket)  
+    -- Remoting passes client payloads through verbatim — validate shape here
+    -- so service handlers can assume well-formed packets.
+    Channel:Connect("UseAction", function(player: Player, packet: InventoryTypesShared.UseActionRemotePacket)
+        if typeof(packet) ~= "table"
+            or typeof(packet.Action) ~= "string"
+            or typeof(packet.ItemId) ~= "string"
+            or (packet.Params ~= nil and typeof(packet.Params) ~= "table")
+        then
+            return
+        end
+
         self.RemoteEvents.UseAction:Fire(player, packet)
     end)
 end

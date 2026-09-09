@@ -33,6 +33,7 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _DataServiceServer: typeof(require("DataServiceServer")),
     _InventoryNetworkServer: typeof(require("InventoryNetworkServer")),
+    _EncyclopediaServiceServer: typeof(require("EncyclopediaServiceServer")),
     _PlayersInventoryItemCount: { [Player]: number }
 }
 
@@ -43,6 +44,18 @@ function InventoryServiceServer._GetItem(self: Module, player: Player, itemId: I
     local Data = self._DataServiceServer:GetData(player)
 
     return Data.Inventory[itemId]
+end
+
+function InventoryServiceServer._GetInventoryItemCount(self: Module, player: Player)
+    return self._PlayersInventoryItemCount[player]
+end
+
+function InventoryServiceServer._IsInventoryFull(self: Module, player: Player)
+    if self:_GetInventoryItemCount(player) >= INVENTORY_CAPACITY then
+        return true
+    else
+        return false
+    end
 end
 
 -- [ Public Functions ] --
@@ -73,6 +86,10 @@ function InventoryServiceServer.UseAction(self: Module, player: Player, action: 
         if Item.Category ~= "Pack" then
             return
         end
+        
+        if self:_IsInventoryFull(player) then
+            return
+        end
 
         local Amount = if not params then 1 else if not params["Amount"] then 1 else params["Amount"]
 
@@ -83,7 +100,6 @@ function InventoryServiceServer.UseAction(self: Module, player: Player, action: 
             Gateway = Gateway,
         })
     elseif action == InventoryEnums.Actions.Delete then
-        -- Currencies aren't deletable — too easy to nuke your own economy.
         if Item.Category == "Currency" then
             return
         end
@@ -121,14 +137,17 @@ function InventoryServiceServer.AddRawItems(self: Module, player: Player, rawIte
     self:AddItems(player, Items)
 end
 
-function InventoryServiceServer.AddItems(self: Module, player: Player, items: { [any]: ItemTypes.Item }, transmitDelay: number?): InventoryTypesShared.Result
+function InventoryServiceServer.AddItems(
+    self: Module, 
+    player: Player, 
+    items: { [any]: ItemTypes.Item },
+    discover: boolean?,
+    transmitDelay: number?
+): InventoryTypesShared.Result
     local Data = self._DataServiceServer:GetProfile(player).Data
     local InventoryData = Data.Inventory
-    local ItemCount = self._PlayersInventoryItemCount[player] or 0
+    local ItemCount = self:_GetInventoryItemCount(player)
 
-    -- An item creates a NEW entry when nothing is stored under its id yet
-    -- (Unique items always have fresh GUID ids; Stackables merge into an
-    -- existing stack). Only new entries consume capacity.
     local NewItemsCount = 0
     for _, item in items do
         if not InventoryData[item.Id] then
@@ -136,12 +155,12 @@ function InventoryServiceServer.AddItems(self: Module, player: Player, items: { 
         end
     end
 
-    if ItemCount + NewItemsCount > INVENTORY_CAPACITY then
-        return InventoryEnums.Result.Fail
-    end
-
     local AddedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
     local UpdatedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
+
+    if discover then
+        self._EncyclopediaServiceServer:DiscoverItems(player, items)
+    end
 
     for _, item in items do
         ItemUtil:OnStorageMode(item, {
@@ -155,7 +174,6 @@ function InventoryServiceServer.AddItems(self: Module, player: Player, items: { 
                 local StoredItem = Data.Inventory[item.Id] :: ItemTypes.StackableItem
 
                 if StoredItem then
-                    -- Stackable view: Luau can't write through a union of tables.
                     local StoredStackable: ItemTypes.Stackable = StoredItem
                     StoredStackable.Amount += item.Amount
 
@@ -251,6 +269,7 @@ function InventoryServiceServer.Init(self: Module, serviceBag: ServiceBag.Servic
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._DataServiceServer = self._ServiceBag:GetService(require("DataServiceServer"))
     self._InventoryNetworkServer = self._ServiceBag:GetService(require("InventoryNetworkServer"))
+    self._EncyclopediaServiceServer = self._ServiceBag:GetService(require("EncyclopediaServiceServer"))
     self._PlayersInventoryItemCount = {}
 end
 

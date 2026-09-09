@@ -1,5 +1,5 @@
 --[=[
-    @class UpgradeServiceServer
+    @class UpgradesServiceServer
 ]=]
 
 -- [ Roblox Services ] --
@@ -17,7 +17,7 @@ local ItemTypes = require("ItemTypes")
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local UpgradeServiceServer = {}
+local UpgradesServiceServer = {}
 
 -- [ Types ] --
 type ModuleData = {
@@ -26,18 +26,18 @@ type ModuleData = {
     _InventoryServiceServer: typeof(require("InventoryServiceServer")),
 }
 
-export type Module = typeof(UpgradeServiceServer) & ModuleData
+export type Module = typeof(UpgradesServiceServer) & ModuleData
 
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
-function UpgradeServiceServer.GetUpgradeLevel(self: Module, player: Player, upgradeName: string): number
+function UpgradesServiceServer.GetUpgradeLevel(self: Module, player: Player, upgradeName: string): number
     local Data = self._DataServiceServer:GetData(player)
 
     return Data.Upgrades[upgradeName]
 end
 
-function UpgradeServiceServer.PurchaseUpgrade(self: Module, player: Player, upgradeName: string)
+function UpgradesServiceServer.PurchaseUpgrade(self: Module, player: Player, upgradeName: string)
     local UpgradeConfig = UpgradesConfig[upgradeName]
 
     if not UpgradeConfig then
@@ -81,7 +81,7 @@ function UpgradeServiceServer.PurchaseUpgrade(self: Module, player: Player, upgr
     data.Upgrades[upgradeName] += 1
 end
 
-function UpgradeServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
+function UpgradesServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     if self._ServiceBag ~= nil then
         error("Service already initialized")
     end
@@ -91,8 +91,8 @@ function UpgradeServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceB
     self._InventoryServiceServer = self._ServiceBag:GetService(require("InventoryServiceServer"))
 end
 
-function UpgradeServiceServer.Start(self: Module)
+function UpgradesServiceServer.Start(self: Module)
     
 end
 
-return UpgradeServiceServer :: Module
+return UpgradesServiceServer :: Module
