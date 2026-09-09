@@ -29,19 +29,22 @@ local function PlantButtons(
         AnimatedButtonComponent({
             Name = "Harvest";
             IsOpen = IsSelected;
-            Image = "rbxassetid://97250954730348";
+            Image = "rbxassetid://138166573995722";
             Text = "Harvest";
-            StrokeColor = Color3.fromRGB(14, 100, 13);
+            TextSize = 22;
+            StrokeColor = Color3.fromRGB(0, 105, 3);
             OnPressed = function()
                 actions.Harvest()
             end;
         }),
         AnimatedButtonComponent({
             Name = "Info";
+            LayoutOrder = 1;
             IsOpen = IsSelected;
-            Image = "rbxassetid://138905656018275";
+            Image = "rbxassetid://134096230556407";
             Text = "Info";
-            StrokeColor = Color3.fromRGB(115, 70, 34);
+            TextSize = 22;
+            StrokeColor = Color3.fromRGB(109, 72, 0);
             OnPressed = function()
                 -- Info action isn't implemented yet (GardenUIClient only provides
                 -- Close/DigUp/Harvest) — guard so pressing doesn't error.
@@ -52,10 +55,12 @@ local function PlantButtons(
         }),
         AnimatedButtonComponent({
             Name = "DigUp";
+            LayoutOrder = 2;
             IsOpen = IsSelected;
-            Image = "rbxassetid://102732472413370";
-            Text = "Dig up";
-            StrokeColor = Color3.fromRGB(117, 26, 25);
+            Image = "rbxassetid://98430497084904";
+            Text = "Dig Up";
+            TextSize = 22;
+            StrokeColor = Color3.fromRGB(130, 40, 40);
             OnPressed = function()
                 actions.DigUp()
             end;
@@ -67,13 +72,13 @@ end
 local Buttons = function(props: Props)
     return Blend.New "Frame" {
         Name = "Buttons";
-        LayoutOrder = 2;
-        Position = UDim2.fromOffset(0, 265);
+        LayoutOrder = 3;
         Size = UDim2.fromOffset(255, 0);
         AutomaticSize = Enum.AutomaticSize.Y,
         BackgroundTransparency = 1;
         Blend.New "UIGridLayout" {
-            CellSize = UDim2.fromOffset(118, 48);
+            CellPadding = UDim2.fromOffset(4, 4);
+            CellSize = UDim2.fromOffset(119, 48);
             HorizontalAlignment = Enum.HorizontalAlignment.Center;
             SortOrder = Enum.SortOrder.LayoutOrder;
             VerticalAlignment = Enum.VerticalAlignment.Center;
@@ -83,15 +88,16 @@ local Buttons = function(props: Props)
                 return UDim.new(0, if selected then 3 else 0)
             end),
             PaddingBottom = Blend.Computed(props.IsSelected, function(selected: boolean)
-                return UDim.new(0, if selected then 3    else 0)
+                return UDim.new(0, if selected then 3 else 0)
             end),
         },
         AnimatedButtonComponent({
             Name = "Close";
             LayoutOrder = 100;
             IsOpen = props.IsSelected;
-            Image = "rbxassetid://101276568553496";
+            Image = "rbxassetid://98430497084904";
             Text = "Close";
+            TextSize = 22;
             StrokeColor = Color3.fromRGB(130, 40, 40);
             OnPressed = props.Actions.Close;
         }),

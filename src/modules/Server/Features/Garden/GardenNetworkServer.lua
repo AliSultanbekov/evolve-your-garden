@@ -121,15 +121,31 @@ function GardenNetworkServer.Start(self: Module)
     Channel:DeclareEvent("HarvestCollected")
 
     Channel:Connect("PlacePlant", function(player: Player, packet: GardenTypesShared.PlacePlantRemotePacket)
+        if typeof(packet) ~= "table" or typeof(packet.SlotId) ~= "string" or typeof(packet.ItemId) ~= "string" then
+            return
+        end
+
         self.RemoteEvents.PlacePlant:Fire(player, packet)
     end)
 
     Channel:Connect("RemovePlant", function(player: Player, packet: GardenTypesShared.RemovePlantRemotePacket)
+        if typeof(packet) ~= "table" or typeof(packet.SlotId) ~= "string" then
+            return
+        end
+
         self.RemoteEvents.RemovePlant:Fire(player, packet)
     end)
 
     Channel:Connect("CollectHarvest", function(player: Player, packet: GardenTypesShared.CollectHarvestRemotePacket)
+        if typeof(packet) ~= "table" or typeof(packet.SlotId) ~= "string" then
+            return
+        end
+
         self.RemoteEvents.CollectHarvest:Fire(player, packet)
+    end)
+
+    Channel:Bind("GetGardens", function(player: Player, packet: GardenTypesShared.GetGardensRemotePacket)
+        return self.RemoteFunctions.GetGardens()
     end)
 end
 

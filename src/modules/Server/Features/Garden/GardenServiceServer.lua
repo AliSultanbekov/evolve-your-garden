@@ -71,15 +71,13 @@ function GardenServiceServer._GetUserGardenId(self: Module, userId: string): Gar
     return self._UserIdToGardenId[userId]
 end
 
-function GardenServiceServer._GetGardenUpgrade(self: Module, player: Player): number
-    return self._UpgradesServiceServer:GetUpgradeLevel(player, "Garden")
-end
-
 function GardenServiceServer._CreateAllSlots(self: Module, player: Player)
-    local GardenUpgrade = self:_GetGardenUpgrade(player)
+    local GardenLevel = self._UpgradesServiceServer:GetUpgradeLevel(player, "Garden")
     local Data = self._DataServiceServer:GetProfile(player).Data
 
-    for i = 1, GardenConfig.UpgradeStats[GardenUpgrade].Slots do
+    local UpgradeStats = GardenConfig:GetUpgradeStats(GardenLevel)
+    
+    for i = 1, UpgradeStats.Slots do
         local SlotId = tostring(i)
 
         if not Data.Garden.Slots[SlotId] then
@@ -141,7 +139,7 @@ function GardenServiceServer.GrowthCycle(self: Module, dt: number)
 
         local Data = self._DataServiceServer:GetProfile(player).Data
         local GardenLevel = self._UpgradesServiceServer:GetUpgradeLevel(player, "Garden")
-        local UpgradeStats = GardenConfig.UpgradeStats[GardenLevel]
+        local UpgradeStats = GardenConfig:GetUpgradeStats(GardenLevel)
         local HarvestCap = UpgradeStats.HarvestCap
 
         Packet[GardenId] = {}
@@ -206,7 +204,8 @@ function GardenServiceServer.AddHarvestItems(self: Module, player: Player, harve
 
     local Data = self._DataServiceServer:GetProfile(player).Data
     local GardenLevel = self._UpgradesServiceServer:GetUpgradeLevel(player, "Garden")
-    local HarvestCap = GardenConfig.UpgradeStats[GardenLevel].HarvestCap
+    local UpgradeStats = GardenConfig:GetUpgradeStats(GardenLevel)
+    local HarvestCap = UpgradeStats.HarvestCap
 
     for slotId, items in harvest do
         local SlotData = Data.Garden.Slots[slotId]
@@ -454,13 +453,19 @@ function GardenServiceServer.Start(self: Module)
     RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
         local Maid, Player = brio:ToMaidAndValue()
 
-        self:_CreateAllSlots(Player)
+        -- OnDataReady is registered with the maid SYNCHRONOUSLY (no yield
+        -- between join and Maid:Add), so a player leaving during profile
+        -- load cancels the pending claim instead of claiming a garden whose
+        -- abandon-teardown was never registered (which, at MaxGardens = 1,
+        -- bricked claiming for the whole server).
+        Maid:Add(self._DataServiceServer:OnDataReady(Player, function(_data)
+            self:_CreateAllSlots(Player)
+            self:ClaimGarden(Player)
 
-        self:ClaimGarden(Player)
-
-        Maid:Add(function()
-            self:AbandonGarden(Player)
-        end)
+            return function()
+                self:AbandonGarden(Player)
+            end
+        end))
     end)
 
     local Accum = 0

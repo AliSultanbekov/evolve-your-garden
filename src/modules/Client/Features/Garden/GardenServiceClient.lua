@@ -296,6 +296,12 @@ function GardenServiceClient.Start(self: Module)
         Garden.Owner.Value = nil
         Garden.Level.Value = nil
 
+        -- Clear the slots too — otherwise the next claimant inherits the
+        -- previous owner's slots/plants/harvest client-side.
+        for _, slotId in Garden.Slots:GetKeyList() do
+            Garden.Slots:Remove(slotId)
+        end
+
         self:_ClearSlotInfoForGarden(packet.GardenId)
 
         self._UserIdToGardenId[Owner] = nil

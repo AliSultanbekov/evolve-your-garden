@@ -14,6 +14,7 @@ local GardenTypesClient = require("GardenTypesClient")
 local Rx = require("Rx")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local ItemConfig = require("ItemConfig")
+local ImagesConfig = require("ImagesConfig")
 
 -- [ Components ] --
 
@@ -36,25 +37,26 @@ local Details = function(props: Props)
     return Blend.New "Frame" {
         Name = "Detail";
         LayoutOrder = 5;
-        Position = UDim2.fromOffset(28, 120);
-        Size = UDim2.fromOffset(352, 346);
+        Position = UDim2.fromOffset(17, 108);
+        Size = UDim2.fromOffset(361, 365);
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
         BackgroundTransparency = 1;
         ZIndex = 6;
         Blend.New "ImageLabel" {
-            Name = "Background";
-            Size = UDim2.fromScale(1, 1);
+            Name = "Wiggle";
+            Position = UDim2.fromOffset(36, 37);
+            Size = UDim2.fromOffset(290, 290);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             ClipsDescendants = true;
-            Image = "rbxassetid://139285285080863";
+            Image = "rbxassetid://80664684269900";
             ScaleType = Enum.ScaleType.Fit;
         };
         Blend.New "ImageLabel" {
             Name = "Icon";
             LayoutOrder = 1;
-            Position = UDim2.fromOffset(26, 22);
-            Size = UDim2.fromOffset(304, 304);
+            Position = UDim2.fromOffset(25, 27);
+            Size = UDim2.fromOffset(310, 310);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             ScaleType = Enum.ScaleType.Fit;
@@ -70,8 +72,8 @@ local Details = function(props: Props)
         Blend.New "TextLabel" {
             Name = "Name";
             LayoutOrder = 2;
-            Position = UDim2.fromOffset(38, 9);
-            Size = UDim2.fromOffset(280, 39);
+            Position = UDim2.fromOffset(20, 22);
+            Size = UDim2.fromOffset(320, 37);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
@@ -83,7 +85,8 @@ local Details = function(props: Props)
                 return displayItem.Name
             end);
             TextColor3 = Color3.fromRGB(255, 255, 255);
-            TextSize = 28;
+            TextSize = 29;
+            TextWrapped = true;
             ZIndex = 3;
             Blend.New "UIStroke" {
                 Color = Color3.fromRGB(43, 73, 112);
@@ -93,11 +96,18 @@ local Details = function(props: Props)
         Blend.New "ImageLabel" {
             Name = "Rarity";
             LayoutOrder = 3;
-            Position = UDim2.fromOffset(120, 47);
-            Size = UDim2.fromOffset(116, 34);
+            Position = UDim2.fromOffset(127, 57);
+            Size = UDim2.fromOffset(106, 30);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
-            Image = "rbxassetid://99294470631790";
+            ClipsDescendants = true;
+            Image = Blend.Computed(DisplayItem, function(displayItem: ReactiveItemTypes.ReactiveItem?)
+                if not displayItem then
+                    return ""
+                end
+
+                return ImagesConfig.PlantHarvest.RarityImages[ItemConfig:GetRarity(displayItem.Name, displayItem.Category)] or ""
+            end);
             ScaleType = Enum.ScaleType.Fit;
             ZIndex = 4;
         };
