@@ -20,7 +20,7 @@ local Signal = require("Signal")
 -- [ Constants ] --
 
 -- [ Variables ] --
-local KEY = "V_5"
+local KEY = "V_7"
 local PROFILE_TEMPLATE = ProfileConfig.Template
 local PROFILE_WAIT_TIMEOUT = 60
 
@@ -71,15 +71,18 @@ function DataServiceServer._SetupPlayerProfile(self: Module, player: Player)
     Profile:Reconcile()
 
     Profile.OnSessionEnd:Connect(function()
-        self._Profiles[player] = nil
+        -- Fire BEFORE removing the profile: unload teardowns (OnDataReady
+        -- callbacks' cleanup) must still be able to resolve the profile for
+        -- final reads/writes. Post-session writes are silently discarded by
+        -- ProfileStore, which beats GetProfile spinning 60s and throwing.
         self._ProfileUnloaded:Fire(player)
+        self._Profiles[player] = nil
         player:Kick("Profile session end - Please rejoin")
     end)
 
     if player.Parent == Players then
         self._Profiles[player] = Profile
         self._ProfileLoaded:Fire(player)
-        print(`Profile loaded for {player.DisplayName}!`)
     else
         Profile:EndSession()
     end

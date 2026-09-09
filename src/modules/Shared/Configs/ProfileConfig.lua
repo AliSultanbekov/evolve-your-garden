@@ -12,6 +12,9 @@ local ItemTypes = require("ItemTypes")
 local GardenTypesShared = require("GardenTypesShared")
 local PackStoreTypesShared = require("PackStoreTypesShared")
 local MerchantTypesShared = require("MerchantTypesShared")
+local EncyclopediaTypesShared = require("EncyclopediaTypesShared")
+local StatsTypesShared = require("StatsTypesShared")
+local QuestsTypesShared = require("QuestsTypesShared")
 
 -- [ Constants ] --
 
@@ -46,6 +49,18 @@ local ProfileConfig = {
         },
         Merchant = {
             
+        },
+        Encyclopedia = {
+            DiscoveredItems = {},
+            CompletedQuests = {},
+        },
+        Stats = {
+            PlayTime = 0
+        },
+        Quests = {
+            Active = {},
+            Completed = {},
+            Burnt = {},
         }
     },
     Leaderstats = {}
@@ -64,7 +79,10 @@ export type ProfileTemplate = {
         Slots: GardenTypesShared.Slots
     },
     PackStore: PackStoreTypesShared.PackStore,
-    Merchant: MerchantTypesShared.Merchant
+    Merchant: MerchantTypesShared.Merchant,
+    Encyclopedia: EncyclopediaTypesShared.Encyclopedia,
+    Stats: StatsTypesShared.Stats,
+    Quests: QuestsTypesShared.QuestsData
 }
 
 return ProfileConfig
