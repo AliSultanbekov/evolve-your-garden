@@ -129,6 +129,11 @@ function UIServiceClient.MountToScreen(self: Module, screenName: string, render:
 end
 
 function UIServiceClient.ToggleUI(self: Module, uiName: string)
+    if not self._UIStates[uiName] then
+        warn(`[UIServiceClient] ToggleUI: no UI registered with name '{uiName}'`)
+        return
+    end
+
     local IsOpened = self._UIStates[uiName].Value
 
     if IsOpened then
@@ -139,12 +144,22 @@ function UIServiceClient.ToggleUI(self: Module, uiName: string)
 end
 
 function UIServiceClient.OpenUI(self: Module, uiName: string)
+    if not self._UIStates[uiName] then
+        warn(`[UIServiceClient] OpenUI: no UI registered with name '{uiName}'`)
+        return
+    end
+
     self:_CloseAllConflicted(uiName)
 
     self._UIStates[uiName].Value = true
 end
 
 function UIServiceClient.CloseUI(self: Module, uiName: string)
+    if not self._UIStates[uiName] then
+        warn(`[UIServiceClient] CloseUI: no UI registered with name '{uiName}'`)
+        return
+    end
+
     self._UIStates[uiName].Value = false
 end
 

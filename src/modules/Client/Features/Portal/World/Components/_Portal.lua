@@ -21,7 +21,10 @@ local PortalTypesClient = require("PortalTypesClient")
 local Portal = function(props: Props)
     local MaidObject = Maid.new()
 
-    local Model = MaidObject:Add(props.Model)
+    -- NOTE: do NOT Maid:Add(props.Model) — the portal model is owned by the
+    -- world / garden lifecycle, not by this component. Destroying it here
+    -- would delete world geometry with no re-creation path.
+    local _Model = props.Model
 
     return MaidObject
 end

@@ -43,10 +43,18 @@ function TimeWorldClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 end
 
 function TimeWorldClient.Start(self: Module)
+    -- TimeOfDay expects zero-padded "HH:MM:SS" — "%d" produced "6:5:3".
+    -- Also dedupe: no reason to invalidate Lighting when the string hasn't changed.
+    local LastTimeOfDay: string? = nil
+
     self._Maid:Add(self._TimeServiceClient:ObserveTime():Subscribe(function(time: number)
         local Hour, Minute, Second = self._TimeServiceClient:ConvertTimeToHMS(time)
+        local TimeOfDay = string.format("%02d:%02d:%02d", Hour, Minute, Second)
 
-        Lighting.TimeOfDay = string.format("%d:%d:%d", Hour, Minute, Second)
+        if TimeOfDay ~= LastTimeOfDay then
+            LastTimeOfDay = TimeOfDay
+            Lighting.TimeOfDay = TimeOfDay
+        end
     end))
 end
 

@@ -54,7 +54,12 @@ function UIZoneService.Start(self: Module)
             return
         end
 
-        local UIName = ZoneInstance:GetAttribute("UIName") :: string
+        local UIName = ZoneInstance:GetAttribute("UIName")
+
+        if typeof(UIName) ~= "string" then
+            warn(`[UIZoneService] UIZone '{ZoneInstance:GetFullName()}' has no string UIName attribute`)
+            return
+        end
 
         self._UIServiceClient:OpenUI(UIName)
     end)
@@ -66,7 +71,11 @@ function UIZoneService.Start(self: Module)
             return
         end
 
-        local UIName = ZoneInstance:GetAttribute("UIName") :: string
+        local UIName = ZoneInstance:GetAttribute("UIName")
+
+        if typeof(UIName) ~= "string" then
+            return
+        end
 
         self._UIServiceClient:CloseUI(UIName)
     end)

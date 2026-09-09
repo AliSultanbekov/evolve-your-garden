@@ -11,7 +11,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local ServiceBag = require("ServiceBag")
 
 -- [ Components ] --
-local Pack = require(script.Parent._Pack)
+local _Pack = require(script.Parent._Pack) -- world pack display, not yet mounted
 
 -- [ Constants ] --
 
@@ -39,29 +39,10 @@ function PackStoreWorldClient.Init(self: Module, serviceBag: ServiceBag.ServiceB
 end
 
 function PackStoreWorldClient.Start(self: Module)
-    --[[task.delay(8, function()
-        print("Sssss")
-        Pack({
-            PackName = "Super Pack",
-            PackNumber = 1,
-            TotalPacks = 4,
-        })
-        Pack({
-            PackName = "Super Pack",
-            PackNumber = 2,
-            TotalPacks = 4,
-        })
-        Pack({
-            PackName = "Super Pack",
-            PackNumber = 3,
-            TotalPacks = 4,
-        })
-        Pack({
-            PackName = "Super Pack",
-            PackNumber = 4,
-            TotalPacks = 4,
-        })
-    end)]]
+    -- TODO: mount world pack displays (_Pack) from the current sale.
+    -- NOTE for that work: _Pack uses a fixed BindToRenderStep name ("PackAnim")
+    -- — per-instance components need unique binding names or one Heartbeat
+    -- connection driving all of them.
 end
 
 return PackStoreWorldClient :: Module

@@ -17,6 +17,7 @@ local Maid = require("Maid")
 local ValueObject = require("ValueObject")
 local Signal = require("Signal")
 local Rx = require("Rx")
+local RxCharacterUtils = require("RxCharacterUtils")
 
 -- [ Constants ] --
 local RAYCAST_DISTANCE = 100
@@ -44,11 +45,13 @@ type ModuleData = {
 export type Module = typeof(MouseServiceClient) & ModuleData
 
 -- [ Private Functions ] --
-function MouseServiceClient._RecreateRaycastParams(self: Module)
+function MouseServiceClient._RecreateRaycastParams(self: Module, character: Model?)
     local Params = RaycastParams.new()
     Params.FilterType = Enum.RaycastFilterType.Exclude
     Params.IgnoreWater = true
-    Params.FilterDescendantsInstances = { LocalPlayer.Character }
+    -- A nil character must yield an EMPTY list — { nil } would silently
+    -- exclude nothing and let pointer raycasts hit the player's own body.
+    Params.FilterDescendantsInstances = if character then { character } else {}
 
     return Params
 end
@@ -60,8 +63,11 @@ function MouseServiceClient._RaycastAtPointer(self: Module): RaycastResult?
         return nil
     end
 
+    -- _MousePosition is in GUI space (InputObject.Position, inset-subtracted) —
+    -- ScreenPointToRay is the matching raycast for that space. Do NOT switch to
+    -- ViewportPointToRay unless the position source changes to GetMouseLocation.
     local Location = self._MousePosition.Value
-    local UnitRay = Camera:ViewportPointToRay(Location.X, Location.Y)
+    local UnitRay = Camera:ScreenPointToRay(Location.X, Location.Y)
 
     return Workspace:Raycast(UnitRay.Origin, UnitRay.Direction * RAYCAST_DISTANCE, self._RaycastParams)
 end
@@ -118,32 +124,49 @@ function MouseServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag
         MousePressed = Signal.new(),
         MouseReleased = Signal.new(),
     } :: any
-    self._RaycastParams = self:_RecreateRaycastParams()
+    self._RaycastParams = self:_RecreateRaycastParams(LocalPlayer.Character)
 end
 
 function MouseServiceClient.Start(self: Module)
-    self._Maid:Add(LocalPlayer.CharacterAdded:Connect(function(character: Model)
-        self._RaycastParams = self:_RecreateRaycastParams()
+    self._Maid:Add(RxCharacterUtils.observeLocalPlayerCharacter():Subscribe(function(character: Model?)
+        self._RaycastParams = self:_RecreateRaycastParams(character)
     end))
 
-    local IsMouseMoving = false
+    -- One coordinate space for everything: InputObject.Position (GUI space,
+    -- inset-subtracted) for BOTH mouse and touch. UI consumers compare against
+    -- AbsolutePosition (same space) and the raycast uses ScreenPointToRay
+    -- (which expects this space). Mixing in GetMouseLocation (viewport space)
+    -- offsets everything vertically by the GUI inset.
+    local PendingPosition: Vector2? = nil
+    local PendingIsTouch = false
 
     self._Maid:Add(UserInputService.InputChanged:Connect(function(input: InputObject)
         if input.UserInputType == Enum.UserInputType.MouseMovement then
-            IsMouseMoving = true
+            PendingPosition = Vector2.new(input.Position.X, input.Position.Y)
+            PendingIsTouch = false
+        elseif input.UserInputType == Enum.UserInputType.Touch then
+            PendingPosition = Vector2.new(input.Position.X, input.Position.Y)
+            PendingIsTouch = true
         end
     end))
 
     self._Maid:Add(RunService.RenderStepped:Connect(function()
-        if not IsMouseMoving then
+        if not PendingPosition then
             return
         end
 
-        IsMouseMoving = false
+        self._MousePosition.Value = PendingPosition
+        PendingPosition = nil
 
-        self._MousePosition.Value = UserInputService:GetMouseLocation()
-
-        self:_UpdateHover()
+        -- Hover is a mouse concept: on touch the "hover" would just be
+        -- wherever the finger last was, which reads as stuck highlights.
+        -- Selection is unaffected (it uses the press-time raycast).
+        if PendingIsTouch then
+            self._HoveredInstance.Value = nil
+            self._HoveredPosition.Value = nil
+        else
+            self:_UpdateHover()
+        end
     end))
 
     self._Maid:Add(UserInputService.InputBegan:Connect(function(input: InputObject, processed: boolean)
@@ -152,7 +175,7 @@ function MouseServiceClient.Start(self: Module)
         end
 
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            self._MousePosition.Value = UserInputService:GetMouseLocation()
+            self._MousePosition.Value = Vector2.new(input.Position.X, input.Position.Y)
 
             local Result = self:_RaycastAtPointer()
 
