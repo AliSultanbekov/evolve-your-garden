@@ -26,6 +26,15 @@ local ItemConfig = {
         ["Pack"] = "Stackable",
         ["Currency"] = "Stackable",
     },
+    RarityLayoutOrder = {
+        ["Common"] = 1,
+        ["Uncommon"] = 2,
+        ["Rare"] = 3,
+        ["Epic"] = 4,
+        ["Legendary"] = 5,
+        ["Mythic"] = 6,
+        ["Celestial"] = 7,
+    },
     Categories = {"Plant", "Material", "Pack", "Currency"},
     MaxAmount = 100000
 }

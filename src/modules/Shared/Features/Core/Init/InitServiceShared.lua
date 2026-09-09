@@ -86,8 +86,6 @@ function InitServiceShared.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
 
-    print(self:_GetModules())
-
     for _, module in self:_GetModules() do
         self._ServiceBag:GetService(module)
     end

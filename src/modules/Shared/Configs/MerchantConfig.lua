@@ -20,8 +20,8 @@ local MerchantConfig = {}
 function MerchantConfig._Init(self: Module)
     self.RefreshTime = 1000
     self.BuyItems = {
-        ["Snow Blossom"] = {
-            Name = "Snow Blossom",
+        ["Tomato"] = {
+            Name = "Tomato",
             Stock = NumberRange.new(1, 4),
             Price = 100,
             Currency = "Coins",

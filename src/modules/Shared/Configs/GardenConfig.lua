@@ -55,5 +55,8 @@ export type Module = typeof(GardenConfig) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
+function GardenConfig.GetUpgradeStats(self: Module, gardenLevel: number)
+    return self.UpgradeStats[gardenLevel] or self.UpgradeStats[3]
+end
 
 return GardenConfig :: Module

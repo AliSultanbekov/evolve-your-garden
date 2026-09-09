@@ -19,8 +19,8 @@ local DEFAULT_AMOUNT_POOL = {
 }
 
 local DEFAULT_GENETICS_CONFIG = {
-    Speed = NumberRange.new(1.0, 1.2),
-    BabyChance = NumberRange.new(0.001, 0.01),
+    Speed = NumberRange.new(0.8, 1.2),
+    BabyChance = NumberRange.new(0.0001, 0.01),
     Yield = NumberRange.new(0, 2),
     Quality = NumberRange.new(0, 2),
     MutationChance = NumberRange.new(0, 2),
@@ -47,16 +47,17 @@ local PlantConfig = {}
 
 -- [ Private Functions ] --
 function PlantConfig._Init(self: Module)
+    self.PlantsCount = 5
     self.Plants = {
         ["Snow Blossom"] = {
             Name = "Snow Blossom",
             Rarity = "Common",
-            Icon = "rbxassetid://175279732",
+            Icon = "",
             BaseCycleTime = 5,
             Level = DEFAULT_LEVEL,
-            Genetics = DEFAULT_GENETICS_CONFIG,
+            Genetics = table.clone(DEFAULT_GENETICS_CONFIG),
             Production = {
-                AmountPool = DEFAULT_AMOUNT_POOL,
+                AmountPool = table.clone(DEFAULT_AMOUNT_POOL),
                 ItemPool = {
                     ["Snow Blossom Fruit"] = 100
                 }
@@ -71,12 +72,12 @@ function PlantConfig._Init(self: Module)
         ["Daisy"] = {
             Name = "Daisy",
             Rarity = "Uncommon",
-            Icon = "rbxassetid://175279732",
+            Icon = "rbxassetid://136682835000115",
             BaseCycleTime = 5,
             Level = DEFAULT_LEVEL,
-            Genetics = DEFAULT_GENETICS_CONFIG,
+            Genetics = table.clone(DEFAULT_GENETICS_CONFIG),
             Production = {
-                AmountPool = DEFAULT_AMOUNT_POOL,
+                AmountPool = table.clone(DEFAULT_AMOUNT_POOL),
                 ItemPool = {
                     ["Snow Blossom Fruit"] = 100
                 }
@@ -85,6 +86,43 @@ function PlantConfig._Init(self: Module)
                 [1] = 0,
                 [2] = 60,
                 [3] = 120,
+            }
+        },
+        ["Buttercup"] = {
+            Name = "Buttercup",
+            Rarity = "Uncommon",
+            Icon = "rbxassetid://94575197746146",
+            BaseCycleTime = 5,
+            Level = DEFAULT_LEVEL,
+            Genetics = table.clone(DEFAULT_GENETICS_CONFIG),
+            Production = {
+                AmountPool = table.clone(DEFAULT_AMOUNT_POOL),
+                ItemPool = {
+                    ["Snow Blossom Fruit"] = 100
+                }
+            },
+            GrowthStages = {
+                [1] = 0,
+                [2] = 60,
+                [3] = 120,
+                [4] = 240,
+            }
+        },
+        ["Tomato"] = {
+            Name = "Tomato",
+            Rarity = "Uncommon",
+            Icon = "rbxassetid://115827142175801",
+            BaseCycleTime = 5,
+            Level = DEFAULT_LEVEL,
+            Genetics = table.clone(DEFAULT_GENETICS_CONFIG),
+            Production = {
+                AmountPool = table.clone(DEFAULT_AMOUNT_POOL),
+                ItemPool = {
+                    ["Snow Blossom Fruit"] = 100
+                }
+            },
+            GrowthStages = {
+                [1] = 0,
             }
         }
     }
@@ -234,6 +272,7 @@ type LevelTreeMilestone = {
 }
 
 type ModuleData = {
+    PlantsCount: number,
     Plants: { [string]: PlantEntry },
     Mutations: { [string]: MutationEntry },
     LevelTreeRewards: { [number]: LevelTreeMilestone },

@@ -37,7 +37,7 @@ export type Object<T> = ObjectData<T> & Module
 export type Module = typeof(ObjectPool)
 
 -- [ Private Functions ] --
-function ProcessKey(key: string): string
+local function ProcessKey(key: string): string
     if key == "" then
         error("[ObjectPool] Key cannot be an empty string.")
     end
@@ -79,6 +79,10 @@ end
 function ObjectPool.ForceConstruct<T>(self: Object<T>, key: string, amount: number?)
     local Key = ProcessKey(key)
     local KeyData = self._KeyBucket[Key]
+
+    if not KeyData then
+        error(`[ObjectPool] Key '{Key}' was never registered (AddKey)`)
+    end
 
     local Amount = math.max(1, amount or 5)
 

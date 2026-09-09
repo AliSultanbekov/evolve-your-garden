@@ -1,5 +1,10 @@
 --[=[
-    @class ImageConfig
+    @class ImagesConfig
+
+    Central lookup for feature-scoped image sets (rarity plates, banners,
+    glows). Scoped by feature, then by what the images are — keep container
+    names plural and drop the feature name from inner keys (the scope
+    already says it).
 ]=]
 
 -- [ Roblox Services ] --
@@ -15,12 +20,17 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Module Table ] --
 local ImagesConfig = {
-    Merchant = {
-        Buttons = {
-            Active = "rbxassetid://135391757483985",
-            Inactive = "rbxassetid://89659126729280"
+    PlantHarvest = {
+        RarityImages = {
+            Celestial = "rbxassetid://72726144214075",
+            Mythic = "rbxassetid://128006382351157",
+            Legendary = "rbxassetid://85278657597693",
+            Epic = "rbxassetid://115276544371467",
+            Rare = "rbxassetid://130541742731585",
+            Uncommon = "rbxassetid://91849170946744",
+            Common = "rbxassetid://125015844024414",
         }
-    },  
+    },
     Inventory = {
         RarityImages = {
             Celestial = "rbxassetid://114970135748413",
@@ -33,8 +43,8 @@ local ImagesConfig = {
         }
     },
     PackStore = {
-        Banner = {
-            Normal = "rbxassetid://120388679844862",
+        Banners = {
+            Normal = "rbxassetid://98894193619155",
             Special = "rbxassetid://95003231122217"
         },
         RarityImages = {
@@ -46,14 +56,22 @@ local ImagesConfig = {
             Uncommon = "rbxassetid://120166528728314",
             Common = "rbxassetid://114395085367525",
         },
-        TabButton = {
-            Unlocked = "rbxassetid://138967597938854",
-            Locked = "rbxassetid://71232635909895",
-        },
-        PackCardRarityGlows = {
+        RarityGlows = {
             Celestial = "rbxassetid://123145782646136",
             Mythic = "rbxassetid://76170367246352",
             Legendary = "rbxassetid://130389065348663",
+        }
+    },
+    Encyclopedia = {
+        PlantCardBackgrounds = {
+            Celestial = "rbxassetid://108558146289194",
+            Mythic = "rbxassetid://81360572848461",
+            Legendary = "rbxassetid://84811772927740",
+            Epic = "rbxassetid://109498357757740",
+            Rare = "rbxassetid://127329397290249",
+            Uncommon = "rbxassetid://120166528728314",
+            Common = "rbxassetid://135846616087477",
+            Undiscovered = "rbxassetid://130038073528754"
         }
     }
 }

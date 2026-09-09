@@ -25,8 +25,9 @@ function PacksConfig._Init(self: Module)
             Rarity = "Common",
             Icon = "rbxassetid://101088311100253",
             PlantPool = {
-                ["Snow Blossom"] = 50,
-                ["Daisy"] = 50,
+                ["Daisy"] = 25,
+                ["Buttercup"] = 25,
+                ["Tomato"] = 25,
             }
         },
         ["Mega Pack"] = {
@@ -34,8 +35,9 @@ function PacksConfig._Init(self: Module)
             Rarity = "Celestial",
             Icon = "rbxassetid://101088311100253",
             PlantPool = {
-                ["Snow Blossom"] = 50,
-                ["Daisy"] = 50,
+                ["Daisy"] = 25,
+                ["Buttercup"] = 25,
+                ["Tomato"] = 25,
             }
         }
     }
