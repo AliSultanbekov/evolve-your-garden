@@ -24,34 +24,37 @@ local Title = function()
         Name = "Title";
         LayoutOrder = 3;
         Position = UDim2.fromOffset(4, 4);
-        Size = UDim2.fromOffset(413, 88);
+        Size = UDim2.fromOffset(407, 83);
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
         BackgroundTransparency = 1;
         ZIndex = 4;
         Blend.New "TextLabel" {
             Name = "Title";
-            Position = UDim2.fromOffset(173, 16);
-            Size = UDim2.fromOffset(231, 51);
+            Position = UDim2.fromOffset(165, 17);
+            Size = UDim2.fromOffset(238, 51);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
-            FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
+            FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
             Text = "Pack Store";
             TextColor3 = Color3.fromRGB(255, 255, 255);
-            TextSize = 40;
+            TextSize = 48;
+            TextWrapped = true;
+            TextXAlignment = Enum.TextXAlignment.Left;
+            TextYAlignment = Enum.TextYAlignment.Top;
             Blend.New "UIStroke" {
-                Color = Color3.fromRGB(97, 61, 34);
-                Thickness = 4;
+                Color = Color3.fromRGB(43, 73, 112);
+                Thickness = 3;
             };
         };
         Blend.New "ImageLabel" {
             Name = "MarketStall";
             LayoutOrder = 1;
-            Position = UDim2.fromOffset(-6, -82);
+            Position = UDim2.fromOffset(-12, -80);
             Size = UDim2.fromOffset(180, 180);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             ClipsDescendants = true;
-            Image = "rbxassetid://88507326517378";
+            Image = "rbxassetid://93856043078136";
             ScaleType = Enum.ScaleType.Fit;
             ZIndex = 2;
         };
@@ -60,7 +63,7 @@ end
 
 -- [ Types ] --
 type Props = {
-    
+
 }
 type ModuleData = {}
 

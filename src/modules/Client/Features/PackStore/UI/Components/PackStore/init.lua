@@ -18,7 +18,7 @@ local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local CloseButtonComponent = require("CloseButtonComponent")
 
 local Background = require(script._Background)
-local TabButtons = require(script._TabButtons)
+local Bookmarks = require(script._Bookmarks)
 local Tabs = require(script._Tabs)
 local Title = require(script._Title)
 
@@ -35,7 +35,7 @@ local Window = function(props: Props)
         ApplyDeviceScale = true;
         Position = UDim2.fromScale(0.5, 0.5);
         AnchorPoint = Vector2.new(0.5, 0.5);
-        Size = UDim2.fromOffset(1208, 708);
+        Size = UDim2.fromOffset(1028, 733);
         BackgroundTransparency = 1;
         IsOpen = props.IsOpen;
         Children = {
@@ -43,15 +43,16 @@ local Window = function(props: Props)
             Background() :: any,
             CloseButtonComponent({
                 Name = "Close",
-                Position = UDim2.fromOffset(1133+61/2, 13+64/2);
-                Size = UDim2.fromOffset(61, 64);
+                Position = UDim2.fromOffset(950 + 68/2, 10 + 71/2);
+                Size = UDim2.fromOffset(68, 71);
+                ZIndex = 3;
                 AnchorPoint = Vector2.new(0.5, 0.5);
                 BackgroundTransparency = 1;
                 OnClose = function()
                     props.OnClose()
                 end;
             });
-            TabButtons({
+            Bookmarks({
                 ActiveTab = props.ActiveTab,
                 SwitchTab = props.SwitchTab
             });

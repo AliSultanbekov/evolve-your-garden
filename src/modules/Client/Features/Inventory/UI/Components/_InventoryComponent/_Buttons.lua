@@ -39,6 +39,7 @@ local Buttons = function(props: Props)
             BackgroundTransparency = 1;
             Image = "rbxassetid://139153995388769";
             OnPressed = props.OnDeleteMode;
+            Visible = false,
             Children = {
                 Blend.New "TextLabel" {
                     Name = "DeleteMode";

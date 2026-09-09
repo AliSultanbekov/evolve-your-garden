@@ -81,6 +81,13 @@ function MerchantUIClient.SetupItemTooltip(self: Module)
         Rx.distinct() :: any
     }) :: any
 
+    self._Maid:Add(self._UIServiceClient:ObserveUI("Merchant"):Subscribe(function(isOpen: boolean)
+        if not isOpen then
+            self._SelectedItem.Value = nil
+            self._SelectedItemPosition.Value = nil 
+        end
+    end))
+
     self._Maid:Add(self._UIServiceClient:MountToScreen("UIs", function() return {
         ItemTooltip({
             Item = DisplayItem,
@@ -182,8 +189,6 @@ function MerchantUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 end
 
 function MerchantUIClient.Start(self: Module)
-    self._UIServiceClient:OpenUI("Merchant")
-
     self:SetupItemTooltip()
 
     self._Maid:Add(self._UIServiceClient:MountToScreen("UIs", function() return {

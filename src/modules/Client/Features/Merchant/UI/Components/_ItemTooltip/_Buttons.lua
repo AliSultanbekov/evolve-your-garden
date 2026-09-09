@@ -102,9 +102,10 @@ local Buttons = function(props: Props)
             LayoutOrder = 1;
             IsOpen = props.IsSelected;
             Size = BUTTON_SIZE;
-            Image = "rbxassetid://97250954730348";
+            Image = "rbxassetid://138166573995722";
             Text = "Sell";
-            StrokeColor = Color3.fromRGB(14, 100, 13);
+            TextSize = 22;
+            StrokeColor = Color3.fromRGB(0, 105, 3);
             OnPressed = function()
                 props.Actions.Sell()
             end;
@@ -114,8 +115,9 @@ local Buttons = function(props: Props)
             LayoutOrder = 100;
             IsOpen = props.IsSelected;
             Size = BUTTON_SIZE;
-            Image = "rbxassetid://101276568553496";
+            Image = "rbxassetid://98430497084904";
             Text = "Close";
+            TextSize = 22;
             StrokeColor = Color3.fromRGB(130, 40, 40);
             OnPressed = props.OnClose;
         }),

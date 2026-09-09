@@ -15,6 +15,8 @@ local RoundingBehaviourTypes = require("RoundingBehaviourTypes")
 local ValueObject = require("ValueObject")
 local Rx = require("Rx")
 local Maid = require("Maid")
+local MerchantConfig = require("MerchantConfig")
+local ReactiveItemTypes = require("ReactiveItemTypes")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
@@ -79,13 +81,13 @@ local AmountSelector = function(props: Props)
             };
             GenericButtonComponent({
                 Name = "Decrement";
-                Position = UDim2.fromOffset(14 + 44/2, 4 + 47/2);
+                Position = UDim2.fromOffset(14 + 44/2, 70 + 4 + 47/2);
                 AnchorPoint = Vector2.new(0.5, 0.5);
                 Size = UDim2.fromOffset(44, 47);
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
                 ClipsDescendants = true;
-                Image = "rbxassetid://124788886396857";
+                Image = "rbxassetid://81259944626191";
                 ScaleType = Enum.ScaleType.Fit;
                 OnPressed = function()
                     props.DecrementSelectedItemSellAmount()
@@ -112,7 +114,7 @@ local AmountSelector = function(props: Props)
             GenericButtonComponent({
                 Name = "Increment";
                 LayoutOrder = 1;
-                Position = UDim2.fromOffset(194 + 40/2, 6 + 43/2);
+                Position = UDim2.fromOffset(194 + 40/2, 70 + 6 + 43/2);
                 AnchorPoint = Vector2.new(0.5, 0.5);
                 Size = UDim2.fromOffset(40, 43);
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
@@ -128,7 +130,7 @@ local AmountSelector = function(props: Props)
                         Size = UDim2.fromOffset(44, 47);
                         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                         BackgroundTransparency = 1;
-                        Image = "rbxassetid://121274968241695";
+                        Image = "rbxassetid://133552324118692";
                         ScaleType = Enum.ScaleType.Fit;
                     };
                     Blend.New "TextLabel" {
@@ -151,54 +153,21 @@ local AmountSelector = function(props: Props)
                     };
                 };
             });
-            Blend.New "Frame" {
+            Blend.New "ImageLabel" {
                 Name = "Display";
                 LayoutOrder = 2;
-                Position = UDim2.fromOffset(63, 0);
+                Position = UDim2.fromOffset(63, 69);
                 Size = UDim2.fromOffset(124, 57);
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
+                ClipsDescendants = true;
+                Image = "rbxassetid://128423489958085";
+                ScaleType = Enum.ScaleType.Fit;
                 ZIndex = 3;
-                Blend.New "Frame" {
-                    Name = "Body";
-                    Position = UDim2.fromOffset(2, 2);
-                    Size = UDim2.fromOffset(120, 53);
-                    BackgroundColor3 = Color3.fromRGB(35, 106, 160);
-                    BorderColor3 = Color3.fromRGB(27, 42, 53);
-                    Blend.New "UIStroke" {
-                        ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
-                        Color = Color3.fromRGB(43, 73, 112);
-                        LineJoinMode = Enum.LineJoinMode.Miter;
-                        Thickness = 2;
-                    };
-                };
-                Blend.New "Frame" {
-                    Name = "Body";
-                    LayoutOrder = 1;
-                    Position = UDim2.fromOffset(2, 2);
-                    Size = UDim2.fromOffset(120, 50);
-                    BackgroundColor3 = Color3.fromRGB(51, 167, 255);
-                    BorderColor3 = Color3.fromRGB(27, 42, 53);
-                    ZIndex = 2;
-                    Blend.New "Frame" {
-                        Name = "InnerStroke";
-                        Position = UDim2.fromScale(0.5, 0.5);
-                        AnchorPoint = Vector2.new(0.5, 0.5);
-                        Size = UDim2.new(1, -4, 1, -4);
-                        BackgroundTransparency = 1;
-                        Blend.New "UIStroke" {
-                            ApplyStrokeMode = Enum.ApplyStrokeMode.Border;
-                            Color = Color3.fromRGB(147, 209, 255);
-                            LineJoinMode = Enum.LineJoinMode.Miter;
-                            Thickness = 2;
-                        };
-                    };
-                };
                 Blend.New "TextLabel" {
-                    Name = "Name";
-                    LayoutOrder = 2;
+                    Name = "Amount";
                     Position = UDim2.fromOffset(4, 4);
-                    Size = UDim2.fromOffset(116, 46);
+                    Size = UDim2.fromOffset(116, 49);
                     BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                     BackgroundTransparency = 1;
                     FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
@@ -218,7 +187,7 @@ local AmountSelector = function(props: Props)
             Blend.New "Frame" {
                 Name = "Dragger";
                 LayoutOrder = 3;
-                Position = UDim2.fromOffset(22, 67);
+                Position = UDim2.fromOffset(22, 70 + 67);
                 Size = UDim2.fromOffset(206, 21);
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
@@ -232,7 +201,7 @@ local AmountSelector = function(props: Props)
                     Size = UDim2.fromOffset(206, 12);
                     BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                     BackgroundTransparency = 1;
-                    Image = "rbxassetid://122114888109433";
+                    Image = "rbxassetid://109375707632012";
                     ScaleType = Enum.ScaleType.Fit;
                 };
                 Blend.New "ImageButton" {
@@ -243,13 +212,13 @@ local AmountSelector = function(props: Props)
                     AutoButtonColor = false;
                     BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                     BackgroundTransparency = 1;
-                    Image = "rbxassetid://103093798185699";
+                    Image = "rbxassetid://92985387099967";
                     ZIndex = 2;
                     [Blend.OnEvent "InputBegan"] = function(input)
                         if input.UserInputType == Enum.UserInputType.MouseButton1
                            or input.UserInputType == Enum.UserInputType.Touch then
                             IsDraggerPressed.Value = true
-            
+
                             local conn
                             conn = input.Changed:Connect(function()
                                 if input.UserInputState == Enum.UserInputState.End then
@@ -261,12 +230,88 @@ local AmountSelector = function(props: Props)
                     end;
                 };
             };
+            Blend.New "Frame" {
+                Name = "SellPrice";
+                LayoutOrder = 4;
+                Position = UDim2.fromOffset(0, 0);
+                Size = UDim2.fromOffset(250, 60);
+                BackgroundColor3 = Color3.fromRGB(163, 162, 165);
+                BackgroundTransparency = 1;
+                ZIndex = 5;
+                Blend.New "ImageLabel" {
+                    Name = "Union";
+                    Position = UDim2.fromOffset(86, 25);
+                    Size = UDim2.fromOffset(30, 30);
+                    BackgroundColor3 = Color3.fromRGB(163, 162, 165);
+                    BackgroundTransparency = 1;
+                    Image = "rbxassetid://114575618265862";
+                    ScaleType = Enum.ScaleType.Fit;
+                };
+                Blend.New "ImageLabel" {
+                    Name = "coin golden 4";
+                    LayoutOrder = 1;
+                    Position = UDim2.fromOffset(85, 24);
+                    Size = UDim2.fromOffset(32, 32);
+                    BackgroundColor3 = Color3.fromRGB(163, 162, 165);
+                    BackgroundTransparency = 1;
+                    ClipsDescendants = true;
+                    Image = "rbxassetid://82367982581365";
+                    ZIndex = 2;
+                };
+                Blend.New "TextLabel" {
+                    Name = "Price";
+                    LayoutOrder = 2;
+                    Position = UDim2.fromOffset(122, 24);
+                    Size = UDim2.fromOffset(54, 32);
+                    BackgroundColor3 = Color3.fromRGB(163, 162, 165);
+                    BackgroundTransparency = 1;
+                    FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
+                    Text = Blend.Computed(props.SelectedItemSellAmount, props.Item, function(selectedItemSellAmount: number, item: ReactiveItemTypes.ReactiveItem?)
+                        if not item then
+                            return ""
+                        end
+
+                        local Price = selectedItemSellAmount * MerchantConfig.SellItems[item.Name].Price
+
+                        return NumberLocalizationUtils.abbreviate(Price, "en-us", RoundingBehaviourTypes.ROUND_TO_CLOSEST, 3)
+                    end);
+                    TextColor3 = Color3.fromRGB(255, 255, 255);
+                    TextSize = 19;
+                    TextWrapped = true;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    ZIndex = 3;
+                    Blend.New "UIStroke" {
+                        Color = Color3.fromRGB(43, 73, 112);
+                        Thickness = 2;
+                    };
+                };
+                Blend.New "TextLabel" {
+                    Name = "Info";
+                    LayoutOrder = 3;
+                    Position = UDim2.fromOffset(61, 0);
+                    Size = UDim2.fromOffset(127, 20);
+                    BackgroundColor3 = Color3.fromRGB(163, 162, 165);
+                    BackgroundTransparency = 1;
+                    FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
+                    Text = "You'll Receive:";
+                    TextColor3 = Color3.fromRGB(255, 255, 255);
+                    TextSize = 19;
+                    TextWrapped = true;
+                    TextXAlignment = Enum.TextXAlignment.Left;
+                    ZIndex = 4;
+                    Blend.New "UIStroke" {
+                        Color = Color3.fromRGB(43, 73, 112);
+                        Thickness = 2;
+                    };
+                };
+            };
         }
     })
 end
 
 -- [ Types ] --
 type Props = {
+    Item: Observable.Observable<ReactiveItemTypes.ReactiveItem?>,
     IsSelected: Observable.Observable<boolean>,
     SelectedItemSellAmount: Observable.Observable<number>,
     SelectedItemMaxSellAmount: Observable.Observable<number>,

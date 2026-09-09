@@ -30,6 +30,8 @@ local ItemTooltipComponent = function(props: Props)
         Position = props.Position,
         AnchorPoint = Vector2.new(0, 0.5),
         PaddingBottom = 3,
+        TopImage = "rbxassetid://138919883170578",
+        RaysImage = "rbxassetid://78990487573441",
         Content = function(displayItem, _isOpen)
             return { 
                 Buttons({
@@ -42,6 +44,7 @@ local ItemTooltipComponent = function(props: Props)
                 });
                 AmountSelector({
                     IsSelected = props.IsSelected,
+                    Item = props.Item,
                     SelectedItemSellAmount = props.SelectedItemSellAmount,
                     SelectedItemMaxSellAmount = props.SelectedItemMaxSellAmount,
                     MousePosition = props.MousePosition,

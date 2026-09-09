@@ -17,7 +17,7 @@ local ComponentTypes = require("ComponentTypes")
 local Title = require(script._Title)
 local Background = require(script._Background)
 local Tabs = require(script._Tabs)
-local TabButtons = require(script._TabButtons)
+local Bookmark = require(script._Bookmarks)
 local Buttons = require(script._Buttons)
 
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
@@ -35,14 +35,14 @@ local Window = function(props: Props)
     return AnimatedFrameComponent({
         Name = "Inventory",
         ApplyDeviceScale = true,
-        Size = UDim2.fromOffset(1223, 729);
+        Size = UDim2.fromOffset(1086, 657);
         Position = UDim2.fromScale(0.5, 0.5);
         AnchorPoint = Vector2.new(0.5, 0.5);
         BackgroundTransparency = 1;
         IsOpen = props.IsOpen;
         Children = {
             Background() :: any;
-            TabButtons({
+            Bookmark({
                 ActiveTab = props.ActiveTab;
                 SwitchTab = props.SwitchTab;
             });
@@ -55,12 +55,14 @@ local Window = function(props: Props)
                 OnItemUnhovered = props.OnItemUnhovered :: any;
             });
             SearchBarComponent({
-                LayoutOrder = 3;
-                Position = UDim2.fromOffset(831, 9);
-                Size = UDim2.fromOffset(306, 64);
+                Position = UDim2.fromOffset(666, 10);
+                Size = UDim2.fromOffset(336, 72);
                 ZIndex = 4;
-                BackgroundImage = "rbxassetid://129977395166820";
-                SearchBoxSize = UDim2.fromOffset(306, 64);
+                BackgroundImage = "rbxassetid://74282051072934";
+                SearchBoxPosition = UDim2.fromOffset(6, 6);
+                SearchBoxSize = UDim2.fromOffset(324, 59);
+                TextBoxStrokeColor =  Color3.fromRGB(43, 73, 112);
+                
                 OnSearch = props.OnSearch;
             });
             Buttons({
@@ -69,12 +71,12 @@ local Window = function(props: Props)
             });
             Title();
             CloseButtonComponent({
-                Position = UDim2.fromOffset(1148+61/2, 9+61/2);
-                Size = UDim2.fromOffset(61, 64);
+                Position = UDim2.fromOffset(1042, 45);
                 AnchorPoint = Vector2.new(0.5, 0.5);
+                Size = UDim2.fromOffset(68, 71);
                 BackgroundTransparency = 1;
-                Image = "rbxassetid://131155686671413";
-                ZIndex = 3;
+                Image = "rbxassetid://121697259395490";
+                ZIndex = 6;
                 OnClose = function()
                     props.OnClose()
                 end;

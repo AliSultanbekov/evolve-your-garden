@@ -19,7 +19,7 @@ local PackStoreTypesShared = require("PackStoreTypesShared")
 local Rx = require("Rx")
 
 -- [ Components ] --
-local GenericButtonComponent = require("GenericButtonComponent")
+local AnimatedButtonComponent = require("AnimatedButtonComponent")
 
 -- [ Constants ] --
 
@@ -52,155 +52,146 @@ local PackCard = function(props: Props)
         Name = "PackCard";
         Size = UDim2.fromOffset(318, 453);
         BackgroundTransparency = 1;
-        Blend.New "Frame" {
+        Blend.New "ImageLabel" {
             Name = "Background";
-            Position = UDim2.fromOffset(3, 3);
-            Size = UDim2.fromOffset(312, 447);
+            Size = UDim2.fromScale(1, 1);
             BackgroundTransparency = 1;
-            Blend.New "ImageLabel" {
-                Name = "Background";
-                Position = UDim2.fromOffset(-3, -3);
-                Size = UDim2.fromOffset(318, 453);
-                BackgroundTransparency = 1;
-                Image = "rbxassetid://99164419082568";
-                ScaleType = Enum.ScaleType.Fit;
-            };
-            Blend.New "ImageLabel" {
-                Name = "Header";
-                Position = UDim2.fromOffset(-3, -3);
-                Size = UDim2.fromOffset(318, 71);
-                BackgroundTransparency = 1;
-                Image = "rbxassetid://85778577299667";
-                ScaleType = Enum.ScaleType.Fit;
-                ZIndex = 2;
-            };
-        };
-        Blend.New "TextLabel" {
-            Name = "Name";
-            Position = UDim2.fromOffset(90, 6);
-            Size = UDim2.fromOffset(140, 55);
-            BackgroundTransparency = 1;
-            FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
-            Text = Pack.Name;
-            TextColor3 = Color3.fromRGB(255, 255, 255);
-            TextScaled = true;
-            TextSize = 24;
-            TextWrapped = true;
-            ZIndex = 2;
-            Blend.New "UIStroke" {
-                Color = Color3.fromRGB(103, 38, 65);
-                Thickness = 3;
-            };
+            ClipsDescendants = true;
+            Image = "rbxassetid://122360671213114";
+            ScaleType = Enum.ScaleType.Fit;
         };
         Blend.New "ImageLabel" {
             Name = "Rays";
-            Position = UDim2.fromOffset(-41 + 400 / 2, 29 + 400 / 2);
+            Position = UDim2.fromOffset(-8 + 334 / 2, 68 + 333 / 2);
             AnchorPoint = Vector2.new(0.5, 0.5);
-            Size = UDim2.fromOffset(400, 400);
+            Size = UDim2.fromOffset(334, 333);
             BackgroundTransparency = 1;
-            Image = "rbxassetid://97163599633952";
-            ScaleType = Enum.ScaleType.Fit;
-            ZIndex = 3;
+            Image = "rbxassetid://97489278730613";
+            ZIndex = 2;
             Rotation = Rotation;
         };
         Blend.New "ImageLabel" {
             Name = "Pack";
-            Position = UDim2.fromOffset(3, 71);
-            Size = UDim2.fromOffset(312, 315);
+            Position = UDim2.fromOffset(3, 91);
+            Size = UDim2.fromOffset(312, 288);
             BackgroundTransparency = 1;
             ClipsDescendants = true;
-            Image = "rbxassetid://128090208868523";
-            ZIndex = 4;
+            Image = "rbxassetid://128387498316353";
+            ZIndex = 3;
         };
-        GenericButtonComponent({
+        AnimatedButtonComponent({
             Name = "Buy";
-            Position = UDim2.fromOffset(171 + 136 / 2, 386 + 56 / 2);
-            Size = UDim2.fromOffset(136, 56);
+            Position = UDim2.fromOffset(162 + 146 / 2, 387 + 56 / 2);
+            Size = UDim2.fromOffset(146, 56);
             AnchorPoint = Vector2.new(0.5, 0.5);
             BackgroundTransparency = 1;
-            Image = "rbxassetid://139395286302642";
-            ZIndex = 5;
+            Image = "rbxassetid://90926194777589";
+            ScaleType = Enum.ScaleType.Fit;
+            ZIndex = 4;
             OnPressed = function()
                 props.BuyPack(Pack.Id)
             end,
             Children = {
                 Blend.New "TextLabel" {
-                    Name = "Name";
+                    Name = "Title";
                     Position = UDim2.fromOffset(6, 6);
-                    Size = UDim2.fromOffset(124, 41);
+                    Size = UDim2.fromOffset(134, 41);
                     BackgroundTransparency = 1;
                     FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
                     Text = "Buy";
                     TextColor3 = Color3.fromRGB(255, 255, 255);
-                    TextSize = 20;
+                    TextSize = 29;
+                    TextWrapped = true;
                     Blend.New "UIStroke" {
-                        Color = Color3.fromRGB(14, 100, 13);
+                        Color = Color3.fromRGB(21, 96, 20);
                         Thickness = 3;
                     };
                 };
             }
         });
         Blend.New "Frame" {
-            Name = "CurrencyBox";
-            Position = UDim2.fromOffset(11, 386);
-            Size = UDim2.fromOffset(136, 56);
+            Name = "Price";
+            Position = UDim2.fromOffset(10, 387);
+            Size = UDim2.fromOffset(146, 56);
             BackgroundTransparency = 1;
-            ZIndex = 6;
+            ZIndex = 5;
             Blend.New "ImageLabel" {
                 Name = "Background";
-                Size = UDim2.fromOffset(136, 56);
-                BackgroundTransparency = 1;
-                Image = "rbxassetid://124957764974531";
-            };
-            Blend.New "ImageLabel" {
-                Name = "Coin";
-                Position = UDim2.fromOffset(8, 3);
-                Size = UDim2.fromOffset(50, 50);
+                Size = UDim2.fromScale(1, 1);
                 BackgroundTransparency = 1;
                 ClipsDescendants = true;
-                Image = "rbxassetid://128750776527002";
+                Image = "rbxassetid://131494745355914";
                 ScaleType = Enum.ScaleType.Fit;
-                ZIndex = 2;
             };
             Blend.New "TextLabel" {
                 Name = "Amount";
-                Position = UDim2.fromOffset(53, 3);
-                Size = UDim2.fromOffset(80, 50);
+                LayoutOrder = 1;
+                Position = UDim2.fromOffset(54, 3);
+                Size = UDim2.fromOffset(89, 50);
                 BackgroundTransparency = 1;
                 FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
                 Text = NumberLocalizationUtils.abbreviate(PackPrice, "en-us", RoundingBehaviourTypes.ROUND_TO_CLOSEST, 3);
                 TextColor3 = Color3.fromRGB(255, 255, 255);
-                TextSize = 24;
-                ZIndex = 3;
+                TextSize = 38;
+                TextWrapped = true;
+                ZIndex = 2;
                 Blend.New "UIStroke" {
-                    Color = Color3.fromRGB(103, 39, 44);
+                    Color = Color3.fromRGB(43, 73, 112);
                     Thickness = 3;
                 };
             };
+            Blend.New "ImageLabel" {
+                Name = "Icon";
+                LayoutOrder = 2;
+                Position = UDim2.fromOffset(3, 3);
+                Size = UDim2.fromOffset(50, 50);
+                BackgroundTransparency = 1;
+                ClipsDescendants = true;
+                Image = "rbxassetid://113750740810118";
+                ScaleType = Enum.ScaleType.Fit;
+                ZIndex = 3;
+            };
         };
         Blend.New "ImageLabel" {
-            Name = "Info";
-            Position = UDim2.fromOffset(12, 17);
-            Size = UDim2.fromOffset(30, 32);
+            Name = "PoolInfo";
+            Position = UDim2.fromOffset(12, 99);
+            Size = UDim2.fromOffset(46, 46);
             BackgroundTransparency = 1;
-            Image = "rbxassetid://134370064066838";
+            Image = "rbxassetid://77147524403860";
             ScaleType = Enum.ScaleType.Fit;
+            ZIndex = 6;
+        };
+        Blend.New "TextLabel" {
+            Name = "Name";
+            Position = UDim2.fromOffset(6, 6);
+            Size = UDim2.fromOffset(306, 75);
+            BackgroundTransparency = 1;
+            FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
+            Text = Pack.Name;
+            TextColor3 = Color3.fromRGB(255, 255, 255);
+            TextSize = 29;
+            TextWrapped = true;
             ZIndex = 7;
+            Blend.New "UIStroke" {
+                Color = Color3.fromRGB(43, 73, 112);
+                Thickness = 3;
+            };
         };
         Blend.New "TextLabel" {
             Name = "Stock";
-            Position = UDim2.fromOffset(257, 6);
-            Size = UDim2.fromOffset(55, 55);
+            Position = UDim2.fromOffset(221, 331);
+            Size = UDim2.fromOffset(61, 29);
             BackgroundTransparency = 1;
-            FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.ExtraBold, Enum.FontStyle.Normal);
+            FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
             Text = Blend.Computed(Pack.Left, function(left: number)
                 return tostring(left) .. "/" .. tostring(Pack.Stock)
             end);
             TextColor3 = Color3.fromRGB(255, 255, 255);
-            TextSize = 20;
+            TextSize = 29;
+            TextWrapped = true;
             ZIndex = 8;
             Blend.New "UIStroke" {
-                Color = Color3.fromRGB(103, 38, 65);
+                Color = Color3.fromRGB(43, 73, 112);
                 Thickness = 3;
             };
         };

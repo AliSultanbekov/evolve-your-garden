@@ -23,11 +23,14 @@ local Background = function()
     return {
         Blend.New "ImageLabel" {
             Name = "Background";
-            Size = UDim2.fromScale(1, 1);
+            Position = UDim2.fromOffset(-133, 0);
+            Size = UDim2.fromOffset(1161, 768);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
-            Image = "rbxassetid://102666729775616";
+            ClipsDescendants = true;
+            Image = "rbxassetid://125498616695817";
             ScaleType = Enum.ScaleType.Fit;
+            ZIndex = 2;
         }
     }
 end
