@@ -27,10 +27,10 @@ local ScalerComponent = function(props: Props)
     return Blend.New "UIScale" {
         Name = "Scaler";
         Scale = Blend.Computed(
-            props.Scale,
+            props.Scale or 1,
             DeviceScale,
-            function(scale: number, device: number)
-                return scale * (if props.ApplyDeviceScale and props.ApplyDeviceScale == true then device else 1)
+            function(scale: number?, device: number)
+                return (scale or 1) * (if props.ApplyDeviceScale == true then device else 1)
             end
         );
     }
@@ -38,7 +38,7 @@ end
 
 -- [ Types ] --
 type Props = {
-    Scale: ComponentTypes.Prop<number>,
+    Scale: ComponentTypes.Prop<number>?,
     ApplyDeviceScale: boolean?,
 }
 type ModuleData = {}

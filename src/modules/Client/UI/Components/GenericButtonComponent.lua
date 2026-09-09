@@ -9,7 +9,6 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
-local ValueObject = require("ValueObject")
 local Observable = require("Observable")
 local ComponentTypes = require("ComponentTypes")
 
@@ -24,16 +23,7 @@ local ScalerComponent = require("ScalerComponent")
 
 -- [ Module Table ] --
 local GenericButtonComponent = function(props: Props)
-    local IsPressed = ValueObject.new(false)
     local VisibleState = if props.Visible == nil then true else props.Visible
-
-    local Scale = Blend.Spring(
-        Blend.Computed(IsPressed, function(pressed: boolean)
-            return if pressed then 0.9 else 1
-        end),
-        35,
-        0.35
-    )
 
     local ButtonInstance: GuiButton
 
@@ -61,12 +51,16 @@ local GenericButtonComponent = function(props: Props)
         [Blend.OnEvent "InputBegan"] = function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1
                or input.UserInputType == Enum.UserInputType.Touch then
-                IsPressed.Value = true
+                if props.OnPressBegan then
+                    props.OnPressBegan(ButtonInstance)
+                end
 
                 local conn
                 conn = input.Changed:Connect(function()
                     if input.UserInputState == Enum.UserInputState.End then
-                        IsPressed.Value = false
+                        if props.OnPressEnded then
+                            props.OnPressEnded(ButtonInstance)
+                        end
                         conn:Disconnect()
                     end
                 end)
@@ -78,7 +72,9 @@ local GenericButtonComponent = function(props: Props)
             end
         end;
         [Blend.OnEvent "MouseLeave"] = function()
-            IsPressed.Value = false
+            if props.OnPressEnded then
+                props.OnPressEnded(ButtonInstance)
+            end
 
             if props.OnUnhovered then
                 props.OnUnhovered(ButtonInstance)
@@ -90,7 +86,7 @@ local GenericButtonComponent = function(props: Props)
             end
         end;
         [Blend.Children] = {
-            ScalerComponent({ Scale = Scale });
+            ScalerComponent({ Scale = props.Scale });
             props.Children :: any
         };
     }
@@ -112,7 +108,11 @@ type Props = {
     ImageColor3: ComponentTypes.Prop<Color3>?,
     ScaleType: ComponentTypes.Prop<Enum.ScaleType>?,
     ClipsDescendants: ComponentTypes.Prop<boolean>?,
+    Scale: ComponentTypes.Prop<number>?,
+
     OnPressed: ((buttonInstance: GuiButton) -> ())?,
+    OnPressBegan: ((buttonInstance: GuiButton) -> ())?,
+    OnPressEnded: ((buttonInstance: GuiButton) -> ())?,
     OnHovered: ((buttonInstance: GuiButton) -> ())?,
     OnUnhovered: ((buttonInstance: GuiButton) -> ())?,
     OnDestroyed: (() -> ())?,

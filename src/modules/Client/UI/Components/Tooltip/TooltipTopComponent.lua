@@ -58,26 +58,29 @@ local TooltipTopComponent = function(props: Props)
         end) :: any,
     })
 
-    return Blend.New "Frame" {
+    return Blend.New "ImageLabel" {
         Name = "Top";
         LayoutOrder = 0;
         Size = UDim2.new(1, 0, 0, 81);
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
         BackgroundTransparency = 1;
+        -- Optional header plate behind name/rarity (e.g. merchant tooltip).
+        Image = props.Image or "";
+        ScaleType = Enum.ScaleType.Fit;
         Blend.New "ImageLabel" {
             Name = "Rays";
-            Position = UDim2.fromOffset(-28 + 142 / 2, -71 + 142 / 2);
+            Position = UDim2.fromOffset(-19 + 127 / 2, -52 + 127 / 2);
             AnchorPoint = Vector2.new(0.5, 0.5);
-            Size = UDim2.fromOffset(142, 142);
+            Size = UDim2.fromOffset(127, 127);
             BackgroundTransparency = 1;
             ClipsDescendants = true;
-            Image = "rbxassetid://77591497948171";
+            Image = props.RaysImage or "rbxassetid://71619082784149";
             ZIndex = 1;
             Rotation = Rotation;
         };
         Blend.New "ImageLabel" {
             Name = "Rarity";
-            Position = UDim2.fromOffset(106, 37);
+            Position = UDim2.fromOffset(105, 34);
             Size = UDim2.fromOffset(84, 24);
             BackgroundTransparency = 1;
             Image = RarityImage;
@@ -85,8 +88,8 @@ local TooltipTopComponent = function(props: Props)
         };
         Blend.New "ImageLabel" {
             Name = "Icon";
-            Position = UDim2.fromOffset(-24, -66);
-            Size = UDim2.fromOffset(133, 133);
+            Position = UDim2.fromOffset(-14, -47);
+            Size = UDim2.fromOffset(117, 117);
             BackgroundTransparency = 1;
             ClipsDescendants = true;
             Image = ItemIcon;
@@ -95,7 +98,7 @@ local TooltipTopComponent = function(props: Props)
         };
         Blend.New "TextLabel" {
             Name = "Name";
-            Position = UDim2.fromOffset(109, 15);
+            Position = UDim2.fromOffset(108, 12);
             Size = UDim2.fromOffset(127, 15);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
@@ -103,12 +106,12 @@ local TooltipTopComponent = function(props: Props)
             Text = ItemName;
             TextColor3 = Color3.fromRGB(255, 255, 255);
             TextScaled = true;
-            TextSize = 16;
+            TextSize = 19;
             TextWrapped = true;
             TextXAlignment = Enum.TextXAlignment.Left;
             ZIndex = 3;
             Blend.New "UIStroke" {
-                Color = Color3.fromRGB(32, 83, 118);
+                Color = Color3.fromRGB(43, 73, 112);
                 LineJoinMode = Enum.LineJoinMode.Miter;
                 Thickness = 2;
             };
@@ -120,6 +123,8 @@ end
 type Props = {
     Item: ComponentTypes.Prop<ReactiveItemTypes.ReactiveItem>,
     AnimateEffects: Observable.Observable<boolean>,
+    Image: string?,
+    RaysImage: string?,
 }
 type ModuleData = {}
 

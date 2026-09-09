@@ -30,9 +30,9 @@ local TooltipBackgroundComponent = function()
         Size = UDim2.fromScale(1, 1);
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
         BackgroundTransparency = 1;
-        Image = "rbxassetid://126179151125521";
+        Image = "rbxassetid://107011874680416";
         ScaleType = Enum.ScaleType.Slice;
-        SliceCenter = Rect.new(Vector2.new(256, 162), Vector2.new(256, 634));
+        SliceCenter = Rect.new(Vector2.new(256, 168), Vector2.new(256, 640));
         SliceScale = 0.5;
     };
 end

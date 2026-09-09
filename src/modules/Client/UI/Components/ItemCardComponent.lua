@@ -23,7 +23,7 @@ local NumberLocalizationUtils = require("NumberLocalizationUtils")
 local RoundingBehaviourTypes = require("RoundingBehaviourTypes")
 
 -- [ Components ] --
-local GenericButtonComponent = require("GenericButtonComponent")
+local AnimatedButtonComponent = require("AnimatedButtonComponent")
 
 -- [ Constants ] --
 local WIGGLE_COLORS = {
@@ -138,7 +138,7 @@ local ItemCardComponent = function(props: Props)
         end))
     end
 
-    return GenericButtonComponent({
+    return AnimatedButtonComponent({
         Name = "ItemCard";
         AnchorPoint = Vector2.new(0.5, 0.5);
         Position = UDim2.fromScale(0.5, 0.5);
@@ -153,7 +153,7 @@ local ItemCardComponent = function(props: Props)
                 AnchorPoint = Vector2.new(0.5, 0.5);
                 Size = UDim2.fromScale(1, 1);
                 BackgroundTransparency = 1;
-                Image = "rbxassetid://104856123058042";
+                Image = "rbxassetid://110306352551009";
                 ScaleType = Enum.ScaleType.Fit;
                 [Blend.Children] = {
                     Blend.New "UIGradient" {

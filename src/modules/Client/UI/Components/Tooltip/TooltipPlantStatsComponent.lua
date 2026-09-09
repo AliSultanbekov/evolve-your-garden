@@ -56,7 +56,8 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
 
     local LevelProgress = LevelInfo:Pipe({
         Rx.map(function(levelInfo: any)
-            return math.clamp((levelInfo.CurrentXp -levelInfo.CurrentLevelXp) / (levelInfo.NextLevelXp - levelInfo.CurrentLevelXp), 0.08, 1)
+            -- Flat bars hide their fill at exactly 0, so no minimum-nub clamp.
+            return math.clamp((levelInfo.CurrentXp - levelInfo.CurrentLevelXp) / (levelInfo.NextLevelXp - levelInfo.CurrentLevelXp), 0, 1)
         end) :: any,
         Rx.distinct(),
         Rx.shareReplay(1)
@@ -74,7 +75,7 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
 
     local GrowthProgress = GrowthInfo:Pipe({
         Rx.map(function(growthInfo: any)
-            return math.clamp((growthInfo.GrowthTime / growthInfo.FinalStageTime), 0.08, 1)
+            return math.clamp((growthInfo.GrowthTime / growthInfo.FinalStageTime), 0, 1)
         end) :: any,
     }) :: any
 
@@ -93,36 +94,15 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
             AnimatedFrameComponent({
                 Name = "Level";
                 LayoutOrder = 1;
-                Size = UDim2.fromOffset(189, 27);
+                Size = UDim2.fromOffset(215, 28);
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
                 IsOpen = true;
                 Children = {
-                    GenericProgressBarComponent({
-                        Position = UDim2.fromOffset(0, 8);
-                        Size = UDim2.fromOffset(189, 19);
-                        BarBackgroundPosition = UDim2.fromOffset(2, 2);
-                        BarBackgroundSize = UDim2.fromOffset(185, 15);
-                        BarBackgroundColor3 = Color3.fromRGB(121, 78, 18);
-                        BarBackgroundUIStokeColor = Color3.fromRGB(103, 69, 17);
-                        BarBackgroundUIStokeSize = 2;
-                        UICorner = 10;
-                        FillImage = "rbxassetid://92565082291017";
-                        FillColorSequence = ColorSequence.new(Color3.fromRGB(255, 200, 2), Color3.fromRGB(255, 158, 1));
-                        FillPosition = UDim2.fromOffset(2, 2);
-                        FillSize = UDim2.fromOffset(-4, 15);
-                        InnerStrokeImage = "rbxassetid://111508696383639";
-                        InnerStrokeColorSequence = ColorSequence.new(Color3.fromRGB(255, 237, 44), Color3.fromRGB(255, 200, 73));
-                        InnerStrokePosition = UDim2.fromOffset(2, 2);
-                        InnerStrokeSize = UDim2.fromOffset(185, 15);
-                        SliceCenter = Rect.new(15, 15, 355, 15);
-                        Progress = LevelProgress;
-                    });
                     Blend.New "TextLabel" {
                         Name = "Info";
-                        LayoutOrder = 1;
-                        Position = UDim2.fromOffset(2, 3);
-                        Size = UDim2.fromOffset(185, 9);
+                        Position = UDim2.fromOffset(0, 1);
+                        Size = UDim2.fromOffset(215, 15);
                         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                         BackgroundTransparency = 1;
                         FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
@@ -130,19 +110,41 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
                             return "Level " .. levelInfo.Level
                         end),
                         TextColor3 = Color3.fromRGB(255, 255, 255);
+                        TextSize = 17;
+                        TextWrapped = true;
                         TextXAlignment = Enum.TextXAlignment.Left;
-                        ZIndex = 2;
+                        ZIndex = 5;
                         Blend.New "UIStroke" {
-                            Color = Color3.fromRGB(135, 90, 22);
+                            Color = Color3.fromRGB(109, 72, 0);
                             Thickness = 2;
                         };
                     };
+                    GenericProgressBarComponent({
+                        Position = UDim2.fromOffset(0, 14);
+                        Size = UDim2.fromOffset(215, 12);
+                        BarBackgroundPosition = UDim2.fromOffset(0, 0);
+                        BarBackgroundSize = UDim2.fromScale(1, 1);
+                        BarBackgroundColor3 = Color3.fromRGB(109, 72, 0);
+                        BarBackgroundUIStokeColor = Color3.fromRGB(109, 72, 0);
+                        BarBackgroundUIStokeSize = 0;
+                        FillPosition = UDim2.fromOffset(0, 0);
+                        FillSize = UDim2.fromOffset(0, 12);
+                        FillColorSequence = ColorSequence.new(Color3.fromRGB(255, 204, 73), Color3.fromRGB(236, 152, 0));
+                        FillGradientRotation = 90;
+                        FillUICorner = 30;
+                        FillStrokeColor = Color3.fromRGB(109, 72, 0);
+                        FillStrokeThickness = 2;
+                        FillInnerStrokeColorSequence = ColorSequence.new(Color3.fromRGB(255, 219, 125), Color3.fromRGB(255, 174, 27));
+                        FillInnerStrokeThickness = 2;
+                        UICorner = 30;
+                        Progress = LevelProgress;
+                    });
                 }
             });
             AnimatedFrameComponent({
                 Name = "Growth";
                 LayoutOrder = 2;
-                Size = UDim2.fromOffset(189, 27);
+                Size = UDim2.fromOffset(215, 28);
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
                 IsOpen = GrowthInfo:Pipe({
@@ -152,31 +154,10 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
                     Rx.distinct() :: any,
                 }) :: any,
                 Children = {
-                    GenericProgressBarComponent({
-                        Position = UDim2.fromOffset(0, 8);
-                        Size = UDim2.fromOffset(189, 19);
-                        BarBackgroundPosition = UDim2.fromOffset(2, 2);
-                        BarBackgroundSize = UDim2.fromOffset(185, 15);
-                        BarBackgroundColor3 = Color3.fromRGB(12, 70, 13);
-                        BarBackgroundUIStokeColor = Color3.fromRGB(17, 103, 19);
-                        BarBackgroundUIStokeSize = 2;
-                        UICorner = 10;
-                        FillImage = "rbxassetid://92565082291017";
-                        FillColorSequence = ColorSequence.new(Color3.fromRGB(36, 248, 78), Color3.fromRGB(22, 209, 35));
-                        FillPosition = UDim2.fromOffset(2, 2);
-                        FillSize = UDim2.fromOffset(-4, 15);
-                        InnerStrokeImage = "rbxassetid://111508696383639";
-                        InnerStrokeColorSequence = ColorSequence.new(Color3.fromRGB(72, 253, 108), Color3.fromRGB(60, 255, 73));
-                        InnerStrokePosition = UDim2.fromOffset(2, 2);
-                        InnerStrokeSize = UDim2.fromOffset(185, 15);
-                        SliceCenter = Rect.new(15, 15, 355, 15);
-                        Progress = GrowthProgress;
-                    });
                     Blend.New "TextLabel" {
                         Name = "Info";
-                        LayoutOrder = 1;
-                        Position = UDim2.fromOffset(2, 3);
-                        Size = UDim2.fromOffset(185, 9);
+                        Position = UDim2.fromOffset(0, 1);
+                        Size = UDim2.fromOffset(215, 15);
                         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                         BackgroundTransparency = 1;
                         FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
@@ -185,13 +166,35 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
                             return "Fully grown in: " .. FormatMMSS(Difference)
                         end),
                         TextColor3 = Color3.fromRGB(255, 255, 255);
+                        TextSize = 17;
+                        TextWrapped = true;
                         TextXAlignment = Enum.TextXAlignment.Left;
-                        ZIndex = 2;
+                        ZIndex = 5;
                         Blend.New "UIStroke" {
                             Color = Color3.fromRGB(17, 103, 19);
                             Thickness = 2;
                         };
                     };
+                    GenericProgressBarComponent({
+                        Position = UDim2.fromOffset(0, 14);
+                        Size = UDim2.fromOffset(215, 12);
+                        BarBackgroundPosition = UDim2.fromOffset(0, 0);
+                        BarBackgroundSize = UDim2.fromScale(1, 1);
+                        BarBackgroundColor3 = Color3.fromRGB(12, 70, 13);
+                        BarBackgroundUIStokeColor = Color3.fromRGB(12, 70, 13);
+                        BarBackgroundUIStokeSize = 0;
+                        FillPosition = UDim2.fromOffset(0, 0);
+                        FillSize = UDim2.fromOffset(0, 12);
+                        FillColorSequence = ColorSequence.new(Color3.fromRGB(36, 248, 78), Color3.fromRGB(22, 209, 35));
+                        FillGradientRotation = 90;
+                        FillUICorner = 30;
+                        FillStrokeColor = Color3.fromRGB(12, 70, 13);
+                        FillStrokeThickness = 2;
+                        FillInnerStrokeColorSequence = ColorSequence.new(Color3.fromRGB(72, 253, 108), Color3.fromRGB(60, 255, 73));
+                        FillInnerStrokeThickness = 2;
+                        UICorner = 30;
+                        Progress = GrowthProgress;
+                    });
                 }
             });
         };

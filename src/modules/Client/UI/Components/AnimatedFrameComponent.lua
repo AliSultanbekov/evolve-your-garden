@@ -35,6 +35,8 @@ local AnimatedFrameComponent = function(props: Props)
         end)
     )
 
+    local VisibleState = if props.Visible == nil then true else props.Visible
+
     return Blend.New "Frame" {
         Name = props.Name;
         Size = props.Size;
@@ -45,8 +47,9 @@ local AnimatedFrameComponent = function(props: Props)
         AutomaticSize = props.AutomaticSize;
         LayoutOrder = props.LayoutOrder;
         ZIndex = props.ZIndex;
-        Visible = Blend.Computed(Scale, function(scale: number)
-            return if scale < 0.01 then false else true
+        Parent = props.Parent;
+        Visible = Blend.Computed(Scale, VisibleState, function(scale: number, visible: boolean)
+            return visible and scale >= 0.01
         end);
         [Blend.Children] = {
             ScalerComponent({ Scale = Scale, ApplyDeviceScale = props.ApplyDeviceScale or false });
@@ -66,6 +69,8 @@ type Props = {
     ZIndex: ComponentTypes.Prop<number>?,
     LayoutOrder: ComponentTypes.Prop<number>?,
     AutomaticSize: ComponentTypes.Prop<Enum.AutomaticSize>?,
+    Visible: ComponentTypes.Prop<boolean>?,
+    Parent: ComponentTypes.Prop<Instance>?,
     Children: { Observable.Observable<Instance> }?,
     ApplyDeviceScale: boolean?,
     IsOpen: ComponentTypes.Prop<boolean>,

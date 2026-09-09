@@ -54,6 +54,8 @@ local TooltipShellComponent = function(props: Props)
         TooltipTopComponent({
             Item = DisplayItem,
             AnimateEffects = IsOpen,
+            Image = props.TopImage,
+            RaysImage = props.RaysImage,
         });
         TooltipPlantStatsComponent({
             Item = DisplayItem :: any,
@@ -99,6 +101,8 @@ type Props = {
     Position: Observable.Observable<UDim2>,
     AnchorPoint: Vector2?,
     PaddingBottom: number?,
+    TopImage: string?,
+    RaysImage: string?,
     Content: ((displayItem: Observable.Observable<ReactiveItemTypes.ReactiveItem>, isOpen: Observable.Observable<boolean>) -> { any })?,
 }
 type ModuleData = {}
