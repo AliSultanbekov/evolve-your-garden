@@ -40,13 +40,13 @@ local ButtonsWindow = function(props: Props)
                 FillDirection = Enum.FillDirection.Horizontal;
             };
             GenericButtonComponent({
-                Name = "Inventory";
+                Name = "Encyclopedia";
                 Size = UDim2.fromOffset(98, 102);
                 AnchorPoint = Vector2.new(0.5, 0.5);
                 BackgroundTransparency = 1;
                 Image = "rbxassetid://135173861387246";
                 OnPressed = function()
-                    props.OnToggleUI("Inventory")
+                    props.OnToggleUI("Encyclopedia")
                 end
             });
         };
