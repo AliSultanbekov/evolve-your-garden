@@ -14,7 +14,6 @@ local require = require(script:FindFirstAncestor("Components").loader).load(scri
 
 -- [ Imports ] --
 local Blend = require("Blend")
-local ValueObject = require("ValueObject")
 local Observable = require("Observable")
 local Rx = require("Rx")
 local PlantsConfig = require("PlantsConfig")
@@ -160,7 +159,7 @@ local Information = function(props: Props)
                 Rx.map(function(discoveredPlantsCount: number)
                     return PlantsConfig.PlantsCount / discoveredPlantsCount
                 end) :: any
-            })
+            }) :: any
         });
     }
 end
