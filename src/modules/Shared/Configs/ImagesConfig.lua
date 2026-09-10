@@ -64,12 +64,12 @@ local ImagesConfig = {
     },
     Encyclopedia = {
         PlantCardBackgrounds = {
-            Celestial = "rbxassetid://108558146289194",
-            Mythic = "rbxassetid://81360572848461",
-            Legendary = "rbxassetid://84811772927740",
-            Epic = "rbxassetid://109498357757740",
-            Rare = "rbxassetid://127329397290249",
-            Uncommon = "rbxassetid://120166528728314",
+            Celestial = "rbxassetid://134952530337284",
+            Mythic = "rbxassetid://107370186688137",
+            Legendary = "rbxassetid://75357291006675",
+            Epic = "rbxassetid://78645511832588",
+            Rare = "rbxassetid://124273306590864",
+            Uncommon = "rbxassetid://101337077630640",
             Common = "rbxassetid://135846616087477",
             Undiscovered = "rbxassetid://130038073528754"
         }

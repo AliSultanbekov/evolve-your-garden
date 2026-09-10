@@ -31,4 +31,9 @@ export type GetDiscoveredItemsRemotePacket = {
     },
 }
 
+export type ItemDiscoveredRemotePacket = {
+    ItemName: string,
+    DiscoveredItem: DiscoveredItem,
+}
+
 return nil

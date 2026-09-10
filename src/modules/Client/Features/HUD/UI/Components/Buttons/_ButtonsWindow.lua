@@ -49,6 +49,16 @@ local ButtonsWindow = function(props: Props)
                     props.OnToggleUI("Encyclopedia")
                 end
             });
+            GenericButtonComponent({
+                Name = "Inventory";
+                Size = UDim2.fromOffset(98, 102);
+                AnchorPoint = Vector2.new(0.5, 0.5);
+                BackgroundTransparency = 1;
+                Image = "rbxassetid://135173861387246";
+                OnPressed = function()
+                    props.OnToggleUI("Inventory")
+                end
+            });
         };
         IsOpen = props.IsOpen
     })

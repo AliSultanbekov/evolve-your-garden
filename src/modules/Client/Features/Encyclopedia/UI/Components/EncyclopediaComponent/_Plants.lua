@@ -128,6 +128,7 @@ local Plants = function(props: Props)
                 };
                 Information({
                     DiscoveredPlantsCount = props.DiscoveredPlantsCount;
+                    SwitchTab = props.SwitchTab;
                 });
                 Blend.New "Frame" {
                     Name = "Container";
@@ -154,7 +155,8 @@ end
 type Props = {
     ActiveTab: ComponentTypes.Prop<string>,
     DiscoveredPlantsCount: Observable.Observable<number>,
-    GetDiscoveredItem: (itemName: string) -> EncyclopediaTypesClient.ReactiveDiscoveredItem
+    GetDiscoveredItem: (itemName: string) -> EncyclopediaTypesClient.ReactiveDiscoveredItem,
+    SwitchTab: (tabName: string) -> (),
 }
 type ModuleData = {}
 

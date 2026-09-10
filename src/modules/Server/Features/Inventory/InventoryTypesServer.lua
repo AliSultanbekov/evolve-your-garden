@@ -16,8 +16,8 @@ local ItemTypes = require("ItemTypes")
 
 -- [ Types ] --
 export type Gateway = {
-    AddRawItems: (items: { [any]: ItemTypes.RawItem }) -> (),
-    AddItems: (items: { [any]: ItemTypes.Item }) -> (),
+    AddRawItems: (items: { [any]: ItemTypes.RawItem }, discover: boolean?, transmitDelay: number?) -> (),
+    AddItems: (items: { [any]: ItemTypes.Item }, discover: boolean?, transmitDelay: number?) -> (),
     RemoveItems: (items: { [any]: ItemTypes.Item }) -> (),
     UpdateItems: (items: { [any]: ItemTypes.Item }) -> (),
 }

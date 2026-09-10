@@ -54,6 +54,7 @@ end
 function EncyclopediaNetworkServer.Start(self: Module)
     local Channel = self._NetworkServiceShared:GetChannel("Encyclopedia")
 
+    Channel:DeclareEvent("ItemDiscovered")
     Channel:DeclareMethod("GetDiscoveredItems")
 
     Channel:Bind("GetDiscoveredItems", function(player: Player)

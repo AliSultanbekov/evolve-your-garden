@@ -49,8 +49,6 @@ function EncyclopediaServiceServer.GetTotalAcquired(self: Module, player: Player
     
     local ItemAcquiredInfo = EncyclopediaData.DiscoveredItems[itemName]
 
-    -- Not-yet-discovered is a normal state (quest checks query arbitrary
-    -- items) — it means zero acquired, not an error.
     if not ItemAcquiredInfo then
         return 0
     end

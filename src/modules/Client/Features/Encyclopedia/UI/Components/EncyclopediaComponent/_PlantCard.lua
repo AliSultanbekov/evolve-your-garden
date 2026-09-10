@@ -23,6 +23,29 @@ local ItemConfig = require("ItemConfig")
 -- [ Components ] --
 
 -- [ Constants ] --
+-- Name-label stroke per rarity, applied through a UIGradient over a white
+-- stroke so every rarity (including Celestial's rainbow) is one code path.
+local RARITY_TO_NAME_STROKE_COLOR_SEQUENCE = {
+    Common = ColorSequence.new(Color3.fromRGB(43, 73, 112)),
+    Uncommon = ColorSequence.new(Color3.fromRGB(101, 65, 23)),
+    Rare = ColorSequence.new(Color3.fromRGB(113, 27, 27)),
+    Epic = ColorSequence.new(Color3.fromRGB(96, 29, 88)),
+    Legendary = ColorSequence.new(Color3.fromRGB(95, 74, 23)),
+    Mythic = ColorSequence.new(Color3.fromRGB(67, 34, 112)),
+    Celestial = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 16, 16)),
+        ColorSequenceKeypoint.new(0.075, Color3.fromRGB(80, 16, 16)),
+        ColorSequenceKeypoint.new(0.217, Color3.fromRGB(71, 50, 14)),
+        ColorSequenceKeypoint.new(0.361, Color3.fromRGB(71, 67, 16)),
+        ColorSequenceKeypoint.new(0.496, Color3.fromRGB(13, 63, 16)),
+        ColorSequenceKeypoint.new(0.639, Color3.fromRGB(14, 61, 68)),
+        ColorSequenceKeypoint.new(0.78, Color3.fromRGB(15, 27, 68)),
+        ColorSequenceKeypoint.new(0.917, Color3.fromRGB(94, 23, 38)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(94, 23, 38)),
+    }),
+}
+
+local UNDISCOVERED_NAME_STROKE_COLOR_SEQUENCE = ColorSequence.new(Color3.fromRGB(62, 62, 62))
 
 -- [ Variables ] --
 
@@ -109,14 +132,17 @@ local PlantCard = function(props: Props)
             TextWrapped = true;
             ZIndex = 4;
             Blend.New "UIStroke" {
-                Color = Blend.Computed(props.IsDiscovered, function(isDiscovered: boolean)
-                    if not isDiscovered then
-                        return Color3.fromRGB(62, 62, 62);
-                    else
-                        return Color3.fromRGB(43, 73, 112);
-                    end
-                end);
+                Color = Color3.fromRGB(255, 255, 255);
                 Thickness = 2;
+                Blend.New "UIGradient" {
+                    Color = Blend.Computed(props.IsDiscovered, function(isDiscovered: boolean)
+                        if not isDiscovered then
+                            return UNDISCOVERED_NAME_STROKE_COLOR_SEQUENCE
+                        else
+                            return RARITY_TO_NAME_STROKE_COLOR_SEQUENCE[PlantRarity]
+                        end
+                    end);
+                };
             };
         };
     }

@@ -13,6 +13,7 @@ local ValueObject = require("ValueObject")
 local PlantsConfig = require("PlantsConfig")
 local EncyclopediaTypesShared = require("EncyclopediaTypesShared")
 local EncyclopediaTypesClient = require("EncyclopediaTypesClient")
+local ItemConfig = require("ItemConfig")
 
 -- [ Constants ] --
 
@@ -37,7 +38,9 @@ export type Module = typeof(EncyclopediaServiceClient) & ModuleData
 function EncyclopediaServiceClient._SetupDiscoveredItems(self: Module)
     local DiscoveredItems = {}
 
-    for _, plantConfig in PlantsConfig.Plants do
+    print(ItemConfig:GetAllItemsConfigs())
+
+    for _, plantConfig in ItemConfig:GetAllItemsConfigs() do
         DiscoveredItems[plantConfig.Name] = {
             DiscoveredTime = ValueObject.new(nil),
             TotalAcquired = ValueObject.new(0)
@@ -69,6 +72,8 @@ end
 
 function EncyclopediaServiceClient.Start(self: Module)
     self._EncyclopediaNetworkClient:GetDiscoveredItems():Then(function(packet: EncyclopediaTypesShared.GetDiscoveredItemsRemotePacket)
+        print(self._DiscoveredItems)
+        print(packet)
         for itemName, discoveredItem in packet.DiscoveredItems do
             self._DiscoveredItems[itemName].DiscoveredTime.Value = discoveredItem.DiscoveredTime
             self._DiscoveredItems[itemName].TotalAcquired.Value = discoveredItem.TotalAcquired
@@ -76,6 +81,18 @@ function EncyclopediaServiceClient.Start(self: Module)
             if PlantsConfig.Plants[itemName] and discoveredItem.TotalAcquired > 0 then
                 self._DiscoveredPlantsCount.Value += 1
             end
+        end
+    end)
+
+    self._EncyclopediaNetworkClient.RemoteEvents.ItemDiscovered:Connect(function(packet: EncyclopediaTypesShared.ItemDiscoveredRemotePacket)
+        local ItemName = packet.ItemName
+        local DiscoveredItem = packet.DiscoveredItem
+
+        self._DiscoveredItems[ItemName].DiscoveredTime.Value = DiscoveredItem.DiscoveredTime
+        self._DiscoveredItems[ItemName].TotalAcquired.Value = DiscoveredItem.TotalAcquired
+
+        if PlantsConfig.Plants[ItemName] and DiscoveredItem.TotalAcquired > 0 then
+            self._DiscoveredPlantsCount.Value += 1
         end
     end)
 end

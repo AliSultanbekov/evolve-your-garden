@@ -47,7 +47,8 @@ local EncyclopediaComponent = function(props: Props)
             Tabs({
                 DiscoveredPlantsCount = props.DiscoveredPlantsCount,
                 ActiveTab = props.ActiveTab,
-                GetDiscoveredItem = props.GetDiscoveredItem
+                GetDiscoveredItem = props.GetDiscoveredItem,
+                SwitchTab = props.SwitchTab,
             }),
             Title(),
             SearchBarComponent({

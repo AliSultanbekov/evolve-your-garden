@@ -73,4 +73,22 @@ export type QuestsData = {
     },
 }
 
+export type QuestAddedRemotePacket = {
+    Quest: Quest
+}
+
+export type QuestCompletedRemotePacket = {
+    QuestId: QuestId
+}
+
+export type RewardClaimedRemotePacket = {
+    QuestId: QuestId
+}
+
+export type ClaimRewardRemotePacket = {
+    QuestId: QuestId
+}
+
+export type GetQuestsRemotePacket = QuestsData
+
 return nil

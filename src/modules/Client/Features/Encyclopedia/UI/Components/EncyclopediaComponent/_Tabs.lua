@@ -19,6 +19,7 @@ local Observable = require("Observable")
 
 -- [ Components ] --
 local Plants = require(script.Parent._Plants)
+local Rewards = require(script.Parent._Rewards)
 
 -- [ Constants ] --
 
@@ -38,7 +39,11 @@ local Tabs = function(props: Props)
         Plants({
             ActiveTab = props.ActiveTab;
             DiscoveredPlantsCount = props.DiscoveredPlantsCount;
-            GetDiscoveredItem = props.GetDiscoveredItem
+            GetDiscoveredItem = props.GetDiscoveredItem,
+            SwitchTab = props.SwitchTab
+        });
+        Rewards({
+            ActiveTab = props.ActiveTab;
         });
     }
 end
@@ -47,7 +52,8 @@ end
 type Props = {
     ActiveTab: ComponentTypes.Prop<string>,
     DiscoveredPlantsCount: Observable.Observable<number>,
-    GetDiscoveredItem: (itemName: string) -> EncyclopediaTypesClient.ReactiveDiscoveredItem
+    GetDiscoveredItem: (itemName: string) -> EncyclopediaTypesClient.ReactiveDiscoveredItem,
+    SwitchTab: (tabName: string) -> (),
 }
 type ModuleData = {}
 

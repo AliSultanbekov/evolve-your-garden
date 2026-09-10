@@ -68,11 +68,11 @@ function InventoryServiceServer.UseAction(self: Module, player: Player, action: 
     end
 
     local Gateway = {
-        AddRawItems = function(items: { [any]: ItemTypes.RawItem })
-            self:AddRawItems(player, items)
+        AddRawItems = function(items: { [any]: ItemTypes.RawItem }, discover: boolean?, transmitDelay: number?)
+            self:AddRawItems(player, items, discover, transmitDelay)
         end,
-        AddItems = function(items: { [any]: ItemTypes.Item })
-            self:AddItems(player, items)
+        AddItems = function(items: { [any]: ItemTypes.Item }, discover: boolean?, transmitDelay: number?)
+            self:AddItems(player, items, discover, transmitDelay)
         end,
         RemoveItems = function(items: { [any]: ItemTypes.Item })
             self:RemoveItems(player, items)
@@ -127,14 +127,20 @@ function InventoryServiceServer.GetItem(self: Module, player: Player, itemId: It
     return table.clone(Item)
 end
 
-function InventoryServiceServer.AddRawItems(self: Module, player: Player, rawItems: { [any]: ItemTypes.RawItem })
+function InventoryServiceServer.AddRawItems(
+    self: Module, 
+    player: Player, 
+    rawItems: { [any]: ItemTypes.RawItem },
+    discover: boolean?,
+    transmitDelay: number?
+)
     local Items: { ItemTypes.Item } = {}
 
     for _, rawItem in rawItems do
         table.insert(Items, ItemUtil:ProcessRawItem(rawItem))
     end
 
-    self:AddItems(player, Items)
+    self:AddItems(player, Items, discover, transmitDelay)
 end
 
 function InventoryServiceServer.AddItems(

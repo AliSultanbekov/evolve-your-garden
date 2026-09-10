@@ -13,6 +13,7 @@ local PlantsConfig = require("PlantsConfig")
 local MaterialsConfig = require("MaterialsConfig")
 local CurrenciesConfig = require("CurrenciesConfig")
 local PacksConfig = require("PacksConfig")
+local Table = require("Table")
 
 -- [ Constants ] --
 
@@ -97,6 +98,24 @@ function ItemConfig.GetRarity(self: Module, itemName: string, itemCategory: Item
     end
 
     error("No rarity found for item: " .. tostring(itemName) .. " (" .. tostring(Category) .. ")")
+end
+
+function ItemConfig.GetAllItemsConfigs(self: Module)
+    local ItemsConfigs = {}
+
+    for _, category in pairs(self.Categories) do
+        if category == "Plant" then
+            ItemsConfigs = Table.merge(ItemsConfigs, PlantsConfig.Plants)
+        elseif category == "Material" then
+            ItemsConfigs = Table.merge(ItemsConfigs, MaterialsConfig.Materials)
+        elseif category == "Pack" then
+            ItemsConfigs = Table.merge(ItemsConfigs, PacksConfig.Packs)
+        elseif category == "Currency" then
+            ItemsConfigs = Table.merge(ItemsConfigs, CurrenciesConfig.Currencies)
+        end
+    end
+
+    return ItemsConfigs
 end
 
 return ItemConfig :: Module

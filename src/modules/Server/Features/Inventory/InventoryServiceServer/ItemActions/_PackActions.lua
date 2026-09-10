@@ -52,10 +52,10 @@ function Pack.Open(props: OpenProps)
             Name = Item.Name,
             Category = "Pack" :: "Pack",
             Amount = props.Amount,
-        }
+        },
     })
 
-    props.Gateway.AddRawItems(PackUtil:Open(Item.Name, props.Amount))
+    props.Gateway.AddRawItems(PackUtil:Open(Item.Name, props.Amount), true)
 end
 
 return Pack :: Module

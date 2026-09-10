@@ -48,7 +48,9 @@ local Information = function(props: Props)
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
-            Text = "24 / 80";
+            Text = Blend.Computed(props.DiscoveredPlantsCount, function(discoveredPlantsCount: number)
+                return tostring(discoveredPlantsCount) .. "/" .. tostring(PlantsConfig.PlantsCount)
+            end);
             TextColor3 = Color3.fromRGB(255, 255, 255);
             TextSize = 38;
             TextWrapped = true;
@@ -85,7 +87,7 @@ local Information = function(props: Props)
             BackgroundTransparency = 1;
             ZIndex = 4;
             OnPressed = function()
-                print("[Encyclopedia] Rewards pressed") -- PLACEHOLDER: switch to Rewards tab
+                props.SwitchTab("Rewards")
             end;
             Children = {
                 Blend.New "ImageLabel" {
@@ -157,7 +159,7 @@ local Information = function(props: Props)
             UICorner = 30;
             Progress = props.DiscoveredPlantsCount:Pipe({
                 Rx.map(function(discoveredPlantsCount: number)
-                    return PlantsConfig.PlantsCount / discoveredPlantsCount
+                    return discoveredPlantsCount / PlantsConfig.PlantsCount
                 end) :: any
             }) :: any
         });
@@ -167,6 +169,7 @@ end
 -- [ Types ] --
 type Props = {
     DiscoveredPlantsCount: Observable.Observable<number>,
+    SwitchTab: (tabName: string) -> (),
 }
 
 type ModuleData = {}
