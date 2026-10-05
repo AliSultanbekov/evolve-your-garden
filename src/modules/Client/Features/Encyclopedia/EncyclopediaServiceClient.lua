@@ -38,8 +38,6 @@ export type Module = typeof(EncyclopediaServiceClient) & ModuleData
 function EncyclopediaServiceClient._SetupDiscoveredItems(self: Module)
     local DiscoveredItems = {}
 
-    print(ItemConfig:GetAllItemsConfigs())
-
     for _, plantConfig in ItemConfig:GetAllItemsConfigs() do
         DiscoveredItems[plantConfig.Name] = {
             DiscoveredTime = ValueObject.new(nil),

@@ -25,7 +25,7 @@ type ModuleData = {
     _NetworkServiceShared: typeof(require("NetworkServiceShared")),
 
     RemoteEvents: {
-        ClaimReward: Signal.Signal<Player, QuestsTypesShared.ClaimRewardRemotePacket>,
+        ClaimReward: Signal.Signal<Player, QuestsTypesShared.QuestClaimRewardRemotePacket>,
     },
     RemoteFunctions: {
         GetQuests: (player: Player) -> QuestsTypesShared.GetQuestsRemotePacket
@@ -37,22 +37,22 @@ export type Module = typeof(QuestsNetworkServer) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
-function QuestsNetworkServer.QuestAdded(self: Module, player: Player, packet: QuestsTypesShared.QuestAddedRemotePacket)
+function QuestsNetworkServer.QuestsAdded(self: Module, player: Player, packet: QuestsTypesShared.QuestsAddedRemotePacket)
     local Channel = self._NetworkServiceShared:GetChannel("Quests")
 
-    Channel:FireClient("QuestAdded", player, packet)
+    Channel:FireClient("QuestsAdded", player, packet)
 end
 
-function QuestsNetworkServer.QuestCompleted(self: Module, player: Player, packet: QuestsTypesShared.QuestCompletedRemotePacket)
+function QuestsNetworkServer.QuestsUpdated(self: Module, player: Player, packet: QuestsTypesShared.QuestsUpdatedRemotePacket)
     local Channel = self._NetworkServiceShared:GetChannel("Quests")
 
-    Channel:FireClient("QuestCompleted", player, packet)
+    Channel:FireClient("QuestsUpdated", player, packet)
 end
 
-function QuestsNetworkServer.RewardClaimed(self: Module, player: Player, packet: QuestsTypesShared.RewardClaimedRemotePacket)
+function QuestsNetworkServer.QuestsRemoved(self: Module, player: Player, packet: QuestsTypesShared.QuestsRemovedRemotePacket)
     local Channel = self._NetworkServiceShared:GetChannel("Quests")
 
-    Channel:FireClient("RewardClaimed", player, packet)
+    Channel:FireClient("QuestsRemoved", player, packet)
 end
 
 function QuestsNetworkServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
@@ -76,16 +76,16 @@ function QuestsNetworkServer.Start(self: Module)
     local Channel = self._NetworkServiceShared:GetChannel("Quests")
 
     Channel:DeclareMethod("GetQuests")
-    Channel:DeclareEvent("QuestAdded")
-    Channel:DeclareEvent("QuestCompleted")
-    Channel:DeclareEvent("RewardClaimed")
+    Channel:DeclareEvent("QuestsAdded")
+    Channel:DeclareEvent("QuestsUpdated")
+    Channel:DeclareEvent("QuestsRemoved")
     Channel:DeclareEvent("ClaimReward")
 
     Channel:Bind("GetQuests", function(player: Player)
         return self.RemoteFunctions.GetQuests(player)
     end)
 
-    Channel:Connect("ClaimReward", function(player: Player, packet: QuestsTypesShared.ClaimRewardRemotePacket)
+    Channel:Connect("ClaimReward", function(player: Player, packet: QuestsTypesShared.QuestClaimRewardRemotePacket)
         if typeof(packet) ~= "table" or typeof(packet.QuestId) ~= "string" then
             return
         end

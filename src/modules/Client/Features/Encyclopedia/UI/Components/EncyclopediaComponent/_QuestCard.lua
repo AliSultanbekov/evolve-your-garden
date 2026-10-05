@@ -15,10 +15,14 @@ local require = require(script:FindFirstAncestor("Components").loader).load(scri
 -- [ Imports ] --
 local Blend = require("Blend")
 local ValueObject = require("ValueObject")
+local QuestsTypesClient = require("QuestsTypesClient")
+local ComponentTypes = require("ComponentTypes")
+local QuestsTypesShared = require("QuestsTypesShared")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
 local GenericProgressBarComponent = require("GenericProgressBarComponent")
+
 
 -- [ Constants ] --
 
@@ -157,8 +161,15 @@ local QuestCard = function(props: Props)
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             ZIndex = 5;
+            Visible = Blend.Computed(props.ReactiveQuest.State, function(state: QuestsTypesShared.QuestState)
+                if state == "Active" then
+                    return false
+                else
+                    return true
+                end
+            end),
             OnPressed = function()
-                print("[Encyclopedia] Claim pressed") -- PLACEHOLDER: claim quest reward
+                props.OnClaim(props.ReactiveQuest.Id)
             end;
             Children = {
                 Blend.New "ImageLabel" {
@@ -249,8 +260,11 @@ end
 
 -- [ Types ] --
 type Props = {
-    LayoutOrder: number?,
+    LayoutOrder: ComponentTypes.Prop<number>,
+    ReactiveQuest: QuestsTypesClient.ReactiveQuest,
+    OnClaim: (questId: string) -> (),
 }
+
 type ModuleData = {}
 
 export type Module = typeof(QuestCard) & ModuleData

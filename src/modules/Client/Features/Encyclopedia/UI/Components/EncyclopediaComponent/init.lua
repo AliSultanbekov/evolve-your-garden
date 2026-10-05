@@ -12,6 +12,8 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local Observable = require("Observable")
 local ComponentTypes = require("ComponentTypes")
 local EncyclopediaTypesClient = require("EncyclopediaTypesClient")
+local QuestsTypesClient = require("QuestsTypesClient")
+local QuestsTypesShared = require("QuestsTypesShared")
 
 -- [ Components ] --
 local AnimatedFrameComponent = require("AnimatedFrameComponent")
@@ -49,6 +51,8 @@ local EncyclopediaComponent = function(props: Props)
                 ActiveTab = props.ActiveTab,
                 GetDiscoveredItem = props.GetDiscoveredItem,
                 SwitchTab = props.SwitchTab,
+                Quests = props.Quests,
+                OnClaimQuest = props.OnClaimQuest,
             }),
             Title(),
             SearchBarComponent({
@@ -83,7 +87,9 @@ type Props = {
     OnClose: () -> (),
     OnSearch: (text: string) -> (),
     SwitchTab: (tabName: string) -> (),
-    GetDiscoveredItem: (itemName: string) -> EncyclopediaTypesClient.ReactiveDiscoveredItem
+    GetDiscoveredItem: (itemName: string) -> EncyclopediaTypesClient.ReactiveDiscoveredItem,
+    Quests: QuestsTypesClient.Quests,
+    OnClaimQuest: (questId: QuestsTypesShared.QuestId) -> ()
 }
 type ModuleData = {}
 

@@ -92,7 +92,6 @@ function PackStoreServiceClient.Start(self: Module)
             return
         end
 
-        -- Server sends the authoritative remaining stock — never derive it locally.
         Pack.Left.Value = packet.Left
     end)
 end

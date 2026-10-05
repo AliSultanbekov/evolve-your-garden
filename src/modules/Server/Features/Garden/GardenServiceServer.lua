@@ -254,7 +254,6 @@ function GardenServiceServer.AddHarvestItems(self: Module, player: Player, harve
                         end
 
                         if item.Amount > ItemConfig.MaxAmount then
-                            -- Stackable view: Luau can't wite through a union of tables.
                             local ItemStackable: ItemTypes.Stackable = item
                             ItemStackable.Amount = ItemConfig.MaxAmount
                         end
@@ -453,11 +452,6 @@ function GardenServiceServer.Start(self: Module)
     RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
         local Maid, Player = brio:ToMaidAndValue()
 
-        -- OnDataReady is registered with the maid SYNCHRONOUSLY (no yield
-        -- between join and Maid:Add), so a player leaving during profile
-        -- load cancels the pending claim instead of claiming a garden whose
-        -- abandon-teardown was never registered (which, at MaxGardens = 1,
-        -- bricked claiming for the whole server).
         Maid:Add(self._DataServiceServer:OnDataReady(Player, function(_data)
             self:_CreateAllSlots(Player)
             self:ClaimGarden(Player)

@@ -13,6 +13,7 @@ local RxPlayerUtils = require("RxPlayerUtils")
 local Brio = require("Brio")
 local Maid = require("Maid")
 local Signal = require("Signal")
+local StatsConfig = require("StatsConfig")
 
 -- [ Constants ] --
 
@@ -83,6 +84,14 @@ function StatsService.Start(self: Module)
         local MaidObject: Maid.Maid, Player: Player = brio:ToMaidAndValue()
 
         MaidObject:Add(self._DataServiceServer:OnDataReady(Player, function(data)
+            local StatsData = data.Stats
+
+            for _, stat in StatsConfig.Stats do
+                if not StatsData[stat] then
+                    StatsData[stat] = 0
+                end
+            end
+
             local SessionStart = os.time()
             local Flushed = 0
             local Running = true

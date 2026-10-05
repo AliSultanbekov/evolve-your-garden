@@ -19,76 +19,58 @@ export type QuestId = string
 export type QuestType = "OneTime" | "Repeatable"
 export type QuestSource = "Encyclopedia" | "Stats"
 export type QuestGoalType = "Relative" | "Absolute"
-
-export type EncyclopediaQuestConfig = {
-    Id: QuestId,
-    Type: QuestType,
-    Reward: {
-        [string]: ItemTypes.RawItem
-    },
-    Source: "Encyclopedia",
+export type QuestState = "Active" | "Completed" | "Burnt"
+export type QuestCategory = "Primary" | "Encyclopedia"
+export type RequirementId = string
+export type QuestRequirement = {
+    Id: RequirementId,
+    Source: QuestSource,
     Key: string,
     GoalType: QuestGoalType,
     Goal: number,
 }
 
-export type StatsQuestConfig = {
+export type QuestConfig = {
     Id: QuestId,
     Type: QuestType,
+    Category: QuestCategory,
     Reward: {
         [string]: ItemTypes.RawItem
     },
-    Source: "Stats",
-    Key: string,
-    GoalType: QuestGoalType,
-    Goal: number,
+    Requirements: {
+        [string]: QuestRequirement
+    }
 }
 
-export type QuestConfig = EncyclopediaQuestConfig | StatsQuestConfig
-
-export type RelativeQuest = {
+export type Quest = {
     Id: QuestId,
-    GoalType: "Relative",
     StartTime: number,
-    Anchor: number,
+    State: QuestState,
+    Anchors: {[string]: number},
 }
-
-export type AbsoluteQuest = {
-    Id: QuestId,
-    GoalType: "Absolute",
-    StartTime: number,
-}
-
-export type Quest = AbsoluteQuest | RelativeQuest
 
 export type QuestsData = {
-    Active: {
-        [QuestId]: Quest
-    },
-    Completed: {
-        [QuestId]: boolean
-    },
-    Burnt: {
-        [QuestId]: boolean
-    },
+    [QuestId]: Quest
 }
 
-export type QuestAddedRemotePacket = {
-    Quest: Quest
+export type QuestsRemovedRemotePacket = {
+    QuestIds: { [any]: QuestId }
 }
 
-export type QuestCompletedRemotePacket = {
+export type QuestsAddedRemotePacket = {
+    Quests: { [any]: Quest }
+}
+
+export type QuestsUpdatedRemotePacket = {
+    Quests: { [any]: Quest }
+}
+
+export type QuestClaimRewardRemotePacket = {
     QuestId: QuestId
 }
 
-export type RewardClaimedRemotePacket = {
-    QuestId: QuestId
+export type GetQuestsRemotePacket = {
+    Quests: QuestsData
 }
-
-export type ClaimRewardRemotePacket = {
-    QuestId: QuestId
-}
-
-export type GetQuestsRemotePacket = QuestsData
 
 return nil

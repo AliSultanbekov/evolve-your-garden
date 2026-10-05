@@ -23,21 +23,26 @@ function QuestConfig._Init(self: Module)
         ["Cool Quest"] = {
             Id = "Cool Quest",
             Type = "OneTime",
+            Category = "Encyclopedia",
             Reward = {
                 ["Snow Blossom Fruit"] = {
                     Name = "Snow Blossom Fruit",
                     Category = "Material",
                 }
             },
-            Source = "Stats",
-            Key = "PlayTime",
-            GoalType = "Absolute",
-            Goal = 60 * 60,
+            Requirements = {
+                ["1"] = { 
+                    Id = "1", 
+                    Source = "Stats", 
+                    Key = "PlayTime", 
+                    GoalType = "Absolute", 
+                    Goal = 60 * 60 
+                }
+            }
         }
     }
-    self.AutoActiveQuests = {
-        "Cool Quest",
-    }
+    self.AutoActiveQuests = {"Cool Quest"}
+    self.Categories = {"Primary", "Encyclopedia"}
 end
 
 -- [ Public Functions ] --
@@ -47,7 +52,8 @@ type ModuleData = {
     Quests: {
         [QuestsTypesShared.QuestId]: QuestsTypesShared.QuestConfig
     },
-    AutoActiveQuests: { QuestsTypesShared.QuestId }
+    AutoActiveQuests: { QuestsTypesShared.QuestId },
+    Categories: { QuestsTypesShared.QuestCategory }
 }
 
 export type Module = typeof(QuestConfig) & ModuleData

@@ -54,14 +54,8 @@ local ProfileConfig = {
             DiscoveredItems = {},
             CompletedQuests = {},
         },
-        Stats = {
-            PlayTime = 0
-        },
-        Quests = {
-            Active = {},
-            Completed = {},
-            Burnt = {},
-        }
+        Stats = {},
+        Quests = {},
     },
     Leaderstats = {}
 } :: { Template: ProfileTemplate, Leaderstats: { [string]: string }}

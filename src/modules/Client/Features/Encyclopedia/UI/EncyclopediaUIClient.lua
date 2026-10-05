@@ -26,6 +26,7 @@ local EncyclopediaUIClient = {}
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _EncyclopediaServiceClient: typeof(require("EncyclopediaServiceClient")),
+    _QuestsServiceClient: typeof(require("QuestsServiceClient")),
     _UIServiceClient: typeof(require("UIServiceClient")),
     _Maid: Maid.Maid,
     _ActiveTab: ValueObject.ValueObject<string>,
@@ -44,6 +45,7 @@ function EncyclopediaUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceB
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._EncyclopediaServiceClient = self._ServiceBag:GetService(require("EncyclopediaServiceClient"))
+    self._QuestsServiceClient = self._ServiceBag:GetService(require("QuestsServiceClient"))
     self._UIServiceClient = self._ServiceBag:GetService(require("UIServiceClient"))
     self._Maid = Maid.new()
     self._ActiveTab = ValueObject.new("Plants")
@@ -76,6 +78,10 @@ function EncyclopediaUIClient.Start(self: Module)
             end,
             GetDiscoveredItem = function(itemName: string)
                 return self._EncyclopediaServiceClient:GetDiscoveredItem(itemName)
+            end,
+            Quests = self._QuestsServiceClient:GetQuestsByCategory("Encyclopedia"),
+            OnClaimQuest = function(questId: string)
+                self._QuestsServiceClient:ClaimReward(questId)
             end
         })
     } end))

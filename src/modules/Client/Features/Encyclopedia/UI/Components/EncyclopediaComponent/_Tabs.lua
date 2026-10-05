@@ -16,6 +16,8 @@ local Blend = require("Blend")
 local EncyclopediaTypesClient = require("EncyclopediaTypesClient")
 local ComponentTypes = require("ComponentTypes")
 local Observable = require("Observable")
+local QuestsTypesClient = require("QuestsTypesClient")
+local QuestsTypesShared = require("QuestsTypesShared")
 
 -- [ Components ] --
 local Plants = require(script.Parent._Plants)
@@ -44,6 +46,8 @@ local Tabs = function(props: Props)
         });
         Rewards({
             ActiveTab = props.ActiveTab;
+            Quests = props.Quests;
+            OnClaimQuest = props.OnClaimQuest;
         });
     }
 end
@@ -54,6 +58,8 @@ type Props = {
     DiscoveredPlantsCount: Observable.Observable<number>,
     GetDiscoveredItem: (itemName: string) -> EncyclopediaTypesClient.ReactiveDiscoveredItem,
     SwitchTab: (tabName: string) -> (),
+    Quests: QuestsTypesClient.Quests,
+    OnClaimQuest: (questId: QuestsTypesShared.QuestId) -> (),
 }
 type ModuleData = {}
 

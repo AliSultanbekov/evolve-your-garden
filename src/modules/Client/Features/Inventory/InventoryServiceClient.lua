@@ -30,19 +30,20 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _InventoryNetworkClient: typeof(require("InventoryNetworkClient")),
     _Items: ReactiveItemTypes.ReactiveItems,
-    _FilteredItems: InventoryTypesClient.FilteredItems,
+    _TabToItems: InventoryTypesClient.TabToItems,
+    _CategoryToItems: InventoryTypesClient.CategoryToItems,
 }
 
 export type Module = typeof(InventoryServiceClient) & ModuleData
 
 -- [ Private Functions ] --
-function InventoryServiceClient._SetupFilteredItems(self: Module)
+function InventoryServiceClient._SetupItemIndexes(self: Module)
     for tab, _ in InventoryConfigClient.TabsConfig do
-        self._FilteredItems[tab] = ObservableMap.new()
+        self._TabToItems[tab] = ObservableMap.new()
     end
 
     for _, category: ItemTypes.Category in ItemConfig.Categories :: { ItemTypes.Category } do
-        self._FilteredItems[category] = ObservableMap.new()
+        self._CategoryToItems[category] = ObservableMap.new()
     end
 end
 
@@ -51,13 +52,13 @@ function InventoryServiceClient._ProcessItems(self: Module, items: { [any]: Item
         local ReactiveItem = ReactiveItemUtil:ToReactive(item)
         local Tab = InventoryConfigClient.CategoryToTab[item.Category]
 
-        if not self._FilteredItems[Tab] then
+        if not self._TabToItems[Tab] then
             continue
         end
 
         self._Items:Set(item.Id, ReactiveItem)
-        self._FilteredItems[Tab]:Set(item.Id, ReactiveItem)
-        self._FilteredItems[item.Category]:Set(item.Id, ReactiveItem)
+        self._TabToItems[Tab]:Set(item.Id, ReactiveItem)
+        self._CategoryToItems[item.Category]:Set(item.Id, ReactiveItem)
     end
 end
 
@@ -71,11 +72,11 @@ function InventoryServiceClient.UseItemAction(self: Module, item: ReactiveItemTy
 end
 
 function InventoryServiceClient.GetItemsByCategory(self: Module, category: ItemTypes.Category)
-    return self._FilteredItems[category]
+    return self._CategoryToItems[category]
 end
 
 function InventoryServiceClient.GetItemsByTab(self: Module, tab: string)
-    return self._FilteredItems[tab]
+    return self._TabToItems[tab]
 end
 
 function InventoryServiceClient.GetItems(self: Module)
@@ -90,9 +91,10 @@ function InventoryServiceClient.Init(self: Module, serviceBag: ServiceBag.Servic
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._InventoryNetworkClient = self._ServiceBag:GetService(require("InventoryNetworkClient"))
     self._Items = ObservableMap.new()
-    self._FilteredItems = {}
+    self._TabToItems = {}
+    self._CategoryToItems = {}
 
-    self:_SetupFilteredItems()
+    self:_SetupItemIndexes()
 end
 
 function InventoryServiceClient.Start(self: Module)
@@ -124,14 +126,12 @@ function InventoryServiceClient.Start(self: Module)
 
             local Tab = InventoryConfigClient.CategoryToTab[item.Category]
 
-            -- Mirror _ProcessItems: an item lives in BOTH the tab map and the
-            -- category map — remove from both, guarded the same way.
-            if self._FilteredItems[Tab] then
-                self._FilteredItems[Tab]:Remove(item.Id)
+            if self._TabToItems[Tab] then
+                self._TabToItems[Tab]:Remove(item.Id)
             end
 
-            if self._FilteredItems[item.Category] then
-                self._FilteredItems[item.Category]:Remove(item.Id)
+            if self._CategoryToItems[item.Category] then
+                self._CategoryToItems[item.Category]:Remove(item.Id)
             end
         end
     end)

@@ -14,16 +14,52 @@ local require = require(script:FindFirstAncestor("Components").loader).load(scri
 -- [ Imports ] --
 local Blend = require("Blend")
 local ComponentTypes = require("ComponentTypes")
+local QuestsTypesClient = require("QuestsTypesClient")
+local QuestsTypesShared = require("QuestsTypesShared")
+local RxBrioUtils = require("RxBrioUtils")
+local Rx = require("Rx")
 
 -- [ Components ] --
 local QuestCard = require(script.Parent._QuestCard)
 
 -- [ Constants ] --
+local LAYOUT_ORDER = {
+    Active = 0,
+    Completed = 1
+}
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
 local Rewards = function(props: Props)
+    local QuestCards = props.Quests:ObserveValuesBrio():Pipe({
+        RxBrioUtils.switchMapBrio(function(ReactiveQuest: QuestsTypesClient.ReactiveQuest)
+            return ReactiveQuest.State:Observe():Pipe({
+                Rx.map(function(state: QuestsTypesShared.QuestState)
+                    return state == "Burnt"
+                end) :: any,
+                Rx.distinct() :: any,
+                Rx.map(function(isBurnt: boolean)
+                    return if isBurnt then nil else ReactiveQuest
+                end) :: any
+            })
+        end) :: any,
+        RxBrioUtils.where(function(ReactiveQuest: QuestsTypesClient.ReactiveQuest?): boolean
+            return ReactiveQuest ~= nil
+        end) :: any,
+        RxBrioUtils.map(function(ReactiveQuest: QuestsTypesClient.ReactiveQuest)
+            return QuestCard({
+                LayoutOrder = ReactiveQuest.State:Observe():Pipe({
+                    Rx.map(function(state: QuestsTypesShared.QuestState)
+                        return LAYOUT_ORDER[state]
+                    end) :: any,
+                }),
+                ReactiveQuest = ReactiveQuest,
+                OnClaim = props.OnClaimQuest
+            })
+        end) :: any
+    }) :: any
+
     return Blend.New "Frame" {
         Name = "Rewards";
         LayoutOrder = 2;
@@ -74,7 +110,7 @@ local Rewards = function(props: Props)
                     PaddingRight = UDim.new(0, 10);
                     PaddingTop = UDim.new(0, 10);
                 };
-                QuestCard({ LayoutOrder = 1 }); -- PLACEHOLDER: sample card; build real cards from quest data
+                QuestCards
             };
         };
     }
@@ -83,6 +119,8 @@ end
 -- [ Types ] --
 type Props = {
     ActiveTab: ComponentTypes.Prop<string>,
+    Quests: QuestsTypesClient.Quests,
+    OnClaimQuest: (questId: string) -> (),
 }
 type ModuleData = {}
 

@@ -16,8 +16,11 @@ local ReactiveItemTypes = require("ReactiveItemTypes")
 -- [ Variables ] --
 
 -- [ Types ] --
-export type FilteredItems = {
+export type TabToItems = {
     [string]: ReactiveItemTypes.ReactiveItems
+}
+export type CategoryToItems = {
+    [ItemTypes.Category]: ReactiveItemTypes.ReactiveItems
 }
 export type TabsConfig = {
     [string]: {

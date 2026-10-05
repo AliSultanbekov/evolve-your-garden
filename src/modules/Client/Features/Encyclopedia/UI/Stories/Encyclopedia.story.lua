@@ -11,6 +11,7 @@ local require = (require :: any)(game:GetService("ServerScriptService"):FindFirs
 local Maid = require("Maid")
 local Blend = require("Blend")
 local ValueObject = require("ValueObject")
+local ObservableMap = require("ObservableMap")
 local EncyclopediaTypesClient = require("EncyclopediaTypesClient")
 
 -- [ Components ] --
@@ -93,6 +94,12 @@ local EncyclopediaStory = {
                 ClaimableCount = ClaimableCount:Observe(),
                 DiscoveredPlantsCount = DiscoveredPlantsCount:Observe(),
                 GetDiscoveredItem = GetDiscoveredItem,
+                -- Empty quest mirror; seed ReactiveQuests here once the
+                -- Rewards tab's ComputedPairs wiring lands.
+                Quests = ObservableMap.new(),
+                OnClaimQuest = function(questId: string)
+                    print("[Story] ClaimQuest:", questId)
+                end,
 
                 SwitchTab = function(tabName: string)
                     print("[Story] SwitchTab:", tabName)
