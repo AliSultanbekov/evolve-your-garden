@@ -2,7 +2,7 @@
 
 A multiplayer garden-simulation game on Roblox, written in fully typed Luau. Players plant seeds, watch them grow in real time, harvest and sell crops, buy packs from a rotating shop, and build up their garden.
 
-I'm the lead developer and sole programmer on a self-funded team (two commissioned 3D/UI specialists, a design partner and five playtesters). The codebase is about 29,000 lines across 213 modules.
+I'm the lead developer and sole programmer on a self-funded team (two commissioned 3D/UI specialists, a design partner and five playtesters). The codebase is about 21,000 lines of my own code across 199 modules, not counting third-party libraries.
 
 ## Features
 

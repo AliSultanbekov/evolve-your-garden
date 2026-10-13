@@ -18,6 +18,7 @@ local PackStoreConfig = require("PackStoreConfig")
 local PackStoreTypesShared = require("PackStoreTypesShared")
 local InventoryTypesShared = require("InventoryTypesShared")
 local ItemUtil = require("ItemUtil")
+local Table = require("Table")
 
 -- [ Constants ] --
 
@@ -133,7 +134,7 @@ function PackStoreService.Refresh(
 
         local Packs: { [PackStoreTypesShared.PackId]: PackStoreTypesShared.Pack} = {}
 
-        for _, pack in table.clone(globalPacks) do
+        for _, pack in Table.deepCopy(globalPacks) do
             Packs[pack.Id] = pack
         end
 
