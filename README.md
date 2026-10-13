@@ -37,9 +37,9 @@ src/modules/
 These are written up in full in [CONVENTIONS.md](CONVENTIONS.md). The main ones:
 
 - **One persisted truth; everything else is derived.** Progress and percentages are computed, never stored twice.
-- **Anchors, not accumulators.** Anything that grows with time (crop growth, cooldowns, playtime) stores a start time and derives elapsed time, instead of ticking every frame.
+- **Anchors over accumulators.** Time-based state should store a start time and derive elapsed time instead of ticking every frame. Crop growth still advances per tick; moving it to an anchor is on the to-do list.
 - **Choke points.** Every way of gaining an item goes through one function, which then notifies the systems that care. One writer per state change.
-- **Events, never polling.** Every change happens in code, so there's always a signal to react to.
+- **Events over polling.** Every change happens in code, so there's a signal to react to instead of checking on a timer. A few older polling loops remain and are being replaced.
 
 ## Tools
 
