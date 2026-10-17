@@ -18,6 +18,7 @@ local QuestsTypesClient = require("QuestsTypesClient")
 local QuestsTypesShared = require("QuestsTypesShared")
 local RxBrioUtils = require("RxBrioUtils")
 local Rx = require("Rx")
+local Observable = require("Observable")
 
 -- [ Components ] --
 local QuestCard = require(script.Parent._QuestCard)
@@ -44,6 +45,7 @@ local Rewards = function(props: Props)
                 end) :: any
             })
         end) :: any,
+        RxBrioUtils.onlyLastBrioSurvives() :: any,
         RxBrioUtils.where(function(ReactiveQuest: QuestsTypesClient.ReactiveQuest?): boolean
             return ReactiveQuest ~= nil
         end) :: any,
@@ -51,11 +53,12 @@ local Rewards = function(props: Props)
             return QuestCard({
                 LayoutOrder = ReactiveQuest.State:Observe():Pipe({
                     Rx.map(function(state: QuestsTypesShared.QuestState)
-                        return LAYOUT_ORDER[state]
+                        return LAYOUT_ORDER[state] or 2
                     end) :: any,
                 }),
                 ReactiveQuest = ReactiveQuest,
-                OnClaim = props.OnClaimQuest
+                OnClaim = props.OnClaimQuest,
+                ObserveQuestProgress = props.ObserveQuestProgress,
             })
         end) :: any
     }) :: any
@@ -121,6 +124,7 @@ type Props = {
     ActiveTab: ComponentTypes.Prop<string>,
     Quests: QuestsTypesClient.Quests,
     OnClaimQuest: (questId: string) -> (),
+    ObserveQuestProgress: (questId: QuestsTypesShared.QuestId) -> Observable.Observable<number>,
 }
 type ModuleData = {}
 

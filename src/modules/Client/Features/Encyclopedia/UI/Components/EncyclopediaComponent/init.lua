@@ -53,6 +53,7 @@ local EncyclopediaComponent = function(props: Props)
                 SwitchTab = props.SwitchTab,
                 Quests = props.Quests,
                 OnClaimQuest = props.OnClaimQuest,
+                ObserveQuestProgress = props.ObserveQuestProgress,
             }),
             Title(),
             SearchBarComponent({
@@ -89,7 +90,8 @@ type Props = {
     SwitchTab: (tabName: string) -> (),
     GetDiscoveredItem: (itemName: string) -> EncyclopediaTypesClient.ReactiveDiscoveredItem,
     Quests: QuestsTypesClient.Quests,
-    OnClaimQuest: (questId: QuestsTypesShared.QuestId) -> ()
+    OnClaimQuest: (questId: QuestsTypesShared.QuestId) -> (),
+    ObserveQuestProgress: (questId: QuestsTypesShared.QuestId) -> Observable.Observable<number>,
 }
 type ModuleData = {}
 

@@ -20,7 +20,7 @@ local Signal = require("Signal")
 -- [ Constants ] --
 
 -- [ Variables ] --
-local KEY = "V_10"
+local KEY = "BETA_V_14"
 local PROFILE_TEMPLATE = ProfileConfig.Template
 local PROFILE_WAIT_TIMEOUT = 60
 
@@ -129,39 +129,28 @@ function DataServiceServer.GetProfile(self: Module, player: Player): Profile
     return Profile
 end
 
---[=[
-    Runs `callback(data)` once the player's data is ready - immediately if the
-    profile is already loaded, otherwise when it loads. Never yields.
-
-    `callback` may return a teardown function that runs when the data unloads
-    (player leaves / session ends) or when the returned cleanup is called.
-
-    Returns a cleanup function; call it (or add it to a Maid) to cancel a pending
-    wait and run the teardown.
-
-    @param player Player
-    @param callback (data: ProfileTemplate) -> (() -> ())?
-    @return () -> () -- cleanup
-]=]
+-- Runs callback(data) once the player's profile is loaded (immediately if it
+-- already is). Never yields. The callback may return a teardown that runs on
+-- profile unload or when the returned cleanup is called (Maid-friendly).
 function DataServiceServer.OnDataReady(
     self: Module,
     player: Player,
     callback: (data: ProfileConfig.ProfileTemplate) -> (() -> ())?
 ): () -> ()
-    local teardown: (() -> ())? = nil
-    local loadedConn: any = nil
-    local unloadedConn: any = nil
-    local fired = false
+    local Teardown: (() -> ())? = nil
+    local LoadedConnection: any = nil
+    local UnloadedConnection: any = nil
+    local Fired = false
 
-    local function runTeardown()
-        if teardown then
-            teardown()
-            teardown = nil
+    local function RunTeardown()
+        if Teardown then
+            Teardown()
+            Teardown = nil
         end
     end
 
-    local function onReady()
-        if fired then
+    local function OnReady()
+        if Fired then
             return
         end
 
@@ -171,44 +160,44 @@ function DataServiceServer.OnDataReady(
             return
         end
 
-        fired = true
+        Fired = true
 
-        if loadedConn then
-            loadedConn:Disconnect()
-            loadedConn = nil
+        if LoadedConnection then
+            LoadedConnection:Disconnect()
+            LoadedConnection = nil
         end
 
-        teardown = callback(Profile.Data)
+        Teardown = callback(Profile.Data)
 
-        unloadedConn = self._ProfileUnloaded:Connect(function(unloadedPlayer: Player)
+        UnloadedConnection = self._ProfileUnloaded:Connect(function(unloadedPlayer: Player)
             if unloadedPlayer == player then
-                runTeardown()
+                RunTeardown()
             end
         end)
     end
 
     if self._Profiles[player] then
-        onReady()
+        OnReady()
     else
-        loadedConn = self._ProfileLoaded:Connect(function(loadedPlayer: Player)
+        LoadedConnection = self._ProfileLoaded:Connect(function(loadedPlayer: Player)
             if loadedPlayer == player then
-                onReady()
+                OnReady()
             end
         end)
     end
 
     return function()
-        if loadedConn then
-            loadedConn:Disconnect()
-            loadedConn = nil
+        if LoadedConnection then
+            LoadedConnection:Disconnect()
+            LoadedConnection = nil
         end
 
-        if unloadedConn then
-            unloadedConn:Disconnect()
-            unloadedConn = nil
+        if UnloadedConnection then
+            UnloadedConnection:Disconnect()
+            UnloadedConnection = nil
         end
 
-        runTeardown()
+        RunTeardown()
     end
 end
 

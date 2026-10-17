@@ -18,7 +18,7 @@ local StatsConfig = {}
 
 -- [ Private Functions ] --
 function StatsConfig._Init(self: Module)
-    self.Stats = { "StartTime" }
+    self.Stats = { "PlayTime" }
 end
 
 -- [ Public Functions ] --

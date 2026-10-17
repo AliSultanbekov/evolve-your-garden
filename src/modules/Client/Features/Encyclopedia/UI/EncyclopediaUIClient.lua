@@ -82,6 +82,9 @@ function EncyclopediaUIClient.Start(self: Module)
             Quests = self._QuestsServiceClient:GetQuestsByCategory("Encyclopedia"),
             OnClaimQuest = function(questId: string)
                 self._QuestsServiceClient:ClaimReward(questId)
+            end,
+            ObserveQuestProgress = function(questId)
+                return self._QuestsServiceClient:ObserveQuestProgress(questId)
             end
         })
     } end))

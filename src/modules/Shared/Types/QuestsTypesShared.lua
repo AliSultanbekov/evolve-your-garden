@@ -32,9 +32,10 @@ export type QuestRequirement = {
 
 export type QuestConfig = {
     Id: QuestId,
+    Description: string,
     Type: QuestType,
     Category: QuestCategory,
-    Reward: {
+    Rewards: {
         [string]: ItemTypes.RawItem
     },
     Requirements: {

@@ -15,7 +15,18 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Types ] --
 export type Stats = {
-    PlayTime: number
+    [string]: number
+}
+
+export type GetStatsRemotePacket = {
+    Stats: {
+        [string]: number
+    }
+}
+
+export type StatUpdatedRemotePacket = {
+    Stat: string,
+    Value: number,
 }
 
 return nil

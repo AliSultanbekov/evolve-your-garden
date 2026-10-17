@@ -9,6 +9,8 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
+local Signal = require("Signal")
+local StatsTypesShared = require("StatsTypesShared")
 
 -- [ Constants ] --
 
@@ -22,7 +24,9 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _NetworkServiceShared: typeof(require("NetworkServiceShared")),
 
-    RemoteEvents: {},
+    RemoteEvents: {
+        StatUpdated: Signal.Signal<StatsTypesShared.StatUpdatedRemotePacket>,
+    },
     RemoteFunctions: {}
 }
 
@@ -31,6 +35,12 @@ export type Module = typeof(StatsNetworkClient) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
+function StatsNetworkClient.GetStats(self: Module)
+    local Channel = self._NetworkServiceShared:GetChannel("Stats")
+
+    return Channel:PromiseInvokeServer("GetStats")
+end
+
 function StatsNetworkClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     if self._ServiceBag ~= nil then
         error("Service already initialized")
@@ -40,7 +50,7 @@ function StatsNetworkClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag
     self._NetworkServiceShared = self._ServiceBag:GetService(require("NetworkServiceShared"))
 
     self.RemoteEvents = {
-        
+        StatUpdated = Signal.new(),
     } :: any
 
     self.RemoteFunctions = {
@@ -49,7 +59,11 @@ function StatsNetworkClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag
 end
 
 function StatsNetworkClient.Start(self: Module)
-    local Channel = self._NetworkServiceShared:GetChannel("ChannelName")
+    local Channel = self._NetworkServiceShared:GetChannel("Stats")
+
+    Channel:Connect("StatUpdated", function(packet: StatsTypesShared.StatUpdatedRemotePacket)
+        self.RemoteEvents.StatUpdated:Fire(packet)
+    end)
 end
 
 return StatsNetworkClient :: Module

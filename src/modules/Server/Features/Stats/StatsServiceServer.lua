@@ -26,6 +26,7 @@ local StatsService = {}
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _DataServiceServer: typeof(require("DataServiceServer")),
+    _StatsNetworkServer: typeof(require("StatsNetworkServer")),
     Signals: {
         StatUpdated: Signal.Signal<Player, string, number, number>
     }
@@ -74,12 +75,28 @@ function StatsService.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._DataServiceServer = self._ServiceBag:GetService(require("DataServiceServer"))
+    self._StatsNetworkServer = self._ServiceBag:GetService(require("StatsNetworkServer"))
     self.Signals = {
         StatUpdated = Signal.new()
     } :: any
 end
 
 function StatsService.Start(self: Module)
+    self._StatsNetworkServer.RemoteFunctions["GetStats"] = function(player: Player)
+        local PlayerData = self._DataServiceServer:GetData(player)
+
+        return {
+            Stats = PlayerData.Stats
+        }
+    end
+
+    self.Signals.StatUpdated:Connect(function(player: Player, stat: string, value: number)
+        self._StatsNetworkServer:StatUpdated(player, {
+            Stat = stat,
+            Value = value
+        })
+    end)
+
     RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
         local MaidObject: Maid.Maid, Player: Player = brio:ToMaidAndValue()
 

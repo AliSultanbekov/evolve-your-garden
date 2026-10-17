@@ -22,9 +22,10 @@ function QuestConfig._Init(self: Module)
     self.Quests = {
         ["Cool Quest"] = {
             Id = "Cool Quest",
+            Description = "Play for 1h",
             Type = "OneTime",
             Category = "Encyclopedia",
-            Reward = {
+            Rewards = {
                 ["Snow Blossom Fruit"] = {
                     Name = "Snow Blossom Fruit",
                     Category = "Material",
@@ -36,12 +37,33 @@ function QuestConfig._Init(self: Module)
                     Source = "Stats", 
                     Key = "PlayTime", 
                     GoalType = "Absolute", 
-                    Goal = 60 * 60 
+                    Goal = 60 
+                }
+            }
+        },
+        ["Repeat Quest"] = {
+            Id = "Cool Quest",
+            Description = "Play for 1h",
+            Type = "Repeatable",
+            Category = "Encyclopedia",
+            Rewards = {
+                ["Snow Blossom Fruit"] = {
+                    Name = "Snow Blossom Fruit",
+                    Category = "Material",
+                }
+            },
+            Requirements = {
+                ["1"] = { 
+                    Id = "1", 
+                    Source = "Stats", 
+                    Key = "PlayTime", 
+                    GoalType = "Absolute", 
+                    Goal = 60
                 }
             }
         }
     }
-    self.AutoActiveQuests = {"Cool Quest"}
+    self.AutoActiveQuests = {"Cool Quest", "Repeat Quest"}
     self.Categories = {"Primary", "Encyclopedia"}
 end
 

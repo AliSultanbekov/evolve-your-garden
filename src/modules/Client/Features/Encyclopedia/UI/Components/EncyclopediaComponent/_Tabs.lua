@@ -48,6 +48,7 @@ local Tabs = function(props: Props)
             ActiveTab = props.ActiveTab;
             Quests = props.Quests;
             OnClaimQuest = props.OnClaimQuest;
+            ObserveQuestProgress = props.ObserveQuestProgress;
         });
     }
 end
@@ -60,6 +61,7 @@ type Props = {
     SwitchTab: (tabName: string) -> (),
     Quests: QuestsTypesClient.Quests,
     OnClaimQuest: (questId: QuestsTypesShared.QuestId) -> (),
+    ObserveQuestProgress: (questId: QuestsTypesShared.QuestId) -> Observable.Observable<number>,
 }
 type ModuleData = {}
 

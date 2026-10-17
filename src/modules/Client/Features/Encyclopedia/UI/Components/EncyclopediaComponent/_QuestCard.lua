@@ -14,10 +14,11 @@ local require = require(script:FindFirstAncestor("Components").loader).load(scri
 
 -- [ Imports ] --
 local Blend = require("Blend")
-local ValueObject = require("ValueObject")
 local QuestsTypesClient = require("QuestsTypesClient")
 local ComponentTypes = require("ComponentTypes")
 local QuestsTypesShared = require("QuestsTypesShared")
+local QuestsConfig = require("QuestsConfig")
+local Observable = require("Observable")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
@@ -25,25 +26,25 @@ local GenericProgressBarComponent = require("GenericProgressBarComponent")
 
 
 -- [ Constants ] --
+local VALUE_STROKE_THICKNESS = 2
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
 local QuestCard = function(props: Props)
-    -- PLACEHOLDER: sample reward icon strip; build from the quest's reward data
+    local Progress = props.ObserveQuestProgress(props.ReactiveQuest.Id)
+
     local RewardIcons = {}
 
-    for index = 1, 5 do
+    for _, reward in QuestsConfig.Quests[props.ReactiveQuest.Id].Rewards do
         table.insert(RewardIcons, Blend.New "ImageLabel" {
             Name = "RewardIcon";
-            LayoutOrder = index;
             Size = UDim2.fromOffset(55, 55);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             ClipsDescendants = true;
             Image = "rbxassetid://84208852588697";
             ScaleType = Enum.ScaleType.Fit;
-            ZIndex = index;
         })
     end
 
@@ -82,6 +83,9 @@ local QuestCard = function(props: Props)
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);
             BackgroundTransparency = 1;
             ZIndex = 3;
+            Visible = Blend.Computed(props.ReactiveQuest.State, function(state: QuestsTypesShared.QuestState)
+                return state == "Active"
+            end),
             GenericProgressBarComponent({
                 Position = UDim2.fromOffset(2, 19);
                 Size = UDim2.fromOffset(337, 12);
@@ -98,24 +102,30 @@ local QuestCard = function(props: Props)
                 FillStrokeColor = Color3.fromRGB(43, 73, 112);
                 FillStrokeThickness = 2;
                 UICorner = 30;
-                Progress = ValueObject.new(0.64):Observe(); -- PLACEHOLDER: quest progress observable
+                Progress = Progress;
             });
             Blend.New "TextLabel" {
                 Name = "Value";
                 LayoutOrder = 3;
-                Position = UDim2.fromOffset(309, 0);
-                Size = UDim2.fromOffset(30, 16);
+                Position = UDim2.fromOffset(280, 0);
+                Size = UDim2.fromOffset(60, 16);
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
                 FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
-                Text = "0%"; -- PLACEHOLDER: quest progress percent
+                Text = Blend.Computed(Progress, function(progress: number)
+                    return tostring(progress*100) .. "%"
+                end);
                 TextColor3 = Color3.fromRGB(255, 255, 255);
                 TextSize = 19;
                 TextWrapped = true;
+                TextXAlignment = Enum.TextXAlignment.Right;
                 ZIndex = 4;
+                Blend.New "UIPadding" {
+                    PaddingRight = UDim.new(0, VALUE_STROKE_THICKNESS);
+                };
                 Blend.New "UIStroke" {
                     Color = Color3.fromRGB(43, 73, 112);
-                    Thickness = 2;
+                    Thickness = VALUE_STROKE_THICKNESS;
                 };
             };
         };
@@ -162,11 +172,7 @@ local QuestCard = function(props: Props)
             BackgroundTransparency = 1;
             ZIndex = 5;
             Visible = Blend.Computed(props.ReactiveQuest.State, function(state: QuestsTypesShared.QuestState)
-                if state == "Active" then
-                    return false
-                else
-                    return true
-                end
+                return state == "Completed"
             end),
             OnPressed = function()
                 props.OnClaim(props.ReactiveQuest.Id)
@@ -233,7 +239,7 @@ local QuestCard = function(props: Props)
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
                 ClipsDescendants = true;
-                Image = "rbxassetid://134233703548866"; -- PLACEHOLDER: quest icon
+                Image = "rbxassetid://134233703548866";
                 ScaleType = Enum.ScaleType.Fit;
             };
             Blend.New "TextLabel" {
@@ -244,7 +250,7 @@ local QuestCard = function(props: Props)
                 BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                 BackgroundTransparency = 1;
                 FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
-                Text = "Discover 20 Plants"; -- PLACEHOLDER: quest title
+                Text = QuestsConfig.Quests[props.ReactiveQuest.Id].Description;
                 TextColor3 = Color3.fromRGB(255, 255, 255);
                 TextSize = 24;
                 TextWrapped = true;
@@ -263,6 +269,7 @@ type Props = {
     LayoutOrder: ComponentTypes.Prop<number>,
     ReactiveQuest: QuestsTypesClient.ReactiveQuest,
     OnClaim: (questId: string) -> (),
+    ObserveQuestProgress: (questId: QuestsTypesShared.QuestId) -> Observable.Observable<number>,
 }
 
 type ModuleData = {}

@@ -13,6 +13,7 @@ local Blend = require("Blend")
 local ValueObject = require("ValueObject")
 local ObservableMap = require("ObservableMap")
 local EncyclopediaTypesClient = require("EncyclopediaTypesClient")
+local QuestsTypesClient = require("QuestsTypesClient")
 
 -- [ Components ] --
 local EncyclopediaComponent = require(script.Parent.Parent.Components.EncyclopediaComponent)
@@ -23,11 +24,13 @@ local EncyclopediaComponent = require(script.Parent.Parent.Components.Encycloped
 local controls = {
     ClaimableCount = 3,
     TomatoDiscovered = false,
+    CoolQuestCompleted = false,
+    QuestProgress = 0.4,
 }
 
 -- [ Module Table ] --
 local EncyclopediaStory = {
-    summary = "Encyclopedia window: bookmark rail (+ claimable badge), plants grid with discovered/undiscovered cards. Toggle TomatoDiscovered to watch a card reveal and the discovered counter move live.",
+    summary = "Encyclopedia window: bookmark rail (+ claimable badge), plants grid with discovered/undiscovered cards, Rewards tab with a live quest card. Toggle TomatoDiscovered for a card reveal; toggle CoolQuestCompleted then press Claim to watch the quest card burn out of the grid.",
     controls = controls,
     render = function(props: { target: Instance, controls: typeof(controls), subscribe: any })
         local MaidObject = Maid.new()
@@ -75,14 +78,34 @@ local EncyclopediaStory = {
         -- Seed one discovered plant so both card variants show immediately.
         SetDiscovered("Snow Blossom", DateTime.now().UnixTimestamp, 12)
 
+        -- Quest mirror: ids MUST exist in QuestsConfig (QuestCard reads
+        -- Description etc. from config by id). "Cool Quest" is the seeded one.
+        local Quests = ObservableMap.new()
+        local QuestProgress = ValueObject.new(controls.QuestProgress)
+        local CoolQuest: QuestsTypesClient.ReactiveQuest = {
+            Id = "Cool Quest",
+            StartTime = DateTime.now().UnixTimestamp,
+            State = ValueObject.new("Active") :: any,
+            Anchors = {},
+        }
+        Quests:Set(CoolQuest.Id, CoolQuest)
+
         if props.subscribe then
             props.subscribe(function(values: typeof(controls))
                 ClaimableCount.Value = values.ClaimableCount
+                QuestProgress.Value = math.clamp(values.QuestProgress, 0, 1)
 
                 if values.TomatoDiscovered then
                     SetDiscovered("Tomato", DateTime.now().UnixTimestamp, 3)
                 else
                     SetDiscovered("Tomato", nil, 0)
+                end
+
+                -- Burnt -> Active also exercises the card remount path.
+                if values.CoolQuestCompleted then
+                    CoolQuest.State.Value = "Completed"
+                else
+                    CoolQuest.State.Value = "Active"
                 end
             end)
         end
@@ -94,11 +117,20 @@ local EncyclopediaStory = {
                 ClaimableCount = ClaimableCount:Observe(),
                 DiscoveredPlantsCount = DiscoveredPlantsCount:Observe(),
                 GetDiscoveredItem = GetDiscoveredItem,
-                -- Empty quest mirror; seed ReactiveQuests here once the
-                -- Rewards tab's ComputedPairs wiring lands.
-                Quests = ObservableMap.new(),
+                Quests = Quests,
+                ObserveQuestProgress = function(_questId: string)
+                    return QuestProgress:Observe()
+                end,
+                -- Mimic the server's OneTime claim: Completed -> Burnt, so
+                -- claiming makes the card leave the grid live.
                 OnClaimQuest = function(questId: string)
                     print("[Story] ClaimQuest:", questId)
+
+                    local Quest = Quests:Get(questId)
+
+                    if Quest and Quest.State.Value == "Completed" then
+                        Quest.State.Value = "Burnt"
+                    end
                 end,
 
                 SwitchTab = function(tabName: string)

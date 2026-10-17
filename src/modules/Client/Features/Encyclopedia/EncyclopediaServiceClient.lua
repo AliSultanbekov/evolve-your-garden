@@ -53,6 +53,12 @@ function EncyclopediaServiceClient.ObserveDiscoveredPlantsCount(self: Module)
     return self._DiscoveredPlantsCount:Observe()
 end
 
+function EncyclopediaServiceClient.ObserveItemTotalAcquired(self: Module, itemName: string)
+    local DiscoveredItem = self._DiscoveredItems[itemName]
+
+    return DiscoveredItem.TotalAcquired:Observe()
+end
+
 function EncyclopediaServiceClient.GetDiscoveredItem(self: Module, itemName: string)
     return self._DiscoveredItems[itemName]
 end
@@ -70,8 +76,6 @@ end
 
 function EncyclopediaServiceClient.Start(self: Module)
     self._EncyclopediaNetworkClient:GetDiscoveredItems():Then(function(packet: EncyclopediaTypesShared.GetDiscoveredItemsRemotePacket)
-        print(self._DiscoveredItems)
-        print(packet)
         for itemName, discoveredItem in packet.DiscoveredItems do
             self._DiscoveredItems[itemName].DiscoveredTime.Value = discoveredItem.DiscoveredTime
             self._DiscoveredItems[itemName].TotalAcquired.Value = discoveredItem.TotalAcquired

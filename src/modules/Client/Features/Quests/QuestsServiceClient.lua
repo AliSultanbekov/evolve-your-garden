@@ -14,6 +14,7 @@ local QuestsTypesClient = require("QuestsTypesClient")
 local QuestsConfig = require("QuestsConfig")
 local ObservableMap = require("ObservableMap")
 local ValueObject = require("ValueObject")
+local Rx = require("Rx")
 
 -- [ Constants ] --
 
@@ -26,6 +27,8 @@ local QuestsServiceClient = {}
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _QuestsNetworkClient: typeof(require("QuestsNetworkClient")),
+    _StatsServiceClient: typeof(require("StatsServiceClient")),
+    _EncyclopediaServiceClient: typeof(require("EncyclopediaServiceClient")),
     _Quests: QuestsTypesClient.Quests,
     _StateToQuests: {
         [QuestsTypesShared.QuestState]: QuestsTypesClient.Quests
@@ -58,35 +61,39 @@ function QuestsServiceClient._SetupCategoryToQuests(self: Module)
     return CategoryToQuests
 end
 
-function QuestsServiceClient._AddQuest(self: Module, quest: QuestsTypesShared.Quest)
-    local QuestConfig = QuestsConfig.Quests[quest.Id]
+function QuestsServiceClient._AddQuests(self: Module, quests: { [any]: QuestsTypesShared.Quest })
+    for _, quest in quests do
+        local QuestConfig = QuestsConfig.Quests[quest.Id]
 
-    if not QuestConfig then
-        warn(`[QuestsServiceClient] No config for quest "{quest.Id}" - skipping`)
-        return
+        if not QuestConfig then
+            warn(`[QuestsServiceClient] No config for quest "{quest.Id}" - skipping`)
+            continue
+        end
+
+        local ReactiveQuest = self:_ToReactiveQuest(quest)
+
+        self._Quests:Set(quest.Id, ReactiveQuest)
+        self._StateToQuests[quest.State]:Set(quest.Id, ReactiveQuest)
+        self._CategoryToQuests[QuestConfig.Category]:Set(quest.Id, ReactiveQuest)
     end
-
-    local ReactiveQuest = self:_ToReactiveQuest(quest)
-
-    self._Quests:Set(quest.Id, ReactiveQuest)
-    self._StateToQuests[quest.State]:Set(quest.Id, ReactiveQuest)
-    self._CategoryToQuests[QuestConfig.Category]:Set(quest.Id, ReactiveQuest)
 end
 
-function QuestsServiceClient._RemoveQuest(self: Module, questId: QuestsTypesShared.QuestId)
-    local ReactiveQuest = self._Quests:Get(questId)
+function QuestsServiceClient._RemoveQuests(self: Module, questIds: { [any]: QuestsTypesShared.QuestId })
+    for _, questId in questIds do
+        local ReactiveQuest = self._Quests:Get(questId)
 
-    if not ReactiveQuest then
-        return
-    end
+        if not ReactiveQuest then
+            continue
+        end
 
-    self._Quests:Remove(questId)
-    self._StateToQuests[ReactiveQuest.State.Value]:Remove(questId)
+        self._Quests:Remove(questId)
+        self._StateToQuests[ReactiveQuest.State.Value]:Remove(questId)
 
-    local QuestConfig = QuestsConfig.Quests[questId]
+        local QuestConfig = QuestsConfig.Quests[questId]
 
-    if QuestConfig then
-        self._CategoryToQuests[QuestConfig.Category]:Remove(questId)
+        if QuestConfig then
+            self._CategoryToQuests[QuestConfig.Category]:Remove(questId)
+        end
     end
 end
 
@@ -110,13 +117,54 @@ function QuestsServiceClient._SyncQuestFromPlain(self: Module, reactiveQuest: Qu
     end
 end
 
-function QuestsServiceClient._ProcessQuests(self: Module, quests: { [any]: QuestsTypesShared.Quest })
-    for _, quest in quests do
-        self:_AddQuest(quest)
+-- [ Public Functions ] --
+function QuestsServiceClient.ObserveQuestProgress(self: Module, questId: QuestsTypesShared.QuestId)
+    local RequirementsProgresses = {}
+
+    for _, requirement in QuestsConfig.Quests[questId].Requirements do
+        table.insert(RequirementsProgresses, self:ObserveRequirementProgress(questId, requirement))
+    end
+
+    return Rx.combineLatest(RequirementsProgresses):Pipe({
+        Rx.map(function(progresses: { number })
+                local Total = 0
+
+                for _, progress in progresses do
+                    Total += progress
+                end
+                
+                return Total / #progresses
+        end) :: any,
+        Rx.distinct() :: any
+    }) :: any
+end
+
+function QuestsServiceClient.ObserveRequirementProgress(self: Module, questId: QuestsTypesShared.QuestId, requirement: QuestsTypesShared.QuestRequirement)
+    local RequirementValue = self:ObserveRequirementValue(requirement)
+    local Quest = self._Quests:Get(questId)
+
+    if not Quest then
+        error(`[QuestsServiceClient] Quest with id "{questId}" not found`)
+    end
+
+    local Anchor = if requirement.GoalType == "Relative" then Quest.Anchors[requirement.Id] else 0
+
+    return RequirementValue:Pipe({
+        Rx.map(function(value: number)
+            return math.clamp((value - Anchor) / requirement.Goal, 0, 1)
+        end) :: any,
+        Rx.distinct() :: any
+    }) :: any
+end
+
+function QuestsServiceClient.ObserveRequirementValue(self: Module, requirement: QuestsTypesShared.QuestRequirement)
+    if requirement.Source == "Stats" then
+        return self._StatsServiceClient:ObserveStat(requirement.Key)
+    else
+        return self._EncyclopediaServiceClient:ObserveItemTotalAcquired(requirement.Key)
     end
 end
 
--- [ Public Functions ] --
 function QuestsServiceClient.GetQuests(self: Module)
     return self._Quests
 end
@@ -142,6 +190,8 @@ function QuestsServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBa
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._QuestsNetworkClient = self._ServiceBag:GetService(require("QuestsNetworkClient"))
+    self._StatsServiceClient = self._ServiceBag:GetService(require("StatsServiceClient"))
+    self._EncyclopediaServiceClient = self._ServiceBag:GetService(require("EncyclopediaServiceClient"))
     self._Quests = ObservableMap.new()
     self._StateToQuests = self:_SetupStateToQuests()
     self._CategoryToQuests = self:_SetupCategoryToQuests()
@@ -149,19 +199,15 @@ end
 
 function QuestsServiceClient.Start(self: Module)
     self._QuestsNetworkClient:GetQuests():Then(function(packet: QuestsTypesShared.GetQuestsRemotePacket)
-        self:_ProcessQuests(packet.Quests)
+        self:_AddQuests(packet.Quests)
     end)
 
     self._QuestsNetworkClient.RemoteEvents.QuestsAdded:Connect(function(packet: QuestsTypesShared.QuestsAddedRemotePacket)
-        for _, quest in packet.Quests do
-            self:_AddQuest(quest)
-        end
+        self:_AddQuests(packet.Quests)
     end)
 
     self._QuestsNetworkClient.RemoteEvents.QuestsRemoved:Connect(function(packet: QuestsTypesShared.QuestsRemovedRemotePacket)
-        for _, questId in packet.QuestIds do
-            self:_RemoveQuest(questId)
-        end
+        self:_RemoveQuests(packet.QuestIds)
     end)
 
     self._QuestsNetworkClient.RemoteEvents.QuestsUpdated:Connect(function(packet: QuestsTypesShared.QuestsUpdatedRemotePacket)

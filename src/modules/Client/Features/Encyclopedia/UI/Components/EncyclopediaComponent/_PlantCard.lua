@@ -23,8 +23,6 @@ local ItemConfig = require("ItemConfig")
 -- [ Components ] --
 
 -- [ Constants ] --
--- Name-label stroke per rarity, applied through a UIGradient over a white
--- stroke so every rarity (including Celestial's rainbow) is one code path.
 local RARITY_TO_NAME_STROKE_COLOR_SEQUENCE = {
     Common = ColorSequence.new(Color3.fromRGB(43, 73, 112)),
     Uncommon = ColorSequence.new(Color3.fromRGB(101, 65, 23)),
