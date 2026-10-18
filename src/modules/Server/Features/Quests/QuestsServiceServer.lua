@@ -371,7 +371,7 @@ function QuestsServiceServer.Start(self: Module)
             Active = {},
             Completed = {},
             Burnt = {},
-        }
+        }       
 
         Maid:Add(function()
             self._PlayersStateToQuestIds[UserId] = nil
@@ -388,8 +388,6 @@ function QuestsServiceServer.Start(self: Module)
                 table.insert(QuestIds, quest.Id)
             end
 
-            self:TryCompleteQuests(Player, QuestIds)
-
             local QuestIdsToAdd = {}
 
             for _, questId in QuestsConfig.AutoActiveQuests do
@@ -401,6 +399,9 @@ function QuestsServiceServer.Start(self: Module)
             end
 
             self:AddQuests(Player, QuestIdsToAdd)
+
+            self:TryCompleteQuests(Player, QuestIds)
+            self:TryCompleteQuests(Player, QuestIdsToAdd)
 
             return
         end))

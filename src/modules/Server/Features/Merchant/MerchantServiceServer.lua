@@ -19,7 +19,13 @@ local MerchantTypesShared = require("MerchantTypesShared")
 local InventoryTypesShared = require("InventoryTypesShared")
 local ChanceClass = require("ChanceClass")
 local ItemUtil = require("ItemUtil")
+local ReconcileUtil = require("ReconcileUtil")
+
 -- [ Constants ] --
+local MERCHANT_TEMPLATE = {
+    LastRefresh = 0,
+    BuySlots = {},
+}
 
 -- [ Variables ] --
 
@@ -209,7 +215,10 @@ function MerchantServiceServer.Start(self: Module)
     RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
         local Maid: Maid.Maid, Player: Player = brio:ToMaidAndValue()
 
+
         Maid:Add(self._DataServiceServer:OnDataReady(Player, function(data: ProfileConfig.ProfileTemplate)
+            ReconcileUtil:Reconcile(data.Merchant, MERCHANT_TEMPLATE)
+
             local Running = true
 
             task.spawn(function()

@@ -44,12 +44,12 @@ local InventoryStory = {
         end
 
         -- Plants with varying mutations
-        addItem({ Name = "Snow Blossom", Category = "Plant" })
-        addItem({ Name = "Snow Blossom", Category = "Plant", Mutations = { "Juicy" } })
-        addItem({ Name = "Snow Blossom", Category = "Plant", Mutations = { "Golden", "Hardy" } })
+        addItem({ Name = "Daisy", Category = "Plant" })
+        addItem({ Name = "Daisy", Category = "Plant", Mutations = { "Juicy" } })
+        addItem({ Name = "Daisy", Category = "Plant", Mutations = { "Golden", "Hardy" } })
 
         -- Material with a stack amount
-        addItem({ Name = "Snow Blossom Fruit", Category = "Material", Amount = 42 })
+        addItem({ Name = "Fruit", Category = "Material", Amount = 42 })
 
         MaidObject:Add(Blend.mount(props.target, {
             InventoryWindow({

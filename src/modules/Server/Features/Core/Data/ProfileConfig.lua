@@ -8,13 +8,15 @@
 local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
-local ItemTypes = require("ItemTypes")
 local GardenTypesShared = require("GardenTypesShared")
 local PackStoreTypesShared = require("PackStoreTypesShared")
 local MerchantTypesShared = require("MerchantTypesShared")
 local EncyclopediaTypesShared = require("EncyclopediaTypesShared")
 local StatsTypesShared = require("StatsTypesShared")
 local QuestsTypesShared = require("QuestsTypesShared")
+local ToolbarTypesShared = require("ToolbarTypesShared")
+local InventoryTypesShared = require("InventoryTypesShared")
+local UpgradesTypesShared = require("UpgradesTypesShared")
 
 -- [ Constants ] --
 
@@ -23,39 +25,15 @@ local QuestsTypesShared = require("QuestsTypesShared")
 -- [ Module Table ] --
 local ProfileConfig = {
     Template = {
-        Upgrades = {
-            Garden = 1
-        },
-        Inventory = {
-            ["Coins"] = {
-                Id = "Coins",
-                Name = "Coins",
-                Category = "Currency" :: "Currency",
-                Amount = 5000,
-            },
-            ["Gems"] = {
-                Id = "Gems",
-                Name = "Gems",
-                Category = "Currency" :: "Currency",
-                Amount = 5000,
-            },
-        },
-        Garden = {
-            Slots = {},
-        },
-        PackStore = {
-            SaleId = "",
-            Packs = {}
-        },
-        Merchant = {
-            
-        },
-        Encyclopedia = {
-            DiscoveredItems = {},
-            CompletedQuests = {},
-        },
+        Upgrades = {},
+        Inventory = {},
+        Garden = {},
+        PackStore = {},
+        Merchant = {},
+        Encyclopedia = {},
         Stats = {},
         Quests = {},
+        Toolbar = {},
     },
     Leaderstats = {}
 } :: { Template: ProfileTemplate, Leaderstats: { [string]: string }}
@@ -63,20 +41,15 @@ local ProfileConfig = {
 -- [ Types ] --
 
 export type ProfileTemplate = {
-    Upgrades: {
-        Garden: number
-    },
-    Inventory: {
-        [ItemTypes.ItemId]: ItemTypes.Item
-    },
-    Garden: {
-        Slots: GardenTypesShared.Slots
-    },
+    Upgrades: UpgradesTypesShared.UpgradesData,
+    Inventory: InventoryTypesShared.InventoryData,
+    Garden: GardenTypesShared.GardenData,
     PackStore: PackStoreTypesShared.PackStore,
     Merchant: MerchantTypesShared.Merchant,
     Encyclopedia: EncyclopediaTypesShared.Encyclopedia,
     Stats: StatsTypesShared.Stats,
-    Quests: QuestsTypesShared.QuestsData
+    Quests: QuestsTypesShared.QuestsData,
+    Toolbar: ToolbarTypesShared.ToolbarData,
 }
 
 return ProfileConfig

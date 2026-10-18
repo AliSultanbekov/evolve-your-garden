@@ -21,8 +21,13 @@ local Blend = require("Blend")
 -- [ Module Table ] --
 local Background = function()
     return {
-        Blend.New "ImageLabel" {
+        Blend.New "ImageButton" {
             Name = "Background";
+        -- ImageButton (no handlers) so it occludes buttons sliding under the
+        -- art: only GuiButtons block other GuiButtons in Roblox hit-testing;
+        -- Active frames/images only sink world input.
+        AutoButtonColor = false;
+        Selectable = false;
             Position = UDim2.fromOffset(-133, 0);
             Size = UDim2.fromOffset(1161, 768);
             BackgroundColor3 = Color3.fromRGB(163, 162, 165);

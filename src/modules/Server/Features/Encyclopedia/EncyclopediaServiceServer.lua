@@ -13,8 +13,15 @@ local ItemTypes = require("ItemTypes")
 local ItemUtil = require("ItemUtil")
 local Signal = require("Signal")
 local EncyclopediaTypesShared = require("EncyclopediaTypesShared")
+local RxPlayerUtils = require("RxPlayerUtils")
+local Brio = require("Brio")
+local Maid = require("Maid")
+local ReconcileUtil = require("ReconcileUtil")
 
 -- [ Constants ] --
+local ENCYCLOPEDIA_TEMPLATE = {
+    DiscoveredItems = {},
+}
 
 -- [ Variables ] --
 
@@ -116,6 +123,16 @@ function EncyclopediaServiceServer.Start(self: Module)
             DiscoveredItems = self:GetDiscoveredItems(player)
         }
     end
+
+    RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
+        local MaidObject: Maid.Maid, Player: Player = brio:ToMaidAndValue()
+
+        MaidObject:Add(self._DataServiceServer:OnDataReady(Player, function(data)
+            ReconcileUtil:Reconcile(data.Encyclopedia, ENCYCLOPEDIA_TEMPLATE)
+
+            return
+        end))
+    end)
 end
 
 return EncyclopediaServiceServer :: Module

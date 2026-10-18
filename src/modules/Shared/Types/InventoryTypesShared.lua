@@ -15,6 +15,7 @@ local ItemTypes = require("ItemTypes")
 -- [ Variables ] --
 
 -- [ Types ] --
+export type InventoryData = { [ItemTypes.ItemId]: ItemTypes.Item}
 
 export type ItemsRemovedRemotePacket = {
     Items: { [ItemTypes.ItemId]: ItemTypes.Item }

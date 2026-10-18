@@ -10,6 +10,7 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 
 -- [ Constants ] --
+local DEFAULT_THRESHOLD = 10
 
 -- [ Variables ] --
 
@@ -18,88 +19,103 @@ local ChanceClass = {}
 ChanceClass.__index = ChanceClass
 
 -- [ Types ] --
-type ChancePool<K> = { [K]: number }
-export type ObjectData<K> = {
-    _Luck: number,
-    _LuckAffectedChances: number,
-    _ChancePool: ChancePool<K>,
-    _TotalChance: number,
+type ChancePool<T> = {
+    [T]: number
 }
-export type Object<K> = typeof(setmetatable({} :: ObjectData<K>, ChanceClass))
+
+type WeightPool<T> = {
+    [T]: number
+}
+
+export type ObjectData<T> = {
+    _Luck: number,
+    _Threshold: number,
+    _Seed: number,
+    _Random: Random,
+    _TotalWeight: number,
+    _WeightPool: {
+        [T]: number
+    },
+    _Order: { T }
+}
+export type Object<T> = typeof(setmetatable({} :: ObjectData<T>, ChanceClass))
 export type Module = typeof(ChanceClass)
 
 -- [ Private Functions ] --
-function ChanceClass._UpdateChances<K>(self: Object<K>, chancePool: ChancePool<K>)
-    local UpdatedChances = {}
-    local DynamicChances = {}
-    local StaticChances = {}
-    local TotalChance = 0
-    local TotalDynamicChance = 0
+function ChanceClass._ChancesToWeights<T>(self: Object<T>, chancePool: ChancePool<T>): WeightPool<T>
+    local Weights = {}
+    local TotalWeight = 0
 
     for key, chance in chancePool do
-        if chance <= self._LuckAffectedChances then
-            local NewChance = chance * self._Luck
-            UpdatedChances[key] = NewChance
-            DynamicChances[key] = NewChance
-            TotalChance += NewChance
-            TotalDynamicChance += NewChance
-        else
-            UpdatedChances[key] = chance
-            StaticChances[key] = chance
-            TotalChance += chance
+        if chance <= self._Threshold then
+            chance *= self._Luck
         end
+
+        Weights[key] = chance
+        TotalWeight += chance
     end
 
-    local Remainder = 100 - TotalChance
+    self._TotalWeight = TotalWeight
 
-    for key, chance in DynamicChances do
-        local Ratio = chance / TotalDynamicChance
-        local NewChance = chance + (Remainder * Ratio)
-        UpdatedChances[key] = NewChance
+    return Weights
+end
+
+function ChanceClass._GenerateOrder<T>(self: Object<T>)
+    local Order = {}
+
+    for key, _ in self._WeightPool do
+        table.insert(Order, key)
     end
 
-    -- Recompute the total from the final pool so Choose's random ceiling always
-    -- matches what the pool actually sums to (redistribution renormalizes it).
-    local FinalTotalChance = 0
-    for _, chance in UpdatedChances do
-        FinalTotalChance += chance
-    end
+    table.sort(Order)
 
-    self._ChancePool = UpdatedChances
-    self._TotalChance = FinalTotalChance
+    return Order
 end
 
 -- [ Public Functions ] --
-function ChanceClass.new<K>(chancePool: { [K]: number }, luck: number?, luckAffectedChances: number?): Object<K>
-    local self = setmetatable({} :: any, ChanceClass) :: Object<K>
+function ChanceClass.new<T>(chancePool: ChancePool<T>, luck: number?, threshold: number?, seed: number?): Object<T>
+    local self = setmetatable({} :: any, ChanceClass) :: Object<T>
 
     self._Luck = luck or 1
-    self._LuckAffectedChances = luckAffectedChances or 10
-    self._ChancePool = {}
-    self._TotalChance = 0
-
-    self:_UpdateChances(chancePool)
+    self._Threshold = threshold or DEFAULT_THRESHOLD
+    self._Seed = seed or Random.new():NextInteger(1, 2^53)
+    self._Random = Random.new(self._Seed)
+    self._TotalWeight = 0
+    self._WeightPool = self:_ChancesToWeights(chancePool)
+    self._Order = self:_GenerateOrder()
 
     return self
 end
 
-function ChanceClass.GetChance<K>(self: Object<K>, key: K)
-    return self._ChancePool[key]
-end
+function ChanceClass.Choose<T>(self: Object<T>): T
+    local RandomNumber = self._Random:NextNumber() * self._TotalWeight
+    local Accumulator = 0
 
-function ChanceClass.Choose<K>(self: Object<K>): K
-    local RandomNumber = math.random() * self._TotalChance
-    local ChanceProgress = 0
-    
-    for key, chance in self._ChancePool do
-        ChanceProgress += chance
+    for _, key in ipairs(self._Order) do
+        local Weight = self._WeightPool[key]
 
-        if RandomNumber < ChanceProgress then
+        if Weight <= 0 then
+            continue
+        end
+
+        Accumulator += Weight
+
+        if Accumulator >= RandomNumber then
             return key
         end
     end
 
-    error("Failed to choose a key: no valid key found in WeightPool.")
+    return self._Order[#self._Order]
+end
+
+function ChanceClass.GetChancePool<T>(self: Object<T>): ChancePool<T>
+    local ChancePool = {}
+
+    for key, weight in self._WeightPool do
+        ChancePool[key] = weight / self._TotalWeight * 100
+    end
+
+    return ChancePool
 end
 
 return ChanceClass :: Module

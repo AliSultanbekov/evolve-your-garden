@@ -42,10 +42,10 @@ local PlantPickerStory = {
         end
 
         -- Plants with varying mutations
-        addItem({ Name = "Snow Blossom", Category = "Plant" })
-        addItem({ Name = "Snow Blossom", Category = "Plant", Mutations = { "Juicy" } })
-        addItem({ Name = "Snow Blossom", Category = "Plant", Mutations = { "Golden", "Hardy" } })
-        addItem({ Name = "Snow Blossom", Category = "Plant", Mutations = { "Juicy", "Golden", "Hardy" } })
+        addItem({ Name = "Daisy", Category = "Plant" })
+        addItem({ Name = "Daisy", Category = "Plant", Mutations = { "Juicy" } })
+        addItem({ Name = "Daisy", Category = "Plant", Mutations = { "Golden", "Hardy" } })
+        addItem({ Name = "Daisy", Category = "Plant", Mutations = { "Juicy", "Golden", "Hardy" } })
 
         MaidObject:Add(props.subscribe(controls, function(newControls)
             IsOpen.Value = newControls.IsOpen

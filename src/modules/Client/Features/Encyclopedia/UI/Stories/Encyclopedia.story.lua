@@ -76,7 +76,7 @@ local EncyclopediaStory = {
         end
 
         -- Seed one discovered plant so both card variants show immediately.
-        SetDiscovered("Snow Blossom", DateTime.now().UnixTimestamp, 12)
+        SetDiscovered("Daisy", DateTime.now().UnixTimestamp, 12)
 
         -- Quest mirror: ids MUST exist in QuestsConfig (QuestCard reads
         -- Description etc. from config by id). "Cool Quest" is the seeded one.

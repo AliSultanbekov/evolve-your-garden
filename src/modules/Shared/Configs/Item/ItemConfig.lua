@@ -13,6 +13,7 @@ local PlantsConfig = require("PlantsConfig")
 local MaterialsConfig = require("MaterialsConfig")
 local CurrenciesConfig = require("CurrenciesConfig")
 local PacksConfig = require("PacksConfig")
+local ToolsConfig = require("ToolsConfig")
 local Table = require("Table")
 
 -- [ Constants ] --
@@ -26,6 +27,7 @@ local ItemConfig = {
         ["Material"] = "Stackable",
         ["Pack"] = "Stackable",
         ["Currency"] = "Stackable",
+        ["Tool"] = "Unique",
     },
     RarityLayoutOrder = {
         ["Common"] = 1,
@@ -36,7 +38,7 @@ local ItemConfig = {
         ["Mythic"] = 6,
         ["Celestial"] = 7,
     },
-    Categories = {"Plant", "Material", "Pack", "Currency"},
+    Categories = {"Plant", "Material", "Pack", "Currency", "Tool"},
     MaxAmount = 100000
 }
 
@@ -63,6 +65,8 @@ function ItemConfig.GetCategory(self: Module, itemName: string): ItemTypes.Categ
         return "Pack"
     elseif CurrenciesConfig.Currencies[itemName] then
         return "Currency"
+    elseif ToolsConfig.Tools[itemName] then
+        return "Tool"
     else
         error("No category found for item: " .. tostring(itemName))
     end
@@ -79,6 +83,8 @@ function ItemConfig.GetIcon(self: Module, itemName: string, itemCategory: ItemTy
         return PacksConfig.Packs[itemName].Icon
     elseif Category == "Currency" then
         return CurrenciesConfig.Currencies[itemName].Icon
+    elseif Category == "Tool" then
+        return ToolsConfig.Tools[itemName].Icon
     end
 
     error("No icon found for item: " .. tostring(itemName) .. " (" .. tostring(Category) .. ")")
@@ -95,6 +101,8 @@ function ItemConfig.GetRarity(self: Module, itemName: string, itemCategory: Item
         return PacksConfig.Packs[itemName].Rarity
     elseif Category == "Currency" then
         return CurrenciesConfig.Currencies[itemName].Rarity
+    elseif Category == "Tool" then
+        return ToolsConfig.Tools[itemName].Rarity
     end
 
     error("No rarity found for item: " .. tostring(itemName) .. " (" .. tostring(Category) .. ")")
@@ -112,6 +120,8 @@ function ItemConfig.GetAllItemsConfigs(self: Module)
             ItemsConfigs = Table.merge(ItemsConfigs, PacksConfig.Packs)
         elseif category == "Currency" then
             ItemsConfigs = Table.merge(ItemsConfigs, CurrenciesConfig.Currencies)
+        elseif category == "Tool" then
+            ItemsConfigs = Table.merge(ItemsConfigs, ToolsConfig.Tools)
         end
     end
 

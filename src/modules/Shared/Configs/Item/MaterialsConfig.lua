@@ -17,8 +17,8 @@ local ItemTypes = require("ItemTypes")
 -- [ Module Table ] --
 local MaterialsConfig = {
     Materials = {
-        ["Snow Blossom Fruit"] = {
-            Name = "Snow Blossom Fruit",
+        ["Fruit"] = {
+            Name = "Fruit",
             Icon = "rbxassetid://115748294366089",
             Rarity = "Common"
         }

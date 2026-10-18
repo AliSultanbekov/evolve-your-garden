@@ -13,7 +13,7 @@ local Blend = require("Blend")
 local ValueObject = require("ValueObject")
 
 -- [ Components ] --
-local ButtonsWindow = require(script.Parent.Parent.Components.Buttons._ButtonsWindow)
+local ButtonsComponent = require(script.Parent.Parent.Components.ButtonsComponent)
 
 -- [ Constants ] --
 
@@ -31,7 +31,7 @@ local ButtonsStory = {
         local IsOpen = ValueObject.new(true)
 
         MaidObject:Add(Blend.mount(props.target, {
-            ButtonsWindow({
+            ButtonsComponent({
                 IsOpen = IsOpen:Observe(),
                 OnToggleUI = function()
                     print("hi")

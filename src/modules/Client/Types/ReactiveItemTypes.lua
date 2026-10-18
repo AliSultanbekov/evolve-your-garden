@@ -49,6 +49,12 @@ type ReactivePlantData = {
 
 type ReactiveMaterialData = {}
 
+-- Durability's presence is static per item (durable iff config declares
+-- MaxDurability); only the value inside the ValueObject mutates.
+type ReactiveToolData = {
+    Durability: ValueObject.ValueObject<number>?,
+}
+
 -- ===== Concrete reactive items =====
 export type ReactivePlantItem = ReactiveCommon & ReactivePlantData & {
     Category: "Plant",
@@ -66,10 +72,14 @@ export type ReactiveCurrencyItem = ReactiveCommon & ReactiveStackable & {
     Category: "Currency",
 }
 
-export type ReactiveItem = ReactivePlantItem | ReactiveMaterialItem | ReactivePackItem | ReactiveCurrencyItem
+export type ReactiveToolItem = ReactiveCommon & ReactiveToolData & {
+    Category: "Tool",
+}
+
+export type ReactiveItem = ReactivePlantItem | ReactiveMaterialItem | ReactivePackItem | ReactiveCurrencyItem | ReactiveToolItem
 
 -- ===== Storage-mode groupings (parallel to ItemTypes.UniqueItem / StackableItem) =====
-export type ReactiveUniqueItem = ReactivePlantItem
+export type ReactiveUniqueItem = ReactivePlantItem | ReactiveToolItem
 export type ReactiveStackableItem = ReactiveMaterialItem | ReactivePackItem | ReactiveCurrencyItem
 export type ReactiveStorageItem = ReactiveItem
 

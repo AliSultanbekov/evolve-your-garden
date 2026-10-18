@@ -19,8 +19,13 @@ local PackStoreTypesShared = require("PackStoreTypesShared")
 local InventoryTypesShared = require("InventoryTypesShared")
 local ItemUtil = require("ItemUtil")
 local Table = require("Table")
+local ReconcileUtil = require("ReconcileUtil")
 
 -- [ Constants ] --
+local PACK_STORE_TEMPLATE = {
+    SaleId = "",
+    Packs = {},
+}
 
 -- [ Variables ] --
 
@@ -213,6 +218,8 @@ function PackStoreService.Start(self: Module)
             local Maid, Player = brio:ToMaidAndValue()
 
             Maid:Add(self._DataServiceServer:OnDataReady(Player, function(data)
+                ReconcileUtil:Reconcile(data.PackStore, PACK_STORE_TEMPLATE)
+
                 if data.PackStore.SaleId ~= self._CurrentSale.SaleId then
                     self:Refresh(self._CurrentSale.SaleId, self._CurrentSale.GlobalPacks, self._CurrentSale.StartTime, { Player })
                 end

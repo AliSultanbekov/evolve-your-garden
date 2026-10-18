@@ -29,6 +29,10 @@ export type Slot = {
     HarvestCount: number,
 }
 
+export type GardenData = {
+    Slots: Slots
+}
+
 export type Slots = { [SlotId]: Slot }
 
 export type GardenClaimedRemotePacket = {

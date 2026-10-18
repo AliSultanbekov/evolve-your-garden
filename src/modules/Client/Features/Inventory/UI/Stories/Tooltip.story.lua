@@ -27,13 +27,13 @@ local controls = {
 
 -- [ Module Table ] --
 local Tooltip = {
-    summary = "Inventory tooltip for the 'Snow Blossom' plant (name, icon, stats). Toggle IsSelected to show the action buttons.",
+    summary = "Inventory tooltip for the 'Daisy' plant (name, icon, stats). Toggle IsSelected to show the action buttons.",
     controls = controls,
     render = function(props: { target: Instance, controls: typeof(controls), subscribe: any })
         local MaidObject = Maid.new()
 
         local Item = ReactiveItemUtil:ToReactive(ItemUtil:ProcessRawItem({
-            Name = "Snow Blossom",
+            Name = "Daisy",
             Category = "Plant",
         }))
 

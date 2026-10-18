@@ -17,7 +17,7 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Types ] --
 export type ItemId = string
-export type Category = "Plant" | "Material" | "Pack" | "Currency"
+export type Category = "Plant" | "Material" | "Pack" | "Currency" | "Tool"
 export type StorageMode = "Unique" | "Stackable"
 export type Rarity = "Common" | "Uncommon" | "Rare" | "Epic" | "Legendary" | "Mythic" | "Celestial"
 
@@ -48,7 +48,14 @@ export type PlantData = {
     LevelTreeChoices: LevelTreeChoices,
 }
 
-export type MaterialData = {}
+export type MaterialData = {
+
+}
+
+export type ToolData = {
+    Durability: number?
+}
+
 
 -- ===== Concrete items =====
 -- Composed: Common + (Stackable if applicable) + category data + Category tag.
@@ -65,8 +72,11 @@ export type PackItem = Common & Stackable & {
 export type CurrencyItem = Common & Stackable & {
     Category: "Currency"
 }
+export type ToolItem = Common & ToolData & {
+    Category: "Tool"
+}
 
-export type Item = PlantItem | MaterialItem | PackItem | CurrencyItem
+export type Item = PlantItem | MaterialItem | PackItem | CurrencyItem | ToolItem
 
 -- ===== Storage-mode groupings =====
 -- Unions of concrete items that share a storage mode.
@@ -76,7 +86,7 @@ export type Item = PlantItem | MaterialItem | PackItem | CurrencyItem
 -- mutate Amount, alias through the Stackable view first:
 --   local View: ItemTypes.Stackable = stackableItem
 --   View.Amount += n
-export type UniqueItem = PlantItem
+export type UniqueItem = PlantItem | ToolItem
 export type StackableItem = MaterialItem | PackItem | CurrencyItem
 export type StorageItem = Item
 
@@ -112,6 +122,13 @@ export type RawCurrencyItem = {
     Amount: number?,
 }
 
-export type RawItem = RawPlantItem | RawMaterialItem | RawPackItem | RawCurrencyItem
+export type RawToolItem = {
+    Id: ItemId?,
+    Name: string,
+    Category: "Tool",
+    Durability: number?,
+}
+
+export type RawItem = RawPlantItem | RawMaterialItem | RawPackItem | RawCurrencyItem | RawToolItem
 
 return nil

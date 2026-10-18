@@ -61,6 +61,13 @@ function ReactiveItemUtil.ToReactive(self: Module, item: ItemTypes.Item): Reacti
             Category = item.Category,
             Amount = ValueObject.new(item.Amount),
         }
+    elseif item.Category == "Tool" then
+        return {
+            Id = item.Id,
+            Name = item.Name,
+            Category = item.Category,
+            Durability = if item.Durability ~= nil then ValueObject.new(item.Durability) else nil,
+        }
     end
 
     error("Unknown item category: " .. tostring((item :: any).Category))
@@ -100,6 +107,13 @@ function ReactiveItemUtil.ToPlain(self: Module, reactiveItem: ReactiveItemTypes.
             Category = reactiveItem.Category,
             Amount = reactiveItem.Amount.Value,
         }
+    elseif reactiveItem.Category == "Tool" then
+        return {
+            Id = reactiveItem.Id,
+            Name = reactiveItem.Name,
+            Category = reactiveItem.Category,
+            Durability = if reactiveItem.Durability then reactiveItem.Durability.Value else nil,
+        }
     end
 
     error("Unknown item category: " .. tostring((reactiveItem :: any).Category))
@@ -118,6 +132,10 @@ function ReactiveItemUtil.SyncFromPlain(self: Module, reactiveItem: ReactiveItem
         reactiveItem.Amount.Value = item.Amount
     elseif reactiveItem.Category == "Currency" and item.Category == "Currency" then
         reactiveItem.Amount.Value = item.Amount
+    elseif reactiveItem.Category == "Tool" and item.Category == "Tool" then
+        if reactiveItem.Durability and item.Durability ~= nil then
+            reactiveItem.Durability.Value = item.Durability
+        end
     end
 end
 
@@ -129,6 +147,7 @@ function ReactiveItemUtil.OnItemCategory(
         Material: ((item: ReactiveItemTypes.ReactiveMaterialItem) -> ())?,
         Pack: ((item: ReactiveItemTypes.ReactivePackItem) -> ())?,
         Currency: ((item: ReactiveItemTypes.ReactiveCurrencyItem) -> ())?,
+        Tool: ((item: ReactiveItemTypes.ReactiveToolItem) -> ())?,
         All: ((item: ReactiveItemTypes.ReactiveItem) -> ())?,
         Other: ((item: ReactiveItemTypes.ReactiveItem) -> ())?,
     }
@@ -155,6 +174,11 @@ function ReactiveItemUtil.OnItemCategory(
     elseif item.Category == "Currency" then
         if cbs.Currency then
             cbs.Currency(item)
+            return
+        end
+    elseif item.Category == "Tool" then
+        if cbs.Tool then
+            cbs.Tool(item)
             return
         end
     end

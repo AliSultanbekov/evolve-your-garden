@@ -12,7 +12,7 @@ local ServiceBag = require("ServiceBag")
 local Maid = require("Maid")
 
 -- [ Components ] --
-local ButtonsWindow = require(script.Parent.Components.Buttons._ButtonsWindow)
+local ButtonsComponent = require(script.Parent.Components.ButtonsComponent)
 
 -- [ Constants ] --
 
@@ -53,7 +53,7 @@ function HUDUIClient.Start(self: Module)
     self._UIServiceClient:OpenUI("HUDButtons")
 
     self._Maid:Add(self._UIServiceClient:MountToScreen("UIs", function() return {
-        ButtonsWindow({
+        ButtonsComponent({
             IsOpen = self._UIServiceClient:ObserveUI("HUDButtons"),
             OnToggleUI = function(uiName: string)
                 self._UIServiceClient:ToggleUI(uiName)

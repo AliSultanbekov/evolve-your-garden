@@ -23,8 +23,12 @@ local ItemUtil = require("ItemUtil")
 local Maid = require("Maid")
 local ItemConfig = require("ItemConfig")
 local InventoryTypesShared = require("InventoryTypesShared")
+local ReconcileUtil = require("ReconcileUtil")
 
 -- [ Constants ] --
+local GARDEN_TEMPLATE = {
+    Slots = {},
+}
 
 -- [ Variables ] --
 
@@ -452,7 +456,9 @@ function GardenServiceServer.Start(self: Module)
     RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
         local Maid, Player = brio:ToMaidAndValue()
 
-        Maid:Add(self._DataServiceServer:OnDataReady(Player, function(_data)
+        Maid:Add(self._DataServiceServer:OnDataReady(Player, function(data)
+            ReconcileUtil:Reconcile(data.Garden, GARDEN_TEMPLATE)
+
             self:_CreateAllSlots(Player)
             self:ClaimGarden(Player)
 

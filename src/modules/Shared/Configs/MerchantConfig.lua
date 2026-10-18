@@ -29,8 +29,8 @@ function MerchantConfig._Init(self: Module)
         }
     }
     self.SellItems = {
-        ["Snow Blossom Fruit"] = {
-            Name = "Snow Blossom Fruit",
+        ["Fruit"] = {
+            Name = "Fruit",
             Price = 100,
             Currency = "Coins"
         }

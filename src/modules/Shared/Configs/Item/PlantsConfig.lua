@@ -47,28 +47,8 @@ local PlantConfig = {}
 
 -- [ Private Functions ] --
 function PlantConfig._Init(self: Module)
-    self.PlantsCount = 5
+    self.PlantsCount = 3
     self.Plants = {
-        ["Snow Blossom"] = {
-            Name = "Snow Blossom",
-            Rarity = "Common",
-            Icon = "",
-            BaseCycleTime = 5,
-            Level = DEFAULT_LEVEL,
-            Genetics = table.clone(DEFAULT_GENETICS_CONFIG),
-            Production = {
-                AmountPool = table.clone(DEFAULT_AMOUNT_POOL),
-                ItemPool = {
-                    ["Snow Blossom Fruit"] = 100
-                }
-            },
-            GrowthStages = {
-                [1] = 0,
-                [2] = 60,
-                [3] = 120,
-                [4] = 180
-            }
-        },
         ["Daisy"] = {
             Name = "Daisy",
             Rarity = "Uncommon",
@@ -79,7 +59,7 @@ function PlantConfig._Init(self: Module)
             Production = {
                 AmountPool = table.clone(DEFAULT_AMOUNT_POOL),
                 ItemPool = {
-                    ["Snow Blossom Fruit"] = 100
+                    ["Fruit"] = 100
                 }
             },
             GrowthStages = {
@@ -98,7 +78,7 @@ function PlantConfig._Init(self: Module)
             Production = {
                 AmountPool = table.clone(DEFAULT_AMOUNT_POOL),
                 ItemPool = {
-                    ["Snow Blossom Fruit"] = 100
+                    ["Fruit"] = 100
                 }
             },
             GrowthStages = {
@@ -118,7 +98,7 @@ function PlantConfig._Init(self: Module)
             Production = {
                 AmountPool = table.clone(DEFAULT_AMOUNT_POOL),
                 ItemPool = {
-                    ["Snow Blossom Fruit"] = 100
+                    ["Fruit"] = 100
                 }
             },
             GrowthStages = {

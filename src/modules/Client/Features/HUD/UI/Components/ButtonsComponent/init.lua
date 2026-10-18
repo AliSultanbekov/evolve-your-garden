@@ -1,5 +1,5 @@
 --[=[
-    @class ButtonsWindow
+    @class ButtonsComponent
 ]=]
 
 -- [ Roblox Services ] --
@@ -22,7 +22,7 @@ local GenericButtonComponent = require("GenericButtonComponent")
 -- [ Functions ] --
 
 -- [ Module Table ] --
-local ButtonsWindow = function(props: Props)
+local ButtonsComponent = function(props: Props)
     return AnimatedFrameComponent({
         Name = "Buttons";
         ApplyDeviceScale = true;
@@ -71,6 +71,6 @@ type Props = {
 }
 type ModuleData = {}
 
-export type Module = typeof(ButtonsWindow) & ModuleData
+export type Module = typeof(ButtonsComponent) & ModuleData
 
-return ButtonsWindow :: Module
+return ButtonsComponent :: Module

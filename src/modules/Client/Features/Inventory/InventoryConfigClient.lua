@@ -26,7 +26,8 @@ local InventoryConfigClient = {
             ["Material"] = true
         },
         ["Items"] = {
-            ["Pack"] = true
+            ["Pack"] = true,
+            ["Tool"] = true,
         },
         ["Currencies"] = {
             ["Currency"] = true
@@ -36,7 +37,8 @@ local InventoryConfigClient = {
         ["Plant"] = "Garden",
         ["Material"] = "Materials",
         ["Pack"] = "Items",
-        ["Currency"] = "Currencies"
+        ["Currency"] = "Currencies",
+        ["Tool"] = "Items",
     }
 } :: {
     TabOrder: { string },

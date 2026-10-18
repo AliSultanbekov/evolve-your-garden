@@ -26,8 +26,8 @@ function QuestConfig._Init(self: Module)
             Type = "OneTime",
             Category = "Encyclopedia",
             Rewards = {
-                ["Snow Blossom Fruit"] = {
-                    Name = "Snow Blossom Fruit",
+                ["Fruit"] = {
+                    Name = "Fruit",
                     Category = "Material",
                 }
             },
@@ -47,8 +47,8 @@ function QuestConfig._Init(self: Module)
             Type = "Repeatable",
             Category = "Encyclopedia",
             Rewards = {
-                ["Snow Blossom Fruit"] = {
-                    Name = "Snow Blossom Fruit",
+                ["Fruit"] = {
+                    Name = "Fruit",
                     Category = "Material",
                 }
             },

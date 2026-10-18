@@ -12,6 +12,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local ItemConfig = require("ItemConfig")
 local ItemTypes = require("ItemTypes")
+local ToolsConfig = require("ToolsConfig")
 
 -- [ Constants ] --
 
@@ -71,6 +72,17 @@ function ItemUtil.ProcessRawItem(self: Module, rawItem: ItemTypes.RawItem): Item
             Category = rawItem.Category,
             Amount = rawItem.Amount or 1,
         }
+    elseif rawItem.Category == "Tool" then
+        local ToolConfig = ToolsConfig.Tools[rawItem.Name]
+
+        -- Creation choke point for the durable-iff-config-declares invariant:
+        -- Durability exists on the item exactly when config has MaxDurability.
+        return {
+            Id = id,
+            Name = rawItem.Name,
+            Category = rawItem.Category,
+            Durability = rawItem.Durability or (ToolConfig and ToolConfig.MaxDurability),
+        }
     end
 
     error("Unknown item category: " .. tostring(rawItem.Category))
@@ -82,6 +94,7 @@ function ItemUtil.OnItemCategory(
     cbs: {
         Plant: ((item: ItemTypes.PlantItem) -> ())?,
         Material: ((item: ItemTypes.MaterialItem) -> ())?,
+        Tool: ((item: ItemTypes.ToolItem) -> ())?,
         All: ((item: ItemTypes.Item) -> ())?,
         Other: ((item: ItemTypes.Item) -> ())?,
     }
@@ -98,6 +111,11 @@ function ItemUtil.OnItemCategory(
     elseif item.Category == "Material" then
         if cbs.Material then
             cbs.Material(item)
+            return
+        end
+    elseif item.Category == "Tool" then
+        if cbs.Tool then
+            cbs.Tool(item)
             return
         end
     end
@@ -146,6 +164,7 @@ export type MakeRawOptions = {
     GrowthTime: number?,
     LastProduction: number?,
     Mutations: { string }?,
+    Durability: number?,
 }
 
 function ItemUtil.MakeRawFromName(self: Module, name: string, opts: MakeRawOptions?): ItemTypes.RawItem
@@ -167,6 +186,12 @@ function ItemUtil.MakeRawFromName(self: Module, name: string, opts: MakeRawOptio
             Xp = o.Xp,
             LastProduction = o.LastProduction,
             Mutations = o.Mutations,
+        }
+    elseif category == "Tool" then
+        return {
+            Name = name,
+            Category = "Tool",
+            Durability = o.Durability,
         }
     end
 

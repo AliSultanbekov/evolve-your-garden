@@ -25,11 +25,9 @@ export type Slot = {
 
 export type Slots = { [SlotId]: Slot }
 
--- Fields are nil until the first server Refresh fills them (the profile
--- template ships an empty Merchant table).
 export type Merchant = {
-    LastRefresh: number?,
-    BuySlots: Slots?
+    LastRefresh: number,
+    BuySlots: Slots
 }
 
 export type GetBuySlotsRemotePacket = {

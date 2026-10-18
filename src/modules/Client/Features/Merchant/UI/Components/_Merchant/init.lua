@@ -122,8 +122,13 @@ local Merchant = function(props: Props)
                     props.OnClose()
                 end;
             });
-            Blend.New "ImageLabel" {
+            Blend.New "ImageButton" {
                 Name = "Background";
+                -- ImageButton (no handlers) so it occludes buttons sliding under the
+                -- art: only GuiButtons block other GuiButtons in Roblox hit-testing;
+                -- Active frames/images only sink world input.
+                AutoButtonColor = false;
+                Selectable = false;
                 LayoutOrder = 1;
                 Position = UDim2.fromOffset(0, 0);
                 Size = UDim2.fromOffset(1161, 688);
