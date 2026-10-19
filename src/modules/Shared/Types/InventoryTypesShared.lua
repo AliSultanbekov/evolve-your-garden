@@ -18,7 +18,7 @@ local ItemTypes = require("ItemTypes")
 export type InventoryData = { [ItemTypes.ItemId]: ItemTypes.Item}
 
 export type ItemsRemovedRemotePacket = {
-    Items: { [ItemTypes.ItemId]: ItemTypes.Item }
+    ItemIds: { ItemTypes.ItemId }
 }
 export type ItemsAddedRemotePacket = {
     Items: { [ItemTypes.ItemId]: ItemTypes.Item }

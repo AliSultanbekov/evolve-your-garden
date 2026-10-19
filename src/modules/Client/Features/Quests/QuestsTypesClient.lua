@@ -24,6 +24,6 @@ export type ReactiveQuest = {
     Anchors: {[string]: number},
 }
 
-export type Quests = ObservableMap.ObservableMap<QuestsTypesShared.QuestId, ReactiveQuest>
+export type ReactiveQuests = ObservableMap.ObservableMap<QuestsTypesShared.QuestId, ReactiveQuest>
 
 return nil

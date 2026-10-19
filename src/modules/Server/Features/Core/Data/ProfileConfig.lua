@@ -49,7 +49,7 @@ export type ProfileTemplate = {
     Encyclopedia: EncyclopediaTypesShared.Encyclopedia,
     Stats: StatsTypesShared.Stats,
     Quests: QuestsTypesShared.QuestsData,
-    Toolbar: ToolbarTypesShared.ToolbarData,
+    Toolbar: ToolbarTypesShared.Slots,
 }
 
 return ProfileConfig

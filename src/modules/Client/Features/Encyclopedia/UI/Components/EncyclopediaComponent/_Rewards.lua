@@ -122,7 +122,7 @@ end
 -- [ Types ] --
 type Props = {
     ActiveTab: ComponentTypes.Prop<string>,
-    Quests: QuestsTypesClient.Quests,
+    Quests: QuestsTypesClient.ReactiveQuests,
     OnClaimQuest: (questId: string) -> (),
     ObserveQuestProgress: (questId: QuestsTypesShared.QuestId) -> Observable.Observable<number>,
 }

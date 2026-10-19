@@ -17,6 +17,7 @@ local InventoryTypesShared = require("InventoryTypesShared")
 local RxPlayerUtils = require("RxPlayerUtils")
 local Brio = require("Brio")
 local InventoryEnums = require("InventoryEnums")
+local Signal = require("Signal")
 
 local PackActions = require(script.ItemActions._PackActions)
 
@@ -29,12 +30,18 @@ local INVENTORY_CAPACITY = 200
 local InventoryServiceServer = {}
 
 -- [ Types ] --
+export type Signals = {
+    ItemAdded: Signal.Signal<Player, ItemTypes.Item>,
+    ItemRemoved: Signal.Signal<Player, ItemTypes.ItemId>,
+}
+
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _DataServiceServer: typeof(require("DataServiceServer")),
     _InventoryNetworkServer: typeof(require("InventoryNetworkServer")),
     _EncyclopediaServiceServer: typeof(require("EncyclopediaServiceServer")),
-    _PlayersInventoryItemCount: { [Player]: number }
+    _PlayersInventoryItemCount: { [Player]: number },
+    Signals: Signals,
 }
 
 export type Module = typeof(InventoryServiceServer) & ModuleData
@@ -222,7 +229,7 @@ end
 function InventoryServiceServer.RemoveItems(self: Module, player: Player, items: { ItemTypes.Item })
     local Data = self._DataServiceServer:GetProfile(player).Data
     
-    local RemovedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
+    local RemovedItemIds: { ItemTypes.ItemId } = {}
     local UpdatedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
 
     for _, item in items do
@@ -234,7 +241,7 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
 
                 Data.Inventory[item.Id] = nil
                 self._PlayersInventoryItemCount[player] -= 1
-                RemovedItems[item.Id] = item
+                table.insert(RemovedItemIds, item.Id)
             end,
             Stackable = function(item: ItemTypes.StackableItem)
                 local StoredItem = Data.Inventory[item.Id] :: ItemTypes.StackableItem
@@ -246,10 +253,9 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
                 if StoredItem.Amount <= item.Amount then
                     Data.Inventory[item.Id] = nil
                     self._PlayersInventoryItemCount[player] -= 1
-                    RemovedItems[item.Id] = StoredItem
+                    table.insert(RemovedItemIds, item.Id)
                     UpdatedItems[item.Id] = nil
                 else
-                    -- Stackable view: Luau can't write through a union of tables.
                     local StoredStackable: ItemTypes.Stackable = StoredItem
                     StoredStackable.Amount -= item.Amount
                     UpdatedItems[item.Id] = StoredItem
@@ -258,8 +264,8 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
         })
     end
 
-    if next(RemovedItems) then
-        self._InventoryNetworkServer:ItemsRemoved(player, { Items = RemovedItems })
+    if next(RemovedItemIds) then
+        self._InventoryNetworkServer:ItemsRemoved(player, { ItemIds = RemovedItemIds })
     end
 
     if next(UpdatedItems) then
@@ -277,6 +283,11 @@ function InventoryServiceServer.Init(self: Module, serviceBag: ServiceBag.Servic
     self._InventoryNetworkServer = self._ServiceBag:GetService(require("InventoryNetworkServer"))
     self._EncyclopediaServiceServer = self._ServiceBag:GetService(require("EncyclopediaServiceServer"))
     self._PlayersInventoryItemCount = {}
+
+    self.Signals = {
+        ItemAdded = Signal.new(),
+        ItemRemoved = Signal.new(),
+    } :: any
 end
 
 function InventoryServiceServer.Start(self: Module)
@@ -292,7 +303,6 @@ function InventoryServiceServer.Start(self: Module)
 
     RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
         local Maid, Player = brio:ToMaidAndValue()
-        --local UserId = PlayerToUserId(Player) // might use in future
 
         Maid:Add(self._DataServiceServer:OnDataReady(Player, function(Data)
             local ItemCount = 0

@@ -1,0 +1,181 @@
+--[=[
+    @class ToolbarServiceClient
+
+    Owns toolbar state: the slot layout mirror and which slot is equipped.
+    The equipped SLOT is the one truth; the equipped item id is derived from
+    it (slot contents changing re-derives automatically). Server mirrors the
+    slot, so only slot changes cross the network.
+]=]
+
+-- [ Roblox Services ] --
+
+-- [ Require ] --
+local require = require(script.Parent.loader).load(script) :: typeof(require)
+
+-- [ Imports ] --
+local ServiceBag = require("ServiceBag")
+local ValueObject = require("ValueObject")
+local Rx = require("Rx")
+local ItemTypes = require("ItemTypes")
+local ToolbarTypesShared = require("ToolbarTypesShared")
+local ToolbarTypesClient = require("ToolbarTypesClient")
+local ToolbarConfig = require("ToolbarConfig")
+
+-- [ Constants ] --
+
+-- [ Variables ] --
+
+-- [ Module Table ] --
+local ToolbarServiceClient = {}
+
+-- [ Types ] --
+type ModuleData = {
+    _ServiceBag: ServiceBag.ServiceBag,
+    _ToolbarNetworkClient: typeof(require("ToolbarNetworkClient")),
+    _InventoryServiceClient: typeof(require("InventoryServiceClient")),
+    _Slots: ToolbarTypesClient.ReactiveSlots,
+    _ItemIdToSlotId: {
+        [ItemTypes.ItemId]: ToolbarTypesShared.SlotId
+    },
+    _EquippedSlotId: ValueObject.ValueObject<ToolbarTypesShared.SlotId?>,
+}
+
+export type Module = typeof(ToolbarServiceClient) & ModuleData
+
+-- [ Private Functions ] --
+function ToolbarServiceClient._SetupSlots(self: Module)
+    local Slots = {}
+
+    for slotId, _ in ToolbarConfig.SlotIds do
+        Slots[slotId] = ValueObject.new()
+    end
+
+    return Slots :: any
+end
+
+function ToolbarServiceClient._GetSlotIdFromItemId(self: Module, itemId: ItemTypes.ItemId)
+    return self._ItemIdToSlotId[itemId]
+end
+
+function ToolbarServiceClient._SetSlotItemId(self: Module, slotId: ToolbarTypesShared.SlotId, itemId: ItemTypes.ItemId?)
+    local Slot = self._Slots[slotId]
+
+    if not Slot then
+        return
+    end
+
+    local StaleItemId = Slot.Value
+
+    if StaleItemId then
+        self._ItemIdToSlotId[StaleItemId] = nil
+    end
+
+    Slot.Value = itemId
+
+    if itemId then
+        self._ItemIdToSlotId[itemId] = slotId
+    end
+end
+
+-- [ Public Functions ] --
+function ToolbarServiceClient.ObserveEquippedItem(self: Module)
+    return self:ObserveEquippedItemId():Pipe({
+        Rx.switchMap(function(itemId: ItemTypes.ItemId?)
+            if not itemId then
+                return Rx.of(nil) :: any
+            end
+
+            return self._InventoryServiceClient:GetItems():ObserveAtKey(itemId)
+        end) :: any,
+        Rx.distinct() :: any,
+    }) :: any
+end
+
+function ToolbarServiceClient.ObserveEquippedItemId(self: Module)
+    return self._EquippedSlotId:Observe():Pipe({
+        Rx.switchMap(function(slotId: ToolbarTypesShared.SlotId?)
+            if not slotId then
+                return Rx.of(nil) :: any
+            end
+
+            return self._Slots[slotId]:Observe()
+        end) :: any,
+        Rx.distinct() :: any,
+    }) :: any
+end
+
+function ToolbarServiceClient.ObserveEquippedSlotId(self: Module)
+    return self._EquippedSlotId:Observe()
+end
+
+function ToolbarServiceClient.GetSlot(self: Module, slotId: ToolbarTypesShared.SlotId)
+    return self._Slots[slotId]
+end
+
+function ToolbarServiceClient.EquipSlot(self: Module, slotId: ToolbarTypesShared.SlotId)
+    if not ToolbarConfig:IsValidSlotId(slotId) then
+        return
+    end
+
+    if self._EquippedSlotId.Value == slotId then
+        self:UnequipSlot()
+        return
+    end
+
+    self._EquippedSlotId.Value = slotId
+    self._ToolbarNetworkClient:EquipSlot({ SlotId = slotId })
+end
+
+function ToolbarServiceClient.UnequipSlot(self: Module)
+    self._EquippedSlotId.Value = nil
+    self._ToolbarNetworkClient:UnequipSlot()
+end
+
+function ToolbarServiceClient.BindSlot(self: Module, slotId: ToolbarTypesShared.SlotId, itemId: ItemTypes.ItemId)
+    if not ToolbarConfig:IsValidSlotId(slotId) then
+        return
+    end
+
+    self:_SetSlotItemId(slotId, itemId)
+    self._ToolbarNetworkClient:BindSlots({ Slots = { [slotId] = itemId } })
+end
+
+function ToolbarServiceClient.UnbindSlot(self: Module, slotId: ToolbarTypesShared.SlotId)
+    if not ToolbarConfig:IsValidSlotId(slotId) then
+        return
+    end
+
+    self:_SetSlotItemId(slotId, nil)
+    self._ToolbarNetworkClient:UnbindSlots({ SlotIds = { slotId } })
+end
+
+function ToolbarServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
+    if self._ServiceBag ~= nil then
+        error("Service already initialized")
+    end
+
+    self._ServiceBag = assert(serviceBag, "No serviceBag")
+    self._ToolbarNetworkClient = self._ServiceBag:GetService(require("ToolbarNetworkClient"))
+    self._InventoryServiceClient = self._ServiceBag:GetService(require("InventoryServiceClient"))
+    self._Slots = self:_SetupSlots()
+    self._ItemIdToSlotId = {}
+    self._EquippedSlotId = ValueObject.new(nil)
+end
+
+function ToolbarServiceClient.Start(self: Module)
+    self._ToolbarNetworkClient:GetSlots():Then(function(packet: ToolbarTypesShared.GetSlotsRemotePacket)
+        for slotId, itemId in packet.Slots do
+            self:_SetSlotItemId(slotId, itemId)
+        end
+    end)
+
+    self._InventoryServiceClient.Signals.ItemRemoved:Connect(function(itemId: ItemTypes.ItemId)
+        local SlotId = self:_GetSlotIdFromItemId(itemId)
+
+        if SlotId then
+            self:_SetSlotItemId(SlotId, nil)
+        end
+    end)
+end
+
+return ToolbarServiceClient :: Module

@@ -16,9 +16,28 @@ local ItemTypes = require("ItemTypes")
 
 -- [ Types ] --
 export type SlotId = string
-
-export type ToolbarData = {
+export type Slots = {
     [SlotId]: ItemTypes.ItemId,
+}
+
+export type EquipSlotRemotePacket = {
+    SlotId: SlotId,
+}
+
+export type UnequipSlotRemotePacket = {}
+
+export type BindSlotsRemotePacket = {
+    Slots: {
+        [SlotId]: ItemTypes.ItemId
+    }
+}
+
+export type UnbindSlotsRemotePacket = {
+    SlotIds: { SlotId }
+}
+
+export type GetSlotsRemotePacket = {
+    Slots: Slots,
 }
 
 return nil

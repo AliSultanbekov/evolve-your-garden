@@ -29,12 +29,12 @@ type ModuleData = {
     _QuestsNetworkClient: typeof(require("QuestsNetworkClient")),
     _StatsServiceClient: typeof(require("StatsServiceClient")),
     _EncyclopediaServiceClient: typeof(require("EncyclopediaServiceClient")),
-    _Quests: QuestsTypesClient.Quests,
+    _Quests: QuestsTypesClient.ReactiveQuests,
     _StateToQuests: {
-        [QuestsTypesShared.QuestState]: QuestsTypesClient.Quests
+        [QuestsTypesShared.QuestState]: QuestsTypesClient.ReactiveQuests
     },
     _CategoryToQuests: {
-        [QuestsTypesShared.QuestCategory]: QuestsTypesClient.Quests
+        [QuestsTypesShared.QuestCategory]: QuestsTypesClient.ReactiveQuests
     }
 }
 
@@ -51,7 +51,7 @@ end
 
 function QuestsServiceClient._SetupCategoryToQuests(self: Module)
     local CategoryToQuests = {} :: {
-        [QuestsTypesShared.QuestCategory]: QuestsTypesClient.Quests
+        [QuestsTypesShared.QuestCategory]: QuestsTypesClient.ReactiveQuests
     }
 
     for _, category: QuestsTypesShared.QuestCategory in QuestsConfig.Categories do

@@ -59,7 +59,7 @@ type Props = {
     DiscoveredPlantsCount: Observable.Observable<number>,
     GetDiscoveredItem: (itemName: string) -> EncyclopediaTypesClient.ReactiveDiscoveredItem,
     SwitchTab: (tabName: string) -> (),
-    Quests: QuestsTypesClient.Quests,
+    Quests: QuestsTypesClient.ReactiveQuests,
     OnClaimQuest: (questId: QuestsTypesShared.QuestId) -> (),
     ObserveQuestProgress: (questId: QuestsTypesShared.QuestId) -> Observable.Observable<number>,
 }

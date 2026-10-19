@@ -17,6 +17,7 @@ local InventoryTypesClient = require("InventoryTypesClient")
 local InventoryConfigClient = require("InventoryConfigClient")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local ItemConfig = require("ItemConfig")
+local Signal = require("Signal")
 
 -- [ Constants ] --
 
@@ -26,12 +27,19 @@ local ItemConfig = require("ItemConfig")
 local InventoryServiceClient = {}
 
 -- [ Types ] --
+type Signals = {
+    ItemAdded: Signal.Signal<ReactiveItemTypes.ReactiveItem>,
+    ItemRemoved: Signal.Signal<ItemTypes.ItemId>,
+}
+
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _InventoryNetworkClient: typeof(require("InventoryNetworkClient")),
     _Items: ReactiveItemTypes.ReactiveItems,
     _TabToItems: InventoryTypesClient.TabToItems,
     _CategoryToItems: InventoryTypesClient.CategoryToItems,
+
+    Signals: Signals,
 }
 
 export type Module = typeof(InventoryServiceClient) & ModuleData
@@ -47,7 +55,7 @@ function InventoryServiceClient._SetupItemIndexes(self: Module)
     end
 end
 
-function InventoryServiceClient._ProcessItems(self: Module, items: { [any]: ItemTypes.Item })
+function InventoryServiceClient._AddItems(self: Module, items: { [any]: ItemTypes.Item })
     for _, item in items do
         local ReactiveItem = ReactiveItemUtil:ToReactive(item)
         local Tab = InventoryConfigClient.CategoryToTab[item.Category]
@@ -59,6 +67,8 @@ function InventoryServiceClient._ProcessItems(self: Module, items: { [any]: Item
         self._Items:Set(item.Id, ReactiveItem)
         self._TabToItems[Tab]:Set(item.Id, ReactiveItem)
         self._CategoryToItems[item.Category]:Set(item.Id, ReactiveItem)
+
+        self.Signals.ItemAdded:Fire(ReactiveItem)
     end
 end
 
@@ -79,6 +89,10 @@ function InventoryServiceClient.GetItemsByTab(self: Module, tab: string)
     return self._TabToItems[tab]
 end
 
+function InventoryServiceClient.GetItem(self: Module, itemId: ItemTypes.ItemId)
+    return self._Items:Get(itemId)
+end
+
 function InventoryServiceClient.GetItems(self: Module)
     return self._Items
 end
@@ -94,12 +108,17 @@ function InventoryServiceClient.Init(self: Module, serviceBag: ServiceBag.Servic
     self._TabToItems = {}
     self._CategoryToItems = {}
 
+    self.Signals = {
+        ItemAdded = Signal.new(),
+        ItemRemoved = Signal.new(), 
+    } :: any
+
     self:_SetupItemIndexes()
 end
 
 function InventoryServiceClient.Start(self: Module)
     self._InventoryNetworkClient:GetItems():Then(function(packet: InventoryTypesShared.GetItemsRemotePacket)
-        self:_ProcessItems(packet.Items)
+        self:_AddItems(packet.Items)
     end):Catch(function(err)
         warn("[InventoryServiceClient] GetItems failed:", err)
     end)
@@ -117,22 +136,30 @@ function InventoryServiceClient.Start(self: Module)
     end)    
 
     self._InventoryNetworkClient.RemoteEvents.ItemsAdded:Connect(function(packet: InventoryTypesShared.ItemsAddedRemotePacket)
-        self:_ProcessItems(packet.Items)
+        self:_AddItems(packet.Items)
     end)
 
     self._InventoryNetworkClient.RemoteEvents.ItemsRemoved:Connect(function(packet: InventoryTypesShared.ItemsRemovedRemotePacket)
-        for _, item in packet.Items do
-            self._Items:Remove(item.Id)
+        for _, itemId in packet.ItemIds do
+            local Item = self._Items:Get(itemId)
 
-            local Tab = InventoryConfigClient.CategoryToTab[item.Category]
+            if not Item then
+                continue
+            end
+
+            local Tab = InventoryConfigClient.CategoryToTab[Item.Category]
+
+            self._Items:Remove(itemId)
 
             if self._TabToItems[Tab] then
-                self._TabToItems[Tab]:Remove(item.Id)
+                self._TabToItems[Tab]:Remove(itemId)
             end
 
-            if self._CategoryToItems[item.Category] then
-                self._CategoryToItems[item.Category]:Remove(item.Id)
+            if self._CategoryToItems[Item.Category] then
+                self._CategoryToItems[Item.Category]:Remove(itemId)
             end
+
+            self.Signals.ItemRemoved:Fire(itemId)
         end
     end)
 end

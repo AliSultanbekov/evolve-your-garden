@@ -49,8 +49,6 @@ type ReactivePlantData = {
 
 type ReactiveMaterialData = {}
 
--- Durability's presence is static per item (durable iff config declares
--- MaxDurability); only the value inside the ValueObject mutates.
 type ReactiveToolData = {
     Durability: ValueObject.ValueObject<number>?,
 }
