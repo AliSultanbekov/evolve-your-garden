@@ -27,7 +27,7 @@ local ItemTooltipComponent = function(props: Props)
     return TooltipShellComponent({
         Item = props.Item,
         Position = props.Position,
-        AnchorPoint = Vector2.new(0, 0.5),
+        AnchorPoint = Vector2.new(0, 0),
         PaddingBottom = 3,
         Content = function(displayItem, _isOpen)
             return {

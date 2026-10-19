@@ -15,21 +15,17 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Module Table ] --
 -- Slot ids mirror the keyboard row: "1".."9" then "0" for the tenth slot.
+-- SlotOrder is the one truth (display + keybind order); the SlotIds set is
+-- derived from it for O(1) validation.
 local ToolbarConfig = {
     SlotCount = 10,
-    SlotIds = {
-        ["1"] = true,
-        ["2"] = true,
-        ["3"] = true,
-        ["4"] = true,
-        ["5"] = true,
-        ["6"] = true,
-        ["7"] = true,
-        ["8"] = true,
-        ["9"] = true,
-        ["0"] = true,
-    },
+    SlotOrder = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" },
+    SlotIds = {},
 }
+
+for _, slotId in ToolbarConfig.SlotOrder do
+    ToolbarConfig.SlotIds[slotId] = true
+end
 
 -- [ Types ] --
 type ModuleData = {}

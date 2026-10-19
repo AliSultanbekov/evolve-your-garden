@@ -40,6 +40,7 @@ local GenericButtonComponent = function(props: Props)
         Parent = props.Parent;
         Image = props.Image or "";
         ImageColor3 = props.ImageColor3;
+        ImageTransparency = props.ImageTransparency;
         ScaleType = props.ScaleType;
         ClipsDescendants = props.ClipsDescendants;
         [Blend.Instance] = function(inst: GuiButton)
@@ -106,6 +107,7 @@ type Props = {
     Visible: ComponentTypes.Prop<boolean>?,
     Image: ComponentTypes.Prop<string>?,
     ImageColor3: ComponentTypes.Prop<Color3>?,
+    ImageTransparency: ComponentTypes.Prop<number>?,
     ScaleType: ComponentTypes.Prop<Enum.ScaleType>?,
     ClipsDescendants: ComponentTypes.Prop<boolean>?,
     Scale: ComponentTypes.Prop<number>?,

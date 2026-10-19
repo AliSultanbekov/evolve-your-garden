@@ -85,6 +85,9 @@ function MouseServiceClient._UpdateHover(self: Module)
 end
 
 -- [ Public Functions ] --
+-- Emits raw InputObject.Position (inset-subtracted space). The "UIs" screen
+-- ignores the inset, so UI placed at the cursor must add GuiService:GetGuiInset()
+-- at the consumer.
 function MouseServiceClient.ObserveMousePosition(self: Module)
     return self._MousePosition:Observe()
 end

@@ -19,6 +19,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local Blend = require("Blend")
 local Observable = require("Observable")
 local ValueObject = require("ValueObject")
+local ComponentTypes = require("ComponentTypes")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
@@ -36,13 +37,19 @@ local AnimatedButtonComponent = function(props: Props)
     local ShouldAnimate = props.ShouldAnimate ~= false
 
     local IsPressed = ValueObject.new(false)
-    local PressScale = Blend.Spring(
-        Blend.Computed(IsPressed, function(pressed: boolean)
-            return if pressed and ShouldAnimate then 0.9 else 1
-        end),
-        35,
-        0.35
-    )
+    local PressScale
+
+    if props.GetScale then
+        PressScale = props.GetScale(IsPressed:Observe())
+    else
+        PressScale = Blend.Spring(
+            Blend.Computed(IsPressed, function(pressed: boolean)
+                return if pressed and ShouldAnimate then 0.9 else 1
+            end),
+            35,
+            0.35
+        )
+    end
 
     local ButtonChildren: { any } = {}
 
@@ -87,6 +94,8 @@ local AnimatedButtonComponent = function(props: Props)
                 Position = UDim2.fromScale(0.5, 0.5);
                 AnchorPoint = Vector2.new(0.5, 0.5);
                 ImageColor3 = props.ImageColor3,
+                ImageTransparency = props.ImageTransparency;
+                ScaleType = props.ScaleType;
                 BackgroundTransparency = 1;
                 Image = props.Image;
 
@@ -109,26 +118,29 @@ end
 
 -- [ Types ] --
 type Props = {
-    Name: string,
+    Name: ComponentTypes.Prop<string>,
     IsOpen: Observable.Observable<boolean>?,
     ShouldAnimate: boolean?,
-    Image: string?,
-    ImageColor3: any?,
-    Text: string?,
-    TextSize: number?,
-    StrokeColor: Color3?,
+    GetScale: ((isPressed: Observable.Observable<boolean>) -> Observable.Observable<number>)?,
+    Image: ComponentTypes.Prop<string>?,
+    ImageColor3: ComponentTypes.Prop<Color3>?,
+    ImageTransparency: ComponentTypes.Prop<number>?,
+    ScaleType: ComponentTypes.Prop<Enum.ScaleType>?,
+    Text: ComponentTypes.Prop<string>?,
+    TextSize: ComponentTypes.Prop<number>?,
+    StrokeColor: ComponentTypes.Prop<Color3>?,
     Children: { any }?,
     OnPressed: (...any) -> ...any,
     OnHovered: ((buttonInstance: GuiButton) -> ())?,
     OnUnhovered: ((buttonInstance: GuiButton) -> ())?,
     OnDestroyed: (() -> ())?,
-    Size: UDim2?,
-    Position: UDim2?,
-    AnchorPoint: Vector2?,
-    ZIndex: number?,
-    LayoutOrder: number?,
-    Visible: any?,
-    Parent: any?,
+    Size: ComponentTypes.Prop<UDim2>?,
+    Position: ComponentTypes.Prop<UDim2>?,
+    AnchorPoint: ComponentTypes.Prop<Vector2>?,
+    ZIndex: ComponentTypes.Prop<number>?,
+    LayoutOrder: ComponentTypes.Prop<number>?,
+    Visible: ComponentTypes.Prop<boolean>?,
+    Parent: ComponentTypes.Prop<Instance>?,
 }
 type ModuleData = {}
 

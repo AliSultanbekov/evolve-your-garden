@@ -28,7 +28,7 @@ local ItemTooltipComponent = function(props: Props)
     return TooltipShellComponent({
         Item = props.Item,
         Position = props.Position,
-        AnchorPoint = Vector2.new(0, 0.5),
+        AnchorPoint = Vector2.new(0, 0),
         PaddingBottom = 3,
         TopImage = "rbxassetid://138919883170578",
         RaysImage = "rbxassetid://78990487573441",

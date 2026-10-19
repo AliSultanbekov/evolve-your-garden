@@ -27,7 +27,7 @@ local ButtonsComponent = function(props: Props)
         Name = "Buttons";
         ApplyDeviceScale = true;
         Position = UDim2.fromScale(0, 0.5);
-        Size = UDim2.fromOffset(206, 315);
+        Size = UDim2.fromOffset(210, 310);
         AnchorPoint = Vector2.new(0, 0.5);
         BackgroundTransparency = 1;
         Children = {
@@ -36,12 +36,12 @@ local ButtonsComponent = function(props: Props)
             };
             Blend.New "UIGridLayout" {
                 CellPadding = UDim2.fromOffset(5, 5);
-                CellSize = UDim2.fromOffset(98, 102);
+                CellSize = UDim2.fromOffset(100, 100);
                 FillDirection = Enum.FillDirection.Horizontal;
             };
             GenericButtonComponent({
                 Name = "Encyclopedia";
-                Size = UDim2.fromOffset(98, 102);
+                Size = UDim2.fromOffset(100, 100);
                 AnchorPoint = Vector2.new(0.5, 0.5);
                 BackgroundTransparency = 1;
                 Image = "rbxassetid://135173861387246";
@@ -51,7 +51,7 @@ local ButtonsComponent = function(props: Props)
             });
             GenericButtonComponent({
                 Name = "Inventory";
-                Size = UDim2.fromOffset(98, 102);
+                Size = UDim2.fromOffset(100, 100);
                 AnchorPoint = Vector2.new(0.5, 0.5);
                 BackgroundTransparency = 1;
                 Image = "rbxassetid://135173861387246";

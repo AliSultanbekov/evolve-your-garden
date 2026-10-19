@@ -194,7 +194,8 @@ function GardenUIClient._SetupTooltip(self: Module)
                         end
 
                         local WorldPoint = SlotModel:GetPivot():PointToWorldSpace(Vector3.new(0, 5, 0))
-                        local ScreenPoint = workspace.CurrentCamera:WorldToScreenPoint(WorldPoint)
+                        -- Viewport variant matches the IgnoreGuiInset "UIs" screen.
+                        local ScreenPoint = workspace.CurrentCamera:WorldToViewportPoint(WorldPoint)
 
                         return UDim2.fromOffset(ScreenPoint.X + 30, ScreenPoint.Y) :: any
                     end) :: any,
@@ -204,9 +205,9 @@ function GardenUIClient._SetupTooltip(self: Module)
             if data.HoveredSlotInfo then
                 return self._MouseServiceClient:ObserveMousePosition():Pipe({
                     Rx.map(function(mouse: Vector2)
-                        local Offset = mouse - GuiService:GetGuiInset()
+                        local Position = mouse + GuiService:GetGuiInset()
 
-                        return UDim2.fromOffset(Offset.X + 30, Offset.Y)
+                        return UDim2.fromOffset(Position.X + 15, Position.Y + 15)
                     end) :: any,
                 }) :: any
             end
@@ -256,7 +257,9 @@ function GardenUIClient._SetupPlantPickerTooltip(self: Module)
             Item = self._HoveredItem:Observe(),
             Position = self._MouseServiceClient:ObserveMousePosition():Pipe({
                 Rx.map(function(position: Vector2)
-                    return UDim2.fromOffset(position.X, position.Y) + UDim2.fromOffset(30, 0)
+                    local Offset = position + GuiService:GetGuiInset()
+
+                    return UDim2.fromOffset(Offset.X + 15, Offset.Y + 15)
                 end) :: any
             }) :: any,
         })

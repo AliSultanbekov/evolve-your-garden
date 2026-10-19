@@ -195,8 +195,11 @@ function ToolbarServiceServer.Start(self: Module)
         local Maid, Player = brio:ToMaidAndValue()
         local UserId = PlayerToUserId(Player)
 
+        self._PlayersItemIdToSlotId[UserId] = {}
+
         Maid:Add(function()
             self._PlayersEquippedSlotIds[UserId] = nil
+            self._PlayersItemIdToSlotId[UserId] = nil
         end)
 
         Maid:Add(self._DataServiceServer:OnDataReady(Player, function(Data)

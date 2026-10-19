@@ -60,7 +60,8 @@ local BillboardComponent = function(props: Props)
                         return
                     end
 
-                    subscription:Fire(Camera:WorldToScreenPoint(WorldPositon))
+                    -- Viewport variant matches the IgnoreGuiInset "UIs" screen.
+                    subscription:Fire(Camera:WorldToViewportPoint(WorldPositon))
                 end))
                 return MaidObject
             end)

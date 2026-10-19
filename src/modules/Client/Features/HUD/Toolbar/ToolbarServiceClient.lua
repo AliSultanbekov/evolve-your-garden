@@ -104,6 +104,25 @@ function ToolbarServiceClient.ObserveEquippedItemId(self: Module)
     }) :: any
 end
 
+function ToolbarServiceClient.ObserveSlotItem(self: Module, slotId: ToolbarTypesShared.SlotId)
+    local Slot = self._Slots[slotId]
+
+    if not Slot then
+        return Rx.of(nil) :: any
+    end
+
+    return Slot:Observe():Pipe({
+        Rx.switchMap(function(itemId: ItemTypes.ItemId?)
+            if not itemId then
+                return Rx.of(nil) :: any
+            end
+
+            return self._InventoryServiceClient:GetItems():ObserveAtKey(itemId)
+        end) :: any,
+        Rx.distinct() :: any,
+    }) :: any
+end
+
 function ToolbarServiceClient.ObserveEquippedSlotId(self: Module)
     return self._EquippedSlotId:Observe()
 end

@@ -3,6 +3,7 @@
 ]=]
 
 -- [ Roblox Services ] --
+local GuiService = game:GetService("GuiService")
 
 -- [ Require ] --
 local require = require(script.Parent.loader).load(script) :: typeof(require)
@@ -75,7 +76,9 @@ function MerchantUIClient.SetupItemTooltip(self: Module)
             if data.IsSelected and data.SelectedPosition then
                 return data.SelectedPosition + UDim2.fromOffset(80, 60)
             else
-                return UDim2.fromOffset(data.MousePosition.X + 30, data.MousePosition.Y)
+                local Position = data.MousePosition + GuiService:GetGuiInset()
+
+                return UDim2.fromOffset(Position.X + 15, Position.Y + 15)
             end
         end) :: any,
         Rx.distinct() :: any
