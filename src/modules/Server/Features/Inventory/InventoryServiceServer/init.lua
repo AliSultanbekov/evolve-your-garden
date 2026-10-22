@@ -266,6 +266,10 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
 
     if next(RemovedItemIds) then
         self._InventoryNetworkServer:ItemsRemoved(player, { ItemIds = RemovedItemIds })
+
+        for _, itemId in RemovedItemIds do
+            self.Signals.ItemRemoved:Fire(player, itemId)
+        end
     end
 
     if next(UpdatedItems) then

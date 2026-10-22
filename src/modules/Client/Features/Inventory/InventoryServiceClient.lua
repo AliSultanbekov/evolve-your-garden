@@ -18,6 +18,7 @@ local InventoryConfigClient = require("InventoryConfigClient")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local ItemConfig = require("ItemConfig")
 local Signal = require("Signal")
+local ValueObject = require("ValueObject")
 
 -- [ Constants ] --
 
@@ -38,6 +39,7 @@ type ModuleData = {
     _Items: ReactiveItemTypes.ReactiveItems,
     _TabToItems: InventoryTypesClient.TabToItems,
     _CategoryToItems: InventoryTypesClient.CategoryToItems,
+    _SelectedItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>,
 
     Signals: Signals,
 }
@@ -72,6 +74,37 @@ function InventoryServiceClient._AddItems(self: Module, items: { [any]: ItemType
     end
 end
 
+function InventoryServiceClient._RemoveItems(self: Module, itemIds: { ItemTypes.ItemId })
+    for _, itemId in itemIds do
+        local Item = self._Items:Get(itemId)
+
+        if not Item then
+            continue
+        end
+
+        local Tab = InventoryConfigClient.CategoryToTab[Item.Category]
+
+        self._Items:Remove(itemId)
+
+        if self._TabToItems[Tab] then
+            self._TabToItems[Tab]:Remove(itemId)
+        end
+
+        if self._CategoryToItems[Item.Category] then
+            self._CategoryToItems[Item.Category]:Remove(itemId)
+        end
+
+        -- Selection may never point at an item that left the inventory.
+        local SelectedItem = self._SelectedItem.Value
+
+        if SelectedItem and SelectedItem.Id == itemId then
+            self._SelectedItem.Value = nil
+        end
+
+        self.Signals.ItemRemoved:Fire(itemId)
+    end
+end
+
 -- [ Public Functions ] --
 function InventoryServiceClient.UseItemAction(self: Module, item: ReactiveItemTypes.ReactiveItem, action: string, params: { [string]: any }?)
     self._InventoryNetworkClient:UseAction({
@@ -97,6 +130,18 @@ function InventoryServiceClient.GetItems(self: Module)
     return self._Items
 end
 
+function InventoryServiceClient.SetSelectedItem(self: Module, item: ReactiveItemTypes.ReactiveItem?)
+    self._SelectedItem.Value = item
+end
+
+function InventoryServiceClient.GetSelectedItem(self: Module)
+    return self._SelectedItem.Value
+end
+
+function InventoryServiceClient.ObserveSelectedItem(self: Module)
+    return self._SelectedItem:Observe()
+end
+
 function InventoryServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     if self._ServiceBag ~= nil then
         error("Service already initialized")
@@ -107,6 +152,7 @@ function InventoryServiceClient.Init(self: Module, serviceBag: ServiceBag.Servic
     self._Items = ObservableMap.new()
     self._TabToItems = {}
     self._CategoryToItems = {}
+    self._SelectedItem = ValueObject.new(nil)
 
     self.Signals = {
         ItemAdded = Signal.new(),
@@ -140,27 +186,7 @@ function InventoryServiceClient.Start(self: Module)
     end)
 
     self._InventoryNetworkClient.RemoteEvents.ItemsRemoved:Connect(function(packet: InventoryTypesShared.ItemsRemovedRemotePacket)
-        for _, itemId in packet.ItemIds do
-            local Item = self._Items:Get(itemId)
-
-            if not Item then
-                continue
-            end
-
-            local Tab = InventoryConfigClient.CategoryToTab[Item.Category]
-
-            self._Items:Remove(itemId)
-
-            if self._TabToItems[Tab] then
-                self._TabToItems[Tab]:Remove(itemId)
-            end
-
-            if self._CategoryToItems[Item.Category] then
-                self._CategoryToItems[Item.Category]:Remove(itemId)
-            end
-
-            self.Signals.ItemRemoved:Fire(itemId)
-        end
+        self:_RemoveItems(packet.ItemIds)
     end)
 end
 

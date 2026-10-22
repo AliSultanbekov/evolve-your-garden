@@ -20,6 +20,7 @@ local Blend = require("Blend")
 local Observable = require("Observable")
 local ValueObject = require("ValueObject")
 local ComponentTypes = require("ComponentTypes")
+local SpringAnimationPresets = require("SpringAnimationPresets")
 
 -- [ Components ] --
 local GenericButtonComponent = require("GenericButtonComponent")
@@ -46,8 +47,8 @@ local AnimatedButtonComponent = function(props: Props)
             Blend.Computed(IsPressed, function(pressed: boolean)
                 return if pressed and ShouldAnimate then 0.9 else 1
             end),
-            35,
-            0.35
+            SpringAnimationPresets.ButtonPress.Speed,
+            SpringAnimationPresets.ButtonPress.Damper
         )
     end
 

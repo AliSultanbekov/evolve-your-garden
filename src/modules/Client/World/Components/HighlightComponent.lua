@@ -9,6 +9,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
+local SpringAnimationPresets = require("SpringAnimationPresets")
 local ComponentTypes = require("ComponentTypes")
 local Rx = require("Rx")
 
@@ -30,8 +31,8 @@ local HighlightComponent = function(props: Props)
                 return 1
             end
         end),
-        10,
-        1.5
+        SpringAnimationPresets.WorldFade.Speed,
+        SpringAnimationPresets.WorldFade.Damper
     );
 
     local HeldAdornee = Rx.combineLatest({

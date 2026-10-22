@@ -13,6 +13,7 @@ local require = require(script:FindFirstAncestor("Components").loader).load(scri
 
 -- [ Imports ] --
 local Blend = require("Blend")
+local SpringAnimationPresets = require("SpringAnimationPresets")
 local Rx = require("Rx")
 local Observable = require("Observable")
 local MerchantConfig = require("MerchantConfig")
@@ -64,8 +65,8 @@ local RefreshTime = function(props: Props)
                     return INACTIVE_POSITION
                 end
             end),
-            20,
-            0.8
+            SpringAnimationPresets.SlideBouncy.Speed,
+            SpringAnimationPresets.SlideBouncy.Damper
         );
         Size = UDim2.fromOffset(183, 99);
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);

@@ -27,6 +27,7 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _ToolbarServiceClient: typeof(require("ToolbarServiceClient")),
     _UIServiceClient: typeof(require("UIServiceClient")),
+    _InventoryServiceClient: typeof(require("InventoryServiceClient")),
     _Maid: Maid.Maid,
 }
 
@@ -43,6 +44,7 @@ function ToolbarUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._ToolbarServiceClient = self._ServiceBag:GetService(require("ToolbarServiceClient"))
     self._UIServiceClient = self._ServiceBag:GetService(require("UIServiceClient"))
+    self._InventoryServiceClient = self._ServiceBag:GetService(require("InventoryServiceClient"))
     self._Maid = Maid.new()
 
     self._UIServiceClient:RegisterUI({
@@ -58,12 +60,32 @@ function ToolbarUIClient.Start(self: Module)
     self._Maid:Add(self._UIServiceClient:MountToScreen("UIs", function() return {
         ToolbarComponent({
             IsOpen = self._UIServiceClient:ObserveUI("Toolbar"),
+            IsInventoryOpen = self._UIServiceClient:ObserveUI("Inventory"),
+            InventorySelectedItem = self._InventoryServiceClient:ObserveSelectedItem(),
             ObserveSlotItem = function(slotId: ToolbarTypesShared.SlotId)
                 return self._ToolbarServiceClient:ObserveSlotItem(slotId)
             end,
             ObserveEquippedSlotId = self._ToolbarServiceClient:ObserveEquippedSlotId(),
             OnSlotPressed = function(slotId: ToolbarTypesShared.SlotId)
-                self._ToolbarServiceClient:EquipSlot(slotId)
+                if self._UIServiceClient:GetUIState("Inventory") then
+                    local SelectedItem = self._InventoryServiceClient:GetSelectedItem()
+
+                    if self._ToolbarServiceClient:GetSlot(slotId).Value then
+                        if SelectedItem then
+                            return
+                        end
+
+                        self._ToolbarServiceClient:UnbindSlot(slotId)
+                    else
+                        if not SelectedItem then
+                            return
+                        end
+
+                        self._ToolbarServiceClient:BindSlot(slotId, SelectedItem.Id)
+                    end
+                else
+                    self._ToolbarServiceClient:EquipSlot(slotId)
+                end
             end,
         })
     } end))

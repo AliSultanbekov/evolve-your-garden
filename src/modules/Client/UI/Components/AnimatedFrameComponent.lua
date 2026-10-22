@@ -9,6 +9,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local Blend = require("Blend")
+local SpringAnimationPresets = require("SpringAnimationPresets")
 local Observable = require("Observable")
 local ComponentTypes = require("ComponentTypes")
 
@@ -28,10 +29,10 @@ local AnimatedFrameComponent = function(props: Props)
             return if open then 1 else 0
         end),
         Blend.Computed(props.IsOpen, function(open: boolean)
-            return if open then 35 else 50
+            return if open then SpringAnimationPresets.WindowOpen.Speed else SpringAnimationPresets.WindowClose.Speed
         end),
         Blend.Computed(props.IsOpen, function(open: boolean)
-            return if open then 0.4 else 1
+            return if open then SpringAnimationPresets.WindowOpen.Damper else SpringAnimationPresets.WindowClose.Damper
         end)
     )
 

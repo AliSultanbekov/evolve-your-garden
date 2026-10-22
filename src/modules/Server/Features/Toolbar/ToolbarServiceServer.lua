@@ -203,7 +203,19 @@ function ToolbarServiceServer.Start(self: Module)
         end)
 
         Maid:Add(self._DataServiceServer:OnDataReady(Player, function(Data)
-            ReconcileUtil:Reconcile(Data.Toolbar, TOOLBAR_TEMPLATE)
+            local ToolbarData = Data.Toolbar 
+
+            ReconcileUtil:Reconcile(ToolbarData, TOOLBAR_TEMPLATE)
+
+            for slotId, itemId: ItemTypes.ItemId in ToolbarData do
+                local SlotIds = {}
+
+                if not self._InventoryServiceServer:GetItem(Player, itemId) then
+                    table.insert(SlotIds, slotId)
+                end
+
+                self:UnbindSlots(Player, SlotIds)
+            end
 
             return
         end))

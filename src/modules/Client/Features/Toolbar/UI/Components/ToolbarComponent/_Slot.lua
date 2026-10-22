@@ -14,12 +14,12 @@ local require = require(script:FindFirstAncestor("Components").loader).load(scri
 -- [ Imports ] --
 local Blend = require("Blend")
 local Rx = require("Rx")
-local ItemTypes = require("ItemTypes")
 local ItemConfig = require("ItemConfig")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local ToolbarTypesShared = require("ToolbarTypesShared")
+local SpringAnimationPresets = require("SpringAnimationPresets")
 local Observable = require("Observable")
-local ComponentTypes = require("ComponentTypes")
+local ValueObject = require("ValueObject")
 
 -- [ Components ] --
 local AnimatedButtonComponent = require("AnimatedButtonComponent")
@@ -31,6 +31,7 @@ local AnimatedButtonComponent = require("AnimatedButtonComponent")
 -- [ Module Table ] --
 local Slot = function(props: Props)
     local Item = props.ObserveItem()
+    local SlotHovered = ValueObject.new(false)
 
     local Icon = Item:Pipe({
         Rx.map(function(item: ReactiveItemTypes.ReactiveItem?)
@@ -46,6 +47,60 @@ local Slot = function(props: Props)
         Rx.map(function(equippedSlotId: ToolbarTypesShared.SlotId?)
             return equippedSlotId == props.SlotId
         end) :: any,
+    })
+
+    local IsRemovable = Rx.combineLatest({
+        IsInventoryOpen = props.IsInventoryOpen,
+        InventorySelectedItem = props.InventorySelectedItem,
+        SlotHovered = SlotHovered:Observe(),
+        Item = props.ObserveItem()
+    }):Pipe({
+        Rx.map(function(data: any)
+            if not data.IsInventoryOpen then
+                return false
+            end
+            
+            if data.InventorySelectedItem then
+                return false
+            end
+
+            if not data.SlotHovered then
+                return false
+            end
+
+            if not data.Item then
+                return false
+            end
+
+            return true
+        end) :: any
+    })
+
+    local IsAddable = Rx.combineLatest({
+        IsInventoryOpen = props.IsInventoryOpen,
+        InventorySelectedItem = props.InventorySelectedItem,
+        SlotHovered = SlotHovered:Observe(),
+        Item = props.ObserveItem()
+    }):Pipe({
+        Rx.map(function(data: any)
+            if not data.IsInventoryOpen then
+                return false
+            end
+            
+            if not data.InventorySelectedItem then
+                return false
+            end
+
+            if not data.SlotHovered then
+                return false
+            end
+
+            if data.Item then
+                return false
+            end
+
+            return true
+        end) :: any
     })
 
     return AnimatedButtonComponent({
@@ -69,14 +124,62 @@ local Slot = function(props: Props)
 
                     return if isEquipped then 1.1 else 1
                 end),
-                30,
-                0.55
+                SpringAnimationPresets.SlotPress.Speed,
+                SpringAnimationPresets.SlotPress.Damper
             )
         end;
         OnPressed = function()
             props.OnPressed(props.SlotId)
         end;
+        OnHovered = function()
+            SlotHovered.Value = true
+        end;
+        OnUnhovered = function()
+            SlotHovered.Value = false
+        end;
         Children = {
+            Blend.New "ImageLabel" {
+                Name = "Add";
+                AnchorPoint = Vector2.new(0.5, 0.5);
+                Position = UDim2.fromScale(0.5, 0.5);
+                Size = UDim2.fromOffset(67, 67);
+                BackgroundTransparency = 1;
+                Image = "rbxassetid://114621846565655";
+                ScaleType = Enum.ScaleType.Fit;
+                ZIndex = 3;
+                [Blend.Children] = {
+                    Blend.New "UIScale" {
+                        Scale = Blend.Spring(
+                            Blend.Computed(IsAddable, function(isAddable: boolean)
+                                return if isAddable == true then 1 else 0 
+                            end),
+                            SpringAnimationPresets.Slide.Speed,
+                            SpringAnimationPresets.Slide.Damper
+                        )
+                    }
+                }
+            };
+            Blend.New "ImageLabel" {
+                Name = "Remove";
+                AnchorPoint = Vector2.new(0.5, 0.5);
+                Position = UDim2.fromScale(0.5, 0.5);
+                Size = UDim2.fromOffset(67, 67);
+                BackgroundTransparency = 1;
+                Image = "rbxassetid://84598310116260";
+                ScaleType = Enum.ScaleType.Fit;
+                ZIndex = 3;
+                [Blend.Children] = {
+                    Blend.New "UIScale" {
+                        Scale = Blend.Spring(
+                            Blend.Computed(IsRemovable, function(isRemovable: boolean)
+                                return if isRemovable == true then 1 else 0 
+                            end),
+                            30,
+                            SpringAnimationPresets.Slide.Damper
+                        )
+                    }
+                }
+            };
             Blend.New "ImageLabel" {
                 Name = "Icon";
                 AnchorPoint = Vector2.new(0.5, 0.5);
@@ -115,6 +218,8 @@ type Props = {
     Size: number,
     ObserveItem: () -> Observable.Observable<ReactiveItemTypes.ReactiveItem?>,
     ObserveEquippedSlotId: Observable.Observable<ToolbarTypesShared.SlotId?>,
+    IsInventoryOpen: Observable.Observable<boolean>,
+    InventorySelectedItem: Observable.Observable<ReactiveItemTypes.ReactiveItem?>,
     OnPressed: (slotId: ToolbarTypesShared.SlotId) -> (),
 }
 type ModuleData = {}

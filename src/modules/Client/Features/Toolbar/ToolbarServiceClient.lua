@@ -20,6 +20,8 @@ local ItemTypes = require("ItemTypes")
 local ToolbarTypesShared = require("ToolbarTypesShared")
 local ToolbarTypesClient = require("ToolbarTypesClient")
 local ToolbarConfig = require("ToolbarConfig")
+local Observable = require("Observable")
+local ReactiveItemTypes = require("ReactiveItemTypes")
 
 -- [ Constants ] --
 
@@ -78,7 +80,7 @@ function ToolbarServiceClient._SetSlotItemId(self: Module, slotId: ToolbarTypesS
 end
 
 -- [ Public Functions ] --
-function ToolbarServiceClient.ObserveEquippedItem(self: Module)
+function ToolbarServiceClient.ObserveEquippedItem(self: Module): Observable.Observable<ReactiveItemTypes.ReactiveItem>
     return self:ObserveEquippedItemId():Pipe({
         Rx.switchMap(function(itemId: ItemTypes.ItemId?)
             if not itemId then
@@ -88,7 +90,7 @@ function ToolbarServiceClient.ObserveEquippedItem(self: Module)
             return self._InventoryServiceClient:GetItems():ObserveAtKey(itemId)
         end) :: any,
         Rx.distinct() :: any,
-    }) :: any
+    })
 end
 
 function ToolbarServiceClient.ObserveEquippedItemId(self: Module)
@@ -101,7 +103,7 @@ function ToolbarServiceClient.ObserveEquippedItemId(self: Module)
             return self._Slots[slotId]:Observe()
         end) :: any,
         Rx.distinct() :: any,
-    }) :: any
+    })
 end
 
 function ToolbarServiceClient.ObserveSlotItem(self: Module, slotId: ToolbarTypesShared.SlotId)

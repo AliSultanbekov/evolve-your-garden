@@ -13,6 +13,7 @@ local require = require(script:FindFirstAncestor("Components").loader).load(scri
 
 -- [ Imports ] --
 local Blend = require("Blend")
+local SpringAnimationPresets = require("SpringAnimationPresets")
 local Observable = require("Observable")
 
 -- [ Components ] --
@@ -35,8 +36,8 @@ local SearchBar = function(props: Props)
                     return INACTIVE_POSITION
                 end
             end),
-            20,
-            1
+            SpringAnimationPresets.Slide.Speed,
+            SpringAnimationPresets.Slide.Damper
         );
         Size = UDim2.fromOffset(356, 91);
         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
