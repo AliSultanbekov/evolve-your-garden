@@ -16,6 +16,7 @@ local RxCharacterUtils = require("RxCharacterUtils")
 local Rx = require("Rx")
 local AssetProvider = require("AssetProvider")
 local ToolsTypesShared = require("ToolsTypesShared")
+local ToolsConfig = require("ToolsConfig")
 
 local TestBehavior = require(script.Parent.Behaviors._TestBehavior)
 
@@ -31,13 +32,16 @@ type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _ToolbarServiceClient: typeof(require("ToolbarServiceClient")),
     _InventoryServiceClient: typeof(require("InventoryServiceClient")),
+    _ToolServiceClient: typeof(require("ToolServiceClient")),
     _Maid: Maid.Maid,
     _ItemIdToToolState: {
         [ItemTypes.ItemId]: ToolsTypesShared.ToolState
     },
     _ToolBehaviors: {
         [string]: TestBehavior.Module
-    }
+    },
+    _EquippedToolItem: ReactiveItemTypes.ReactiveItem?,
+    _LastActivated: number,
 }
 
 export type Module = typeof(ToolsWorldClient) & ModuleData
@@ -53,28 +57,80 @@ function ToolsWorldClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._ToolbarServiceClient = self._ServiceBag:GetService(require("ToolbarServiceClient"))
     self._InventoryServiceClient = self._ServiceBag:GetService(require("InventoryServiceClient"))
+    self._ToolServiceClient = self._ServiceBag:GetService(require("ToolServiceClient"))
     self._Maid = Maid.new()
     self._ItemIdToToolState = {}
     self._ToolBehaviors = {
         ["TestBehavior"] = TestBehavior
     }
+    self._EquippedToolItem = nil
+    self._LastActivated = 0
 end
 
 function ToolsWorldClient.Start(self: Module)
     local BehaviorMaid = Maid.new()
 
-    self._ToolbarServiceClient:ObserveEquippedItem():Subscribe(function(item: ReactiveItemTypes.ReactiveItem)
-        BehaviorMaid:DoCleaning()
+    self._ToolbarServiceClient.Signals.ItemEquipped:Connect(function(itemId: ItemTypes.ItemId)
+        local Item = self._InventoryServiceClient:GetItem(itemId)
 
-        if not item then
+        if not Item then
             return
         end
 
         local Behavior = self._ToolBehaviors["TestBehavior"]
 
+        self._EquippedToolItem = Item
+
         Behavior:OnEquipped(BehaviorMaid, {
-            State = self._ItemIdToToolState[item.Id],
-            Item = item
+            State = self._ItemIdToToolState[itemId],
+            Item = Item
+        })
+    end)
+
+    self._ToolbarServiceClient.Signals.ItemUnequipped:Connect(function()
+        local Item = self._EquippedToolItem
+
+        if not Item then
+            return
+        end
+
+        local Behavior = self._ToolBehaviors["TestBehavior"]
+
+        Behavior:OnUnequipped({
+            State = self._ItemIdToToolState[Item.Id],
+            Item = Item
+        })
+
+        self._EquippedToolItem = nil
+        self._LastActivated = 0
+
+        BehaviorMaid:DoCleaning()
+    end)
+
+    self._ToolServiceClient.Signals.ToolActivated:Connect(function()
+        local Item = self._EquippedToolItem
+
+        if not Item then
+            return
+        end
+
+        local Behavior = self._ToolBehaviors["TestBehavior"]
+
+        if Item.Category ~= "Tool" then
+            return 
+        end
+
+        local ToolConfig = ToolsConfig.Tools[Item.Name]
+
+        if self._LastActivated + ToolConfig.Cooldown >= os.clock() then
+            return
+        end
+
+        self._LastActivated = os.clock()
+
+        Behavior:OnUnequipped({
+            State = self._ItemIdToToolState[Item.Id],
+            Item = Item
         })
     end)
 

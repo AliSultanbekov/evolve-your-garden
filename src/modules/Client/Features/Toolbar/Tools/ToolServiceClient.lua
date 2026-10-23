@@ -10,6 +10,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
 local Signal = require("Signal")
+local ItemTypes = require("ItemTypes")
 
 -- [ Constants ] --
 
@@ -20,12 +21,13 @@ local ToolServiceClient = {}
 
 -- [ Types ] --
 export type Signals = {
-    ToolActivated: Signal.Signal<>
+    ToolActivated: Signal.Signal<ItemTypes.ItemId>
 }
 
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
-    Signals: Signals
+    _ToolbarServiceClient: typeof(require("ToolbarServiceClient")),
+    Signals: Signals,
 }
 
 export type Module = typeof(ToolServiceClient) & ModuleData
@@ -33,15 +35,26 @@ export type Module = typeof(ToolServiceClient) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
+function ToolServiceClient.ActivateTool(self: Module)
+    local EquippedItem = self._ToolbarServiceClient:GetEquippedSlotItem()
+
+    if not EquippedItem then
+        return
+    end
+    
+    self.Signals.ToolActivated:Fire(EquippedItem.Id)
+end
+
 function ToolServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     if self._ServiceBag ~= nil then
         error("Service already initialized")
     end
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
+    self._ToolbarServiceClient = self._ServiceBag:GetService(require("ToolbarServiceClient"))
     self.Signals = {
         ToolActivated = Signal.new()
-    }
+    } :: any
 end
 
 function ToolServiceClient.Start(self: Module)

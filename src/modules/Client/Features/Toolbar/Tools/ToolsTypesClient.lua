@@ -16,7 +16,7 @@ local ToolsTypesShared = require("ToolsTypesShared")
 -- [ Variables ] --
 
 -- [ Types ] --
-export type BehaviorOnEquippedContext = {
+export type BehaviorContext = {
     State: ToolsTypesShared.ToolState,
     Item: ReactiveItemTypes.ReactiveItem
 }

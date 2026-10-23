@@ -134,8 +134,35 @@ function ToolbarServiceClient.ObserveSlotItem(self: Module, slotId: ToolbarTypes
     }) :: any
 end
 
+function ToolbarServiceClient.GetEquippedSlotItem(self: Module): ReactiveItemTypes.ReactiveItem?
+    local SlotId = self:GetEquippedSlotId()
+
+    if not SlotId then
+        return
+    end
+
+    local Item = self:GetSlotItem(SlotId)
+
+    return Item
+end
+
+function ToolbarServiceClient.GetSlotItem(self: Module, slotId: ToolbarTypesShared.SlotId): ReactiveItemTypes.ReactiveItem?
+    local Slot = self._Slots[slotId]
+    local ItemId = Slot.Value
+
+    if not ItemId then
+        return
+    end
+
+    return self._InventoryServiceClient:GetItem(ItemId)
+end
+
 function ToolbarServiceClient.ObserveEquippedSlotId(self: Module)
     return self._EquippedSlotId:Observe()
+end
+
+function ToolbarServiceClient.GetEquippedSlotId(self: Module): ToolbarTypesShared.SlotId?
+    return self._EquippedSlotId.Value
 end
 
 function ToolbarServiceClient.GetSlot(self: Module, slotId: ToolbarTypesShared.SlotId)

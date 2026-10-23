@@ -196,7 +196,8 @@ function ToolbarServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceB
     self._PlayersItemIdToSlotId = {}
     self._PlayersEquippedSlotIds = {}
     self.Signals = {
-        ItemEquipped = Signal.new()
+        ItemEquipped = Signal.new(),
+        ItemUnequipped = Signal.new(),
     } :: any
 end
 
