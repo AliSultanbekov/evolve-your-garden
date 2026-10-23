@@ -19,11 +19,12 @@ local ToolsConfig = {}
 
 -- [ Private Functions ] --
 function ToolsConfig._Init(self: Module)
-    ToolsConfig.Tools = {
+    self.Tools = {
         ["Watering Can"] = {
             Name = "Watering Can",
             Icon = "rbxassetid://",
             Rarity = "Common",
+            Cooldown = 10
         },
     }
 end
@@ -36,6 +37,7 @@ type ModuleData = {
         Name: string,
         Icon: string,
         Rarity: ItemTypes.Rarity,
+        Cooldown: number,
         MaxDurability: number?,
     }},
 }

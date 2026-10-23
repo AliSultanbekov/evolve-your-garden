@@ -9,11 +9,15 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
 local ServiceBag = require("ServiceBag")
+local ItemTypes = require("ItemTypes")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local Maid = require("Maid")
 local RxCharacterUtils = require("RxCharacterUtils")
 local Rx = require("Rx")
 local AssetProvider = require("AssetProvider")
+local ToolsTypesShared = require("ToolsTypesShared")
+
+local TestBehavior = require(script.Parent.Behaviors._TestBehavior)
 
 -- [ Constants ] --
 
@@ -26,7 +30,14 @@ local ToolsWorldClient = {}
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _ToolbarServiceClient: typeof(require("ToolbarServiceClient")),
+    _InventoryServiceClient: typeof(require("InventoryServiceClient")),
     _Maid: Maid.Maid,
+    _ItemIdToToolState: {
+        [ItemTypes.ItemId]: ToolsTypesShared.ToolState
+    },
+    _ToolBehaviors: {
+        [string]: TestBehavior.Module
+    }
 }
 
 export type Module = typeof(ToolsWorldClient) & ModuleData
@@ -41,13 +52,43 @@ function ToolsWorldClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._ToolbarServiceClient = self._ServiceBag:GetService(require("ToolbarServiceClient"))
+    self._InventoryServiceClient = self._ServiceBag:GetService(require("InventoryServiceClient"))
     self._Maid = Maid.new()
+    self._ItemIdToToolState = {}
+    self._ToolBehaviors = {
+        ["TestBehavior"] = TestBehavior
+    }
 end
 
 function ToolsWorldClient.Start(self: Module)
+    local BehaviorMaid = Maid.new()
+
+    self._ToolbarServiceClient:ObserveEquippedItem():Subscribe(function(item: ReactiveItemTypes.ReactiveItem)
+        BehaviorMaid:DoCleaning()
+
+        if not item then
+            return
+        end
+
+        local Behavior = self._ToolBehaviors["TestBehavior"]
+
+        Behavior:OnEquipped(BehaviorMaid, {
+            State = self._ItemIdToToolState[item.Id],
+            Item = item
+        })
+    end)
+
+    self._Maid:Add(self._InventoryServiceClient.Signals.ItemAdded:Connect(function(item: ReactiveItemTypes.ReactiveItem)
+        self._ItemIdToToolState[item.Id] = {}
+    end))
+
+    self._Maid:Add(self._InventoryServiceClient.Signals.ItemRemoved:Connect(function(itemId: ItemTypes.ItemId)
+        self._ItemIdToToolState[itemId] = nil
+    end))
+
     local EquipMaid = Maid.new()
 
-    Rx.combineLatest({
+    self._Maid:Add(Rx.combineLatest({
         Character = RxCharacterUtils.observeLocalPlayerCharacter(),
         Item = self._ToolbarServiceClient:ObserveEquippedItem(),
     }):Subscribe(function(data: any)
@@ -77,7 +118,7 @@ function ToolsWorldClient.Start(self: Module)
         RigidConstraint.Attachment1 = ItemGripAttachment
         RigidConstraint.Parent = ItemEquippableModel
         ItemEquippableModel.Parent = Character
-    end)
+    end))
 end
 
 return ToolsWorldClient :: Module

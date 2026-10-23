@@ -19,8 +19,11 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local ImagesConfig = {
-    PlantHarvest = {
+local ImagesConfig = {}
+
+-- [ Private Functions ] --
+function ImagesConfig._Init(self: Module)
+    self.PlantHarvest = {
         RarityImages = {
             Celestial = "rbxassetid://72726144214075",
             Mythic = "rbxassetid://128006382351157",
@@ -30,8 +33,8 @@ local ImagesConfig = {
             Uncommon = "rbxassetid://91849170946744",
             Common = "rbxassetid://125015844024414",
         }
-    },
-    Inventory = {
+    }
+    self.Inventory = {
         RarityImages = {
             Celestial = "rbxassetid://114970135748413",
             Mythic = "rbxassetid://137412519941453",
@@ -41,8 +44,8 @@ local ImagesConfig = {
             Uncommon = "rbxassetid://118493569296859",
             Common = "rbxassetid://109018260063077",
         }
-    },
-    PackStore = {
+    }
+    self.PackStore = {
         Banners = {
             Normal = "rbxassetid://98894193619155",
             Special = "rbxassetid://95003231122217"
@@ -61,8 +64,8 @@ local ImagesConfig = {
             Mythic = "rbxassetid://76170367246352",
             Legendary = "rbxassetid://130389065348663",
         }
-    },
-    Encyclopedia = {
+    }
+    self.Encyclopedia = {
         PlantCardBackgrounds = {
             Celestial = "rbxassetid://134952530337284",
             Mythic = "rbxassetid://107370186688137",
@@ -74,15 +77,32 @@ local ImagesConfig = {
             Undiscovered = "rbxassetid://130038073528754"
         }
     }
-}
+end
+
+-- [ Public Functions ] --
 
 -- [ Types ] --
-type ModuleData = {}
+type Images = { [string]: string }
+
+type ModuleData = {
+    PlantHarvest: {
+        RarityImages: Images,
+    },
+    Inventory: {
+        RarityImages: Images,
+    },
+    PackStore: {
+        Banners: Images,
+        RarityImages: Images,
+        RarityGlows: Images,
+    },
+    Encyclopedia: {
+        PlantCardBackgrounds: Images,
+    },
+}
 
 export type Module = typeof(ImagesConfig) & ModuleData
 
--- [ Private Functions ] --
-
--- [ Public Functions ] --
+(ImagesConfig :: any):_Init()
 
 return ImagesConfig :: Module

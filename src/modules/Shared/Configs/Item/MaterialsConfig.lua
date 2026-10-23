@@ -15,31 +15,34 @@ local ItemTypes = require("ItemTypes")
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local MaterialsConfig = {
-    Materials = {
+local MaterialsConfig = {}
+
+-- [ Private Functions ] --
+function MaterialsConfig._Init(self: Module)
+    self.Materials = {
         ["Fruit"] = {
             Name = "Fruit",
             Icon = "rbxassetid://115748294366089",
             Rarity = "Common"
         }
     }
-} :: {
-    Materials: {
-        [string]: {
-            Name: string,
-            Icon: string,
-            Rarity: ItemTypes.Rarity
-        }
-    }
-}
+end
+
+-- [ Public Functions ] --
 
 -- [ Types ] --
-type ModuleData = {}
+type MaterialEntry = {
+    Name: string,
+    Icon: string,
+    Rarity: ItemTypes.Rarity,
+}
+
+type ModuleData = {
+    Materials: { [string]: MaterialEntry },
+}
 
 export type Module = typeof(MaterialsConfig) & ModuleData
 
--- [ Private Functions ] --
-
--- [ Public Functions ] --
+(MaterialsConfig :: any):_Init()
 
 return MaterialsConfig :: Module

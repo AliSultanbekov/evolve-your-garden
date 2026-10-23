@@ -16,6 +16,7 @@ local SINGLETONS = {
     "service",
     "manager",
     "network",
+    "inputclient",
     "uiclient",
     "worldclient",
 }

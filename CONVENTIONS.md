@@ -28,6 +28,7 @@ When two names feel inconsistent, find which one broke the formula and fix that 
 |---|---|---|
 | Services | `<Domain>Service<Server\|Client>` | `StatsServiceServer`, `MerchantServiceClient` |
 | UI orchestrators | `<Domain>UIClient` | `InventoryUIClient` |
+| Input adapters | `<Domain>InputClient` — device-to-service adapter, stateless, mirror of NetworkClient: translates device input into service API calls, no decisions, no state | `ToolbarInputClient` |
 | Data getters | `Get<CollectionNoun>` | `GetItems`, `GetDiscoveredItems`, `GetStats` |
 | Client observables | `Observe<Noun>` | `ObserveMousePosition`, `ObserveHoveredModel` |
 | Replication packets | `<Noun><PastTenseVerb>` | `ItemsAdded`, `ItemsDiscovered`, `StatChanged` |

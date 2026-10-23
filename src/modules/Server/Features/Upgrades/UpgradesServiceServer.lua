@@ -21,7 +21,7 @@ local ReconcileUtil = require("ReconcileUtil")
 -- adding an upgrade there seeds old saves automatically.
 local UPGRADES_TEMPLATE = {}
 
-for upgradeName, _ in UpgradesConfig :: { [string]: any } do
+for upgradeName, _ in UpgradesConfig.Upgrades do
     UPGRADES_TEMPLATE[upgradeName] = 1
 end
 
@@ -49,7 +49,7 @@ function UpgradesServiceServer.GetUpgradeLevel(self: Module, player: Player, upg
 end
 
 function UpgradesServiceServer.PurchaseUpgrade(self: Module, player: Player, upgradeName: string)
-    local UpgradeConfig = UpgradesConfig[upgradeName]
+    local UpgradeConfig = UpgradesConfig.Upgrades[upgradeName]
 
     if not UpgradeConfig then
         return

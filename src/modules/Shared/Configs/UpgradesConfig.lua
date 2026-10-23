@@ -1,5 +1,5 @@
 --[=[
-    @class UpgradeConfig
+    @class UpgradesConfig
 ]=]
 
 -- [ Roblox Services ] --
@@ -14,29 +14,36 @@ local _require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local UpgradeConfig = {
-    ["Garden"] = {
-        Currency = "Coins",
-        MaxLevel = 10,
-        GetPrice = function(level: number): number
-            return 100 + (level * 50)
-        end
-    }
-} :: {
-    [string]: {
-        Currency: string,
-        MaxLevel: number,
-        GetPrice: (level: number) -> number
-    }
-}
-
--- [ Types ] --
-type ModuleData = {}
-
-export type Module = typeof(UpgradeConfig) & ModuleData
+local UpgradesConfig = {}
 
 -- [ Private Functions ] --
+function UpgradesConfig._Init(self: Module)
+    self.Upgrades = {
+        ["Garden"] = {
+            Currency = "Coins",
+            MaxLevel = 10,
+            GetPrice = function(level: number): number
+                return 100 + (level * 50)
+            end
+        }
+    }
+end
 
 -- [ Public Functions ] --
 
-return UpgradeConfig :: Module
+-- [ Types ] --
+type UpgradeEntry = {
+    Currency: string,
+    MaxLevel: number,
+    GetPrice: (level: number) -> number,
+}
+
+type ModuleData = {
+    Upgrades: { [string]: UpgradeEntry },
+}
+
+export type Module = typeof(UpgradesConfig) & ModuleData
+
+(UpgradesConfig :: any):_Init()
+
+return UpgradesConfig :: Module

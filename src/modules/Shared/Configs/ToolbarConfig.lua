@@ -5,40 +5,56 @@
 -- [ Roblox Services ] --
 
 -- [ Require ] --
-local _require = require(script.Parent.loader).load(script) :: typeof(require)
+local require = require(script.Parent.loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
+local ToolbarTypesShared = require("ToolbarTypesShared")
 
 -- [ Constants ] --
 
 -- [ Variables ] --
 
 -- [ Module Table ] --
--- Slot ids mirror the keyboard row: "1".."9" then "0" for the tenth slot.
--- SlotOrder is the one truth (display + keybind order); the SlotIds set is
--- derived from it for O(1) validation.
-local ToolbarConfig = {
-    SlotCount = 10,
-    SlotOrder = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" },
-    SlotIds = {},
-}
-
-for _, slotId in ToolbarConfig.SlotOrder do
-    ToolbarConfig.SlotIds[slotId] = true
-end
-
--- [ Types ] --
-type ModuleData = {}
-
-export type Module = typeof(ToolbarConfig) & ModuleData
+local ToolbarConfig = {}
 
 -- [ Private Functions ] --
+function ToolbarConfig._Init(self: Module)
+    self.SlotOrder = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" }
+    self.SlotCount = #self.SlotOrder
+    self.SlotIds = {}
+    self.KeyCodeToSlotId = {
+        [Enum.KeyCode.One] = "1",
+        [Enum.KeyCode.Two] = "2",
+        [Enum.KeyCode.Three] = "3",
+        [Enum.KeyCode.Four] = "4",
+        [Enum.KeyCode.Five] = "5",
+        [Enum.KeyCode.Six] = "6",
+        [Enum.KeyCode.Seven] = "7",
+        [Enum.KeyCode.Eight] = "8",
+        [Enum.KeyCode.Nine] = "9",
+        [Enum.KeyCode.Zero] = "0",
+    }
+
+    for _, slotId in self.SlotOrder do
+        self.SlotIds[slotId] = true
+    end
+end
 
 -- [ Public Functions ] --
--- Anything outside SlotIds is rejected at the server boundary so clients
--- can never grow Data.Toolbar past the real bar.
 function ToolbarConfig.IsValidSlotId(self: Module, slotId: string): boolean
     return self.SlotIds[slotId] == true
 end
+
+-- [ Types ] --
+type ModuleData = {
+    SlotOrder: { ToolbarTypesShared.SlotId },
+    SlotCount: number,
+    SlotIds: { [ToolbarTypesShared.SlotId]: boolean },
+    KeyCodeToSlotId: { [Enum.KeyCode]: ToolbarTypesShared.SlotId },
+}
+
+export type Module = typeof(ToolbarConfig) & ModuleData
+
+(ToolbarConfig :: any):_Init()
 
 return ToolbarConfig :: Module

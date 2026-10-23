@@ -20,6 +20,7 @@ local PlayerToUserId = require("PlayerToUserId")
 local ToolbarTypesShared = require("ToolbarTypesShared")
 local ToolbarConfig = require("ToolbarConfig")
 local ReconcileUtil = require("ReconcileUtil")
+local Signal = require("Signal")
 
 -- [ Constants ] --
 local TOOLBAR_TEMPLATE = {}
@@ -30,6 +31,11 @@ local TOOLBAR_TEMPLATE = {}
 local ToolbarServiceServer = {}
 
 -- [ Types ] --
+type Signals = {
+    ItemEquipped: Signal.Signal<Player, ItemTypes.ItemId>,
+    ItemUnequipped: Signal.Signal<Player, ItemTypes.ItemId>,
+}
+
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _InventoryServiceServer: typeof(require("InventoryServiceServer")),
@@ -42,7 +48,8 @@ type ModuleData = {
     },
     _PlayersEquippedSlotIds: {
         [string]: ToolbarTypesShared.SlotId
-    }
+    },
+    Signals: Signals
 }
 
 export type Module = typeof(ToolbarServiceServer) & ModuleData
@@ -82,9 +89,10 @@ function ToolbarServiceServer.BindSlots(
     }
 )
     local PlayerData = self._DataServiceServer:GetData(player)
-    local Slots = PlayerData.Toolbar
+    local ToolbarData = PlayerData.Toolbar
     local UserId = PlayerToUserId(player)
     local ItemIdToSlotId = self._PlayersItemIdToSlotId[UserId]
+    local EquippedSlotId = self:GetEquippedSlotId(player)
 
     for slotId, itemId in slots do
         if not ToolbarConfig:IsValidSlotId(slotId) then
@@ -94,8 +102,12 @@ function ToolbarServiceServer.BindSlots(
         if not self._InventoryServiceServer:GetItem(player, itemId) then
             continue
         end
+        
+        if EquippedSlotId == slotId then
+            self:UnequipSlot(player)
+        end
 
-        Slots[slotId] = itemId
+        ToolbarData[slotId] = itemId
         ItemIdToSlotId[itemId] = slotId
     end
 end
@@ -108,39 +120,68 @@ function ToolbarServiceServer.UnbindSlots(
     }
 )
     local PlayerData = self._DataServiceServer:GetData(player)
-    local Slots = PlayerData.Toolbar
+    local ToolbarData = PlayerData.Toolbar
     local UserId = PlayerToUserId(player)
     local ItemIdToSlotId = self._PlayersItemIdToSlotId[UserId]
+    local EquippedSlotId = self:GetEquippedSlotId(player)
 
     for _, slotId in slotIds do
         if not ToolbarConfig:IsValidSlotId(slotId) then
             continue
         end
         
-        local ItemId = Slots[slotId]
+        local ItemId = ToolbarData[slotId]
 
-        Slots[slotId] = nil
+        ToolbarData[slotId] = nil
 
-        if ItemId then
-            ItemIdToSlotId[ItemId] = nil
+        if not ItemId then
+            continue
         end
+
+        ItemIdToSlotId[ItemId] = nil
+
+        if EquippedSlotId ~= slotId then
+            continue
+        end
+
+        self._PlayersEquippedSlotIds[UserId] = nil
+        self.Signals.ItemUnequipped:Fire(player, ItemId)
     end
 end
 
 function ToolbarServiceServer.EquipSlot(self: Module, player: Player, slotId: ToolbarTypesShared.SlotId)
+    local PlayerData = self._DataServiceServer:GetData(player)
+    local ToolbarData = PlayerData.Toolbar
+
     if not ToolbarConfig:IsValidSlotId(slotId) then
         return
     end
 
     local UserId = PlayerToUserId(player)
+    local ItemId = ToolbarData[slotId]
 
     self._PlayersEquippedSlotIds[UserId] = slotId
+
+    if ItemId then
+        self.Signals.ItemEquipped:Fire(player, ItemId)
+    end
 end
 
 function ToolbarServiceServer.UnequipSlot(self: Module, player: Player)
+    local PlayerData = self._DataServiceServer:GetData(player)
+    local ToolbarData = PlayerData.Toolbar
     local UserId = PlayerToUserId(player)
+    local SlotId = self._PlayersEquippedSlotIds[UserId]
 
     self._PlayersEquippedSlotIds[UserId] = nil
+
+    if SlotId then
+        local ItemId = ToolbarData[SlotId]
+
+        if ItemId then
+            self.Signals.ItemUnequipped:Fire(player, ItemId)
+        end
+    end
 end
 
 function ToolbarServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
@@ -154,6 +195,9 @@ function ToolbarServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceB
     self._ToolbarNetworkServer = self._ServiceBag:GetService(require("ToolbarNetworkServer"))
     self._PlayersItemIdToSlotId = {}
     self._PlayersEquippedSlotIds = {}
+    self.Signals = {
+        ItemEquipped = Signal.new()
+    } :: any
 end
 
 function ToolbarServiceServer.Start(self: Module)

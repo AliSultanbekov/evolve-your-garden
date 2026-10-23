@@ -8,28 +8,41 @@
     Damper < 1 = bouncy, 1 = no overshoot, > 1 = slow settle.
 ]=]
 
+-- [ Roblox Services ] --
+
 -- [ Require ] --
-local require = require(script.Parent.loader).load(script) :: typeof(require)
+local _require = require(script.Parent.loader).load(script) :: typeof(require)
+
+-- [ Imports ] --
+
+-- [ Constants ] --
+
+-- [ Variables ] --
 
 -- [ Module Table ] --
-local SpringAnimationPresets = {
+local SpringAnimationPresets = {}
+
+-- [ Private Functions ] --
+function SpringAnimationPresets._Init(self: Module)
     -- Windows scaling in (slight bounce) and out (fast, no bounce).
-    WindowOpen = { Speed = 35, Damper = 0.4 },
-    WindowClose = { Speed = 50, Damper = 1 },
+    self.WindowOpen = { Speed = 35, Damper = 0.4 }
+    self.WindowClose = { Speed = 50, Damper = 1 }
 
     -- Default button press shrink.
-    ButtonPress = { Speed = 35, Damper = 0.35 },
+    self.ButtonPress = { Speed = 35, Damper = 0.35 }
 
     -- Toolbar slot press/equip scale (softer bounce than ButtonPress).
-    SlotPress = { Speed = 30, Damper = 0.55 },
+    self.SlotPress = { Speed = 30, Damper = 0.55 }
 
     -- Elements sliding between anchored positions (merchant tab bars).
-    Slide = { Speed = 20, Damper = 1 },
-    SlideBouncy = { Speed = 20, Damper = 0.8 },
+    self.Slide = { Speed = 20, Damper = 1 }
+    self.SlideBouncy = { Speed = 20, Damper = 0.8 }
 
     -- World highlight fade in/out.
-    WorldFade = { Speed = 10, Damper = 1.5 },
-}
+    self.WorldFade = { Speed = 10, Damper = 1.5 }
+end
+
+-- [ Public Functions ] --
 
 -- [ Types ] --
 export type SpringAnimationPreset = {
@@ -37,6 +50,18 @@ export type SpringAnimationPreset = {
     Damper: number,
 }
 
-export type Module = typeof(SpringAnimationPresets)
+type ModuleData = {
+    WindowOpen: SpringAnimationPreset,
+    WindowClose: SpringAnimationPreset,
+    ButtonPress: SpringAnimationPreset,
+    SlotPress: SpringAnimationPreset,
+    Slide: SpringAnimationPreset,
+    SlideBouncy: SpringAnimationPreset,
+    WorldFade: SpringAnimationPreset,
+}
+
+export type Module = typeof(SpringAnimationPresets) & ModuleData
+
+(SpringAnimationPresets :: any):_Init()
 
 return SpringAnimationPresets :: Module

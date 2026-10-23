@@ -21,15 +21,18 @@ local Table = require("Table")
 -- [ Variables ] --
 
 -- [ Module Table ] --
-local ItemConfig = {
-    CategoryToStorageMode = {
+local ItemConfig = {}
+
+-- [ Private Functions ] --
+function ItemConfig._Init(self: Module)
+    self.CategoryToStorageMode = {
         ["Plant"] = "Unique",
         ["Material"] = "Stackable",
         ["Pack"] = "Stackable",
         ["Currency"] = "Stackable",
         ["Tool"] = "Unique",
-    },
-    RarityLayoutOrder = {
+    }
+    self.RarityLayoutOrder = {
         ["Common"] = 1,
         ["Uncommon"] = 2,
         ["Rare"] = 3,
@@ -37,23 +40,10 @@ local ItemConfig = {
         ["Legendary"] = 5,
         ["Mythic"] = 6,
         ["Celestial"] = 7,
-    },
-    Categories = {"Plant", "Material", "Pack", "Currency", "Tool"},
-    MaxAmount = 100000
-}
-
--- [ Types ] --
-type ModuleData = {
-    CategoryToStorageMode: {
-        [ItemTypes.Category]: ItemTypes.StorageMode
-    },
-    Categories: { ItemTypes.Category },
-    MaxAmount: number,
-}
-
-export type Module = typeof(ItemConfig) & ModuleData
-
--- [ Private Functions ] --
+    }
+    self.Categories = {"Plant", "Material", "Pack", "Currency", "Tool"}
+    self.MaxAmount = 100000
+end
 
 -- [ Public Functions ] --
 function ItemConfig.GetCategory(self: Module, itemName: string): ItemTypes.Category
@@ -127,5 +117,19 @@ function ItemConfig.GetAllItemsConfigs(self: Module)
 
     return ItemsConfigs
 end
+
+-- [ Types ] --
+type ModuleData = {
+    CategoryToStorageMode: {
+        [ItemTypes.Category]: ItemTypes.StorageMode
+    },
+    RarityLayoutOrder: { [ItemTypes.Rarity]: number },
+    Categories: { ItemTypes.Category },
+    MaxAmount: number,
+}
+
+export type Module = typeof(ItemConfig) & ModuleData
+
+(ItemConfig :: any):_Init()
 
 return ItemConfig :: Module

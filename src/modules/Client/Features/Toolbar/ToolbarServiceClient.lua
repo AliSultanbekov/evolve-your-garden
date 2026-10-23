@@ -22,6 +22,8 @@ local ToolbarTypesClient = require("ToolbarTypesClient")
 local ToolbarConfig = require("ToolbarConfig")
 local Observable = require("Observable")
 local ReactiveItemTypes = require("ReactiveItemTypes")
+local Maid = require("Maid")
+local Signal = require("Signal")
 
 -- [ Constants ] --
 
@@ -31,15 +33,22 @@ local ReactiveItemTypes = require("ReactiveItemTypes")
 local ToolbarServiceClient = {}
 
 -- [ Types ] --
+type Signals = {
+    ItemEquipped: Signal.Signal<ItemTypes.ItemId>,
+    ItemUnequipped: Signal.Signal<ItemTypes.ItemId>
+}
+
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _ToolbarNetworkClient: typeof(require("ToolbarNetworkClient")),
     _InventoryServiceClient: typeof(require("InventoryServiceClient")),
+    _Maid: Maid.Maid,
     _Slots: ToolbarTypesClient.ReactiveSlots,
     _ItemIdToSlotId: {
         [ItemTypes.ItemId]: ToolbarTypesShared.SlotId
     },
     _EquippedSlotId: ValueObject.ValueObject<ToolbarTypesShared.SlotId?>,
+    Signals: Signals,
 }
 
 export type Module = typeof(ToolbarServiceClient) & ModuleData
@@ -145,11 +154,29 @@ function ToolbarServiceClient.EquipSlot(self: Module, slotId: ToolbarTypesShared
 
     self._EquippedSlotId.Value = slotId
     self._ToolbarNetworkClient:EquipSlot({ SlotId = slotId })
+
+    local ItemId = self._Slots[slotId].Value
+
+    if ItemId then
+        self.Signals.ItemEquipped:Fire(ItemId)
+    end
 end
 
 function ToolbarServiceClient.UnequipSlot(self: Module)
+    local SlotId = self._EquippedSlotId.Value
+
+    if not SlotId then
+        return
+    end
+
     self._EquippedSlotId.Value = nil
     self._ToolbarNetworkClient:UnequipSlot()
+
+    local ItemId = self._Slots[SlotId].Value
+
+    if ItemId then
+        self.Signals.ItemUnequipped:Fire(ItemId)
+    end
 end
 
 function ToolbarServiceClient.BindSlot(self: Module, slotId: ToolbarTypesShared.SlotId, itemId: ItemTypes.ItemId)
@@ -178,9 +205,14 @@ function ToolbarServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceB
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._ToolbarNetworkClient = self._ServiceBag:GetService(require("ToolbarNetworkClient"))
     self._InventoryServiceClient = self._ServiceBag:GetService(require("InventoryServiceClient"))
+    self._Maid = Maid.new()
     self._Slots = self:_SetupSlots()
     self._ItemIdToSlotId = {}
     self._EquippedSlotId = ValueObject.new(nil)
+    self.Signals = {
+        ItemEquipped = Signal.new(),
+        ItemUnequipped = Signal.new(),
+    } :: any
 end
 
 function ToolbarServiceClient.Start(self: Module)
