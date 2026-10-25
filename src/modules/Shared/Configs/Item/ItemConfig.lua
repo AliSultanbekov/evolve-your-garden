@@ -98,6 +98,28 @@ function ItemConfig.GetRarity(self: Module, itemName: string, itemCategory: Item
     error("No rarity found for item: " .. tostring(itemName) .. " (" .. tostring(Category) .. ")")
 end
 
+function ItemConfig.GetTags(self: Module, itemName: string, itemCategory: ItemTypes.Category?): { [string]: boolean }
+    local Category = itemCategory or self:GetCategory(itemName)
+
+    if Category == "Plant" then
+        return PlantsConfig.Plants[itemName].Tags
+    elseif Category == "Material" then
+        return MaterialsConfig.Materials[itemName].Tags
+    elseif Category == "Pack" then
+        return PacksConfig.Packs[itemName].Tags
+    elseif Category == "Currency" then
+        return CurrenciesConfig.Currencies[itemName].Tags
+    elseif Category == "Tool" then
+        return ToolsConfig.Tools[itemName].Tags
+    end
+
+    error("No tags found for item: " .. tostring(itemName) .. " (" .. tostring(Category) .. ")")
+end
+
+function ItemConfig.HasTag(self: Module, itemName: string, tag: string, itemCategory: ItemTypes.Category?): boolean
+    return self:GetTags(itemName, itemCategory)[tag] == true
+end
+
 function ItemConfig.GetAllItemsConfigs(self: Module)
     local ItemsConfigs = {}
 

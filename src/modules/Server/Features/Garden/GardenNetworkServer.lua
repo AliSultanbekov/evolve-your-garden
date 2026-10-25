@@ -45,12 +45,6 @@ function GardenNetworkServer.HarvestCollected(self: Module, packet: GardenTypesS
     Channel:FireAllClients("HarvestCollected", packet)
 end
 
-function GardenNetworkServer.GrowthCycle(self: Module, packet: GardenTypesShared.GrowthCycleRemotePacket)
-    local Channel = self._NetworkServiceShared:GetChannel("Garden")
-
-    Channel:FireAllClients("GrowthCycle", packet)
-end
-
 function GardenNetworkServer.HarvestItemsUpdated(self: Module, player: Player, packet: GardenTypesShared.HarvestItemsUpdatedRemotePacket)
     local Channel = self._NetworkServiceShared:GetChannel("Garden")
 
@@ -115,13 +109,12 @@ function GardenNetworkServer.Start(self: Module)
     Channel:DeclareEvent("GardenAbandoned")
     Channel:DeclareEvent("HarvestItemsAdded")
     Channel:DeclareEvent("HarvestItemsUpdated")
-    Channel:DeclareEvent("GrowthCycle")
     Channel:DeclareMethod("GetGardens")
     Channel:DeclareEvent("CollectHarvest")
     Channel:DeclareEvent("HarvestCollected")
 
     Channel:Connect("PlacePlant", function(player: Player, packet: GardenTypesShared.PlacePlantRemotePacket)
-        if typeof(packet) ~= "table" or typeof(packet.SlotId) ~= "string" or typeof(packet.ItemId) ~= "string" then
+        if typeof(packet) ~= "table" or typeof(packet.GardenId) ~= "string" or typeof(packet.SlotId) ~= "string" or typeof(packet.ItemId) ~= "string" then
             return
         end
 
@@ -129,7 +122,7 @@ function GardenNetworkServer.Start(self: Module)
     end)
 
     Channel:Connect("RemovePlant", function(player: Player, packet: GardenTypesShared.RemovePlantRemotePacket)
-        if typeof(packet) ~= "table" or typeof(packet.SlotId) ~= "string" then
+        if typeof(packet) ~= "table" or typeof(packet.GardenId) ~= "string" or typeof(packet.SlotId) ~= "string" then
             return
         end
 
@@ -137,7 +130,7 @@ function GardenNetworkServer.Start(self: Module)
     end)
 
     Channel:Connect("CollectHarvest", function(player: Player, packet: GardenTypesShared.CollectHarvestRemotePacket)
-        if typeof(packet) ~= "table" or typeof(packet.SlotId) ~= "string" then
+        if typeof(packet) ~= "table" or typeof(packet.GardenId) ~= "string" or typeof(packet.SlotId) ~= "string" then
             return
         end
 

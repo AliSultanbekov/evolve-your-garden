@@ -29,7 +29,7 @@ type ModuleData = {
     _StatsServiceServer: typeof(require("StatsServiceServer")),
     _EncyclopediaServiceServer: typeof(require("EncyclopediaServiceServer")),
     _InventoryServiceServer: typeof(require("InventoryServiceServer")),
-    _PlayersStateToQuestIds: {
+    _UserIdToStateToQuestIds: {
         [string]: {
             Active: { [QuestsTypesShared.QuestId]: boolean },
             Completed: { [QuestsTypesShared.QuestId]: boolean },
@@ -66,7 +66,7 @@ function QuestsServiceServer._UpdateQuestState(self: Module, player: Player, que
     local PlayerData = self._DataServiceServer:GetData(player)
     local QuestsData = PlayerData.Quests
     local UserId = PlayerToUserId(player)
-    local StateToQuestIds = self._PlayersStateToQuestIds[UserId]
+    local StateToQuestIds = self._UserIdToStateToQuestIds[UserId]
     local Quest = QuestsData[questId]
 
     if not Quest then
@@ -246,7 +246,7 @@ function QuestsServiceServer.AddQuests(self: Module, player: Player, questIds: {
     local PlayerData = self._DataServiceServer:GetData(player)
     local QuestsData = PlayerData.Quests
     local UserId = PlayerToUserId(player)
-    local StateToQuestIds = self._PlayersStateToQuestIds[UserId]
+    local StateToQuestIds = self._UserIdToStateToQuestIds[UserId]
     local AddedQuests = {}
 
     for _, questId in questIds do
@@ -292,7 +292,7 @@ function QuestsServiceServer.RemoveQuests(self: Module, player: Player, questIds
     local PlayerData = self._DataServiceServer:GetData(player)
     local QuestsData = PlayerData.Quests
     local UserId = PlayerToUserId(player)
-    local StateToQuestIds = self._PlayersStateToQuestIds[UserId]
+    local StateToQuestIds = self._UserIdToStateToQuestIds[UserId]
     local RemovedQuestIds = {}
 
     for _, questId in questIds do
@@ -326,7 +326,7 @@ function QuestsServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBa
     self._StatsServiceServer = self._ServiceBag:GetService(require("StatsServiceServer"))
     self._EncyclopediaServiceServer = self._ServiceBag:GetService(require("EncyclopediaServiceServer"))
     self._InventoryServiceServer = self._ServiceBag:GetService(require("InventoryServiceServer"))
-    self._PlayersStateToQuestIds = {}
+    self._UserIdToStateToQuestIds = {}
     self._SourceKeyToQuestIds = {}
 end
 
@@ -367,19 +367,19 @@ function QuestsServiceServer.Start(self: Module)
         local Maid, Player = brio:ToMaidAndValue()
         local UserId = PlayerToUserId(Player)
 
-        self._PlayersStateToQuestIds[UserId] = {
+        self._UserIdToStateToQuestIds[UserId] = {
             Active = {},
             Completed = {},
             Burnt = {},
         }       
 
         Maid:Add(function()
-            self._PlayersStateToQuestIds[UserId] = nil
+            self._UserIdToStateToQuestIds[UserId] = nil
         end)
 
         Maid:Add(self._DataServiceServer:OnDataReady(Player, function(data)
             local QuestsData = data.Quests
-            local StateToQuestIds = self._PlayersStateToQuestIds[UserId]
+            local StateToQuestIds = self._UserIdToStateToQuestIds[UserId]
 
             local QuestIds = {}
 

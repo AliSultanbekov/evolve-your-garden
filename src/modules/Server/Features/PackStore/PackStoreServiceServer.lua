@@ -16,7 +16,8 @@ local RxPlayerUtils = require("RxPlayerUtils")
 local Brio = require("Brio")
 local PackStoreConfig = require("PackStoreConfig")
 local PackStoreTypesShared = require("PackStoreTypesShared")
-local InventoryTypesShared = require("InventoryTypesShared")
+local GeneralTypesShared = require("GeneralTypesShared")
+local GeneralEnums = require("GeneralEnums")
 local ItemUtil = require("ItemUtil")
 local Table = require("Table")
 local ReconcileUtil = require("ReconcileUtil")
@@ -102,9 +103,9 @@ function PackStoreService.BuyPack(self: Module, player: Player, packId: PackStor
         Name = Pack.Name,
         Amount = 1,
     })
-    local Result: InventoryTypesShared.Result = self._InventoryServiceServer:AddItems(player, { PackItem }, true)
+    local Result: GeneralTypesShared.DefaultResult = self._InventoryServiceServer:AddItems(player, { PackItem }, true)
 
-    if Result == "Fail" then
+    if Result == GeneralEnums.Result.Fail then
         return
     end
 

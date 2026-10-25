@@ -24,6 +24,7 @@ function PacksConfig._Init(self: Module)
             Name = "Super Pack",
             Rarity = "Common",
             Icon = "rbxassetid://101088311100253",
+            Tags = {},
             PlantPool = {
                 ["Daisy"] = 25,
                 ["Buttercup"] = 25,
@@ -34,6 +35,7 @@ function PacksConfig._Init(self: Module)
             Name = "Mega Pack",
             Rarity = "Celestial",
             Icon = "rbxassetid://101088311100253",
+            Tags = {},
             PlantPool = {
                 ["Daisy"] = 25,
                 ["Buttercup"] = 25,
@@ -50,6 +52,7 @@ type PackEntry = {
     Name: string,
     Rarity: ItemTypes.Rarity,
     Icon: string,
+    Tags: { [string]: boolean },
     PlantPool: {
         [string]: number
     }

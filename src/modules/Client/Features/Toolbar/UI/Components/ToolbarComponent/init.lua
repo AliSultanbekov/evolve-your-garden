@@ -38,7 +38,7 @@ local ToolbarComponent = function(props: Props)
             LayoutOrder = layoutOrder,
             Size = SLOT_SIZE,
             ObserveItem = function()
-                return props.ObserveSlotItem(slotId)
+                return props.ObserveItemFromSlotId(slotId)
             end,
             ObserveEquippedSlotId = props.ObserveEquippedSlotId,
             IsInventoryOpen = props.IsInventoryOpen,
@@ -82,7 +82,7 @@ type Props = {
     IsOpen: Observable.Observable<boolean>,
     IsInventoryOpen: Observable.Observable<boolean>,
     InventorySelectedItem: Observable.Observable<ReactiveItemTypes.ReactiveItem?>,
-    ObserveSlotItem: (slotId: ToolbarTypesShared.SlotId) -> Observable.Observable<ReactiveItemTypes.ReactiveItem?>,
+    ObserveItemFromSlotId: (slotId: ToolbarTypesShared.SlotId) -> Observable.Observable<ReactiveItemTypes.ReactiveItem?>,
     ObserveEquippedSlotId: Observable.Observable<ToolbarTypesShared.SlotId?>,
     OnSlotPressed: (slotId: ToolbarTypesShared.SlotId) -> (),
 }

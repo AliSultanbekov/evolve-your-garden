@@ -49,7 +49,6 @@ function ItemUtil.ProcessRawItem(self: Module, rawItem: ItemTypes.RawItem): Item
             LastProduction = rawItem.LastProduction or 0,
             GeneticNumber = rawItem.GeneticNumber or math.random(1, (2^31)-1),
             Mutations = rawItem.Mutations or {},
-            LevelTreeChoices = rawItem.LevelTreeChoices or {},
         }
     elseif rawItem.Category == "Material" then
         return {

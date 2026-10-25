@@ -27,6 +27,7 @@ export type Signals = {
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _ToolbarServiceClient: typeof(require("ToolbarServiceClient")),
+    _ToolsNetworkClient: typeof(require("ToolsNetworkClient")),
     Signals: Signals,
 }
 
@@ -35,14 +36,15 @@ export type Module = typeof(ToolServiceClient) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
-function ToolServiceClient.ActivateTool(self: Module)
-    local EquippedItem = self._ToolbarServiceClient:GetEquippedSlotItem()
+function ToolServiceClient.ActivateTool(self: Module, params: { [string]: any }?)
+    local EquippedItem = self._ToolbarServiceClient:GetEquippedItem()
 
     if not EquippedItem then
         return
     end
-    
+
     self.Signals.ToolActivated:Fire(EquippedItem.Id)
+    self._ToolsNetworkClient:ActivateTool({ Params = params })
 end
 
 function ToolServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
@@ -52,6 +54,7 @@ function ToolServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._ToolbarServiceClient = self._ServiceBag:GetService(require("ToolbarServiceClient"))
+    self._ToolsNetworkClient = self._ServiceBag:GetService(require("ToolsNetworkClient"))
     self.Signals = {
         ToolActivated = Signal.new()
     } :: any

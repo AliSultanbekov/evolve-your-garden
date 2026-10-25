@@ -35,6 +35,8 @@ type ModuleData = {
     _MouseServiceClient: typeof(require("MouseServiceClient")),
     _PortalServiceClient: typeof(require("PortalServiceClient")),
     _UIServiceClient: typeof(require("UIServiceClient")),
+    _ToolbarServiceClient: typeof(require("ToolbarServiceClient")),
+    _ToolServiceClient: typeof(require("ToolServiceClient")),
     _Maid: Maid.Maid,
     _SlotModelToSlotInfo: { [Instance]: GardenTypesClient.SlotInfo },
 }
@@ -98,7 +100,7 @@ function GardenWorldClient._SetupHover(self: Module)
 end
 
 function GardenWorldClient._SetupSelect(self: Module)
-    self._Maid:Add(Rx.fromSignal(self._MouseServiceClient.Signals.MousePressed :: any):Subscribe(function(pressedInstance: Instance?)
+    self._Maid:Add(self._MouseServiceClient.Signals.MousePressed:Connect(function(pressedInstance: Instance?)
         if self._UIServiceClient:IsCategoryOpen("Main") then
             return
         end
@@ -133,6 +135,10 @@ function GardenWorldClient._SetupSelect(self: Module)
     end))
 end
 
+function GardenWorldClient._SetupTools()
+    
+end
+
 -- [ Public Functions ] --
 function GardenWorldClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     if self._ServiceBag ~= nil then
@@ -144,6 +150,8 @@ function GardenWorldClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._MouseServiceClient = self._ServiceBag:GetService(require("MouseServiceClient"))
     self._PortalServiceClient = self._ServiceBag:GetService(require("PortalServiceClient"))
     self._UIServiceClient = self._ServiceBag:GetService(require("UIServiceClient"))
+    self._ToolbarServiceClient = self._ServiceBag:GetService(require("ToolbarServiceClient"))
+    self._ToolServiceClient = self._ServiceBag:GetService(require("ToolServiceClient"))
     self._Maid = Maid.new()
     self._SlotModelToSlotInfo = {}
 end

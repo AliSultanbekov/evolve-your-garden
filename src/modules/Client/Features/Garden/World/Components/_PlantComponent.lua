@@ -13,7 +13,7 @@ local GardenTypesClient = require("GardenTypesClient")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local AssetProvider = require("AssetProvider")
 local Rx = require("Rx")
-local PlantUtil = require("PlantUtil")
+local PlantUtilShared = require("PlantUtilShared")
 
 -- [ Components ] --
 
@@ -37,7 +37,7 @@ local PlantComponent = function(props: Props)
     
     MaidObject:Add(props.Plant.GrowthTime:Observe():Pipe({
         Rx.map(function(growthTime: number)
-            return PlantUtil:GetCurrentGrowthStage(Plant.Name, growthTime)
+            return PlantUtilShared:GetCurrentGrowthStage(Plant.Name, growthTime)
         end) :: any,
         Rx.distinct() :: any,
     }):Subscribe(function(growthStage: number)

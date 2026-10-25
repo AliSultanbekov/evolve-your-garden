@@ -19,10 +19,6 @@ local InventoryEnums = {
         Open = "Open" :: "Open",
         Delete = "Delete" :: "Delete",
     },
-    Result = {
-        Success = "Success" :: "Success",
-        Fail = "Fail" :: "Fail"
-    }
 }
 
 -- [ Types ] --

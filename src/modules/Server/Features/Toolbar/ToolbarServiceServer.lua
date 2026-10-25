@@ -41,12 +41,12 @@ type ModuleData = {
     _InventoryServiceServer: typeof(require("InventoryServiceServer")),
     _DataServiceServer: typeof(require("DataServiceServer")),
     _ToolbarNetworkServer: typeof(require("ToolbarNetworkServer")),
-    _PlayersItemIdToSlotId: {
+    _UserIdToItemIdToSlotId: {
         [string]: {
             [ItemTypes.ItemId]: ToolbarTypesShared.SlotId
         }
     },
-    _PlayersEquippedSlotIds: {
+    _UserIdToEquippedSlotId: {
         [string]: ToolbarTypesShared.SlotId
     },
     Signals: Signals
@@ -57,7 +57,7 @@ export type Module = typeof(ToolbarServiceServer) & ModuleData
 -- [ Private Functions ] --
 function ToolbarServiceServer._GetSlotIdFromItemId(self: Module, player: Player, itemId: ItemTypes.ItemId)
     local UserId = PlayerToUserId(player)
-    local ItemIdToSlotId = self._PlayersItemIdToSlotId[UserId]
+    local ItemIdToSlotId = self._UserIdToItemIdToSlotId[UserId]
 
     return ItemIdToSlotId[itemId]
 end
@@ -66,7 +66,7 @@ end
 function ToolbarServiceServer.GetEquippedSlotId(self: Module, player: Player): ToolbarTypesShared.SlotId?
     local UserId = PlayerToUserId(player)
 
-    return self._PlayersEquippedSlotIds[UserId]
+    return self._UserIdToEquippedSlotId[UserId]
 end
 
 function ToolbarServiceServer.GetEquippedItemId(self: Module, player: Player): ItemTypes.ItemId?
@@ -91,7 +91,7 @@ function ToolbarServiceServer.BindSlots(
     local PlayerData = self._DataServiceServer:GetData(player)
     local ToolbarData = PlayerData.Toolbar
     local UserId = PlayerToUserId(player)
-    local ItemIdToSlotId = self._PlayersItemIdToSlotId[UserId]
+    local ItemIdToSlotId = self._UserIdToItemIdToSlotId[UserId]
     local EquippedSlotId = self:GetEquippedSlotId(player)
 
     for slotId, itemId in slots do
@@ -122,7 +122,7 @@ function ToolbarServiceServer.UnbindSlots(
     local PlayerData = self._DataServiceServer:GetData(player)
     local ToolbarData = PlayerData.Toolbar
     local UserId = PlayerToUserId(player)
-    local ItemIdToSlotId = self._PlayersItemIdToSlotId[UserId]
+    local ItemIdToSlotId = self._UserIdToItemIdToSlotId[UserId]
     local EquippedSlotId = self:GetEquippedSlotId(player)
 
     for _, slotId in slotIds do
@@ -144,7 +144,7 @@ function ToolbarServiceServer.UnbindSlots(
             continue
         end
 
-        self._PlayersEquippedSlotIds[UserId] = nil
+        self._UserIdToEquippedSlotId[UserId] = nil
         self.Signals.ItemUnequipped:Fire(player, ItemId)
     end
 end
@@ -160,7 +160,7 @@ function ToolbarServiceServer.EquipSlot(self: Module, player: Player, slotId: To
     local UserId = PlayerToUserId(player)
     local ItemId = ToolbarData[slotId]
 
-    self._PlayersEquippedSlotIds[UserId] = slotId
+    self._UserIdToEquippedSlotId[UserId] = slotId
 
     if ItemId then
         self.Signals.ItemEquipped:Fire(player, ItemId)
@@ -171,9 +171,9 @@ function ToolbarServiceServer.UnequipSlot(self: Module, player: Player)
     local PlayerData = self._DataServiceServer:GetData(player)
     local ToolbarData = PlayerData.Toolbar
     local UserId = PlayerToUserId(player)
-    local SlotId = self._PlayersEquippedSlotIds[UserId]
+    local SlotId = self._UserIdToEquippedSlotId[UserId]
 
-    self._PlayersEquippedSlotIds[UserId] = nil
+    self._UserIdToEquippedSlotId[UserId] = nil
 
     if SlotId then
         local ItemId = ToolbarData[SlotId]
@@ -193,8 +193,8 @@ function ToolbarServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceB
     self._InventoryServiceServer = self._ServiceBag:GetService(require("InventoryServiceServer"))
     self._DataServiceServer = self._ServiceBag:GetService(require("DataServiceServer"))
     self._ToolbarNetworkServer = self._ServiceBag:GetService(require("ToolbarNetworkServer"))
-    self._PlayersItemIdToSlotId = {}
-    self._PlayersEquippedSlotIds = {}
+    self._UserIdToItemIdToSlotId = {}
+    self._UserIdToEquippedSlotId = {}
     self.Signals = {
         ItemEquipped = Signal.new(),
         ItemUnequipped = Signal.new(),
@@ -240,11 +240,11 @@ function ToolbarServiceServer.Start(self: Module)
         local Maid, Player = brio:ToMaidAndValue()
         local UserId = PlayerToUserId(Player)
 
-        self._PlayersItemIdToSlotId[UserId] = {}
+        self._UserIdToItemIdToSlotId[UserId] = {}
 
         Maid:Add(function()
-            self._PlayersEquippedSlotIds[UserId] = nil
-            self._PlayersItemIdToSlotId[UserId] = nil
+            self._UserIdToEquippedSlotId[UserId] = nil
+            self._UserIdToItemIdToSlotId[UserId] = nil
         end)
 
         Maid:Add(self._DataServiceServer:OnDataReady(Player, function(Data)

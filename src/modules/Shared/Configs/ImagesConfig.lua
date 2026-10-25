@@ -23,17 +23,6 @@ local ImagesConfig = {}
 
 -- [ Private Functions ] --
 function ImagesConfig._Init(self: Module)
-    self.PlantHarvest = {
-        RarityImages = {
-            Celestial = "rbxassetid://72726144214075",
-            Mythic = "rbxassetid://128006382351157",
-            Legendary = "rbxassetid://85278657597693",
-            Epic = "rbxassetid://115276544371467",
-            Rare = "rbxassetid://130541742731585",
-            Uncommon = "rbxassetid://91849170946744",
-            Common = "rbxassetid://125015844024414",
-        }
-    }
     self.Inventory = {
         RarityImages = {
             Celestial = "rbxassetid://114970135748413",
@@ -85,9 +74,6 @@ end
 type Images = { [string]: string }
 
 type ModuleData = {
-    PlantHarvest: {
-        RarityImages: Images,
-    },
     Inventory: {
         RarityImages: Images,
     },

@@ -90,6 +90,14 @@ function InitServiceShared.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     for _, module in self:_GetModules() do
         self._ServiceBag:GetService(module)
     end
+
+    -- Package services live outside our Modules tree, so the scanner never
+    -- sees them - register explicitly.
+    if RunService:IsServer() then
+        self._ServiceBag:GetService(require("CmdrService"))
+    else
+        self._ServiceBag:GetService(require("CmdrServiceClient"))
+    end
 end
 
 function InitServiceShared.Start(self: Module)

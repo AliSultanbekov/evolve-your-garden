@@ -40,7 +40,7 @@ local ToolbarStory = {
         MaidObject:Add(Blend.mount(props.target, {
             ToolbarComponent({
                 IsOpen = IsOpen:Observe(),
-                ObserveSlotItem = function(slotId: string)
+                ObserveItemFromSlotId = function(slotId: string)
                     return Rx.of(SlotItems[slotId])
                 end,
                 ObserveEquippedSlotId = EquippedSlotId:Observe(),

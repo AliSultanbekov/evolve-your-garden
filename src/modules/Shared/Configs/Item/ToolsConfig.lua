@@ -22,9 +22,10 @@ function ToolsConfig._Init(self: Module)
     self.Tools = {
         ["Watering Can"] = {
             Name = "Watering Can",
-            Icon = "rbxassetid://",
+            Icon = "rbxassetid://115170506789276",
             Rarity = "Common",
-            Cooldown = 10
+            Cooldown = 10,
+            Tags = {},
         },
     }
 end
@@ -38,6 +39,7 @@ type ModuleData = {
         Icon: string,
         Rarity: ItemTypes.Rarity,
         Cooldown: number,
+        Tags: { [string]: boolean },
         MaxDurability: number?,
     }},
 }

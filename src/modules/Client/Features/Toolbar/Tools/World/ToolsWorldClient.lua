@@ -58,10 +58,12 @@ function ToolsWorldClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._ToolbarServiceClient = self._ServiceBag:GetService(require("ToolbarServiceClient"))
     self._InventoryServiceClient = self._ServiceBag:GetService(require("InventoryServiceClient"))
     self._ToolServiceClient = self._ServiceBag:GetService(require("ToolServiceClient"))
+
     self._Maid = Maid.new()
     self._ItemIdToToolState = {}
     self._ToolBehaviors = {
-        ["TestBehavior"] = TestBehavior
+        ["Test"] = TestBehavior,
+        ["Watering Can"] = require(script.Parent.Behaviors._WateringCanBehavior)
     }
     self._EquippedToolItem = nil
     self._LastActivated = 0
@@ -77,9 +79,17 @@ function ToolsWorldClient.Start(self: Module)
             return
         end
 
-        local Behavior = self._ToolBehaviors["TestBehavior"]
+        local Behavior = self._ToolBehaviors[Item.Name]
+
+        if not Behavior then
+            return
+        end
 
         self._EquippedToolItem = Item
+
+        if not self._ItemIdToToolState[itemId] then
+            self._ItemIdToToolState[itemId] = {}
+        end
 
         Behavior:OnEquipped(BehaviorMaid, {
             State = self._ItemIdToToolState[itemId],
@@ -94,7 +104,11 @@ function ToolsWorldClient.Start(self: Module)
             return
         end
 
-        local Behavior = self._ToolBehaviors["TestBehavior"]
+        local Behavior = self._ToolBehaviors[Item.Name]
+
+        if not Behavior then
+            return
+        end
 
         Behavior:OnUnequipped({
             State = self._ItemIdToToolState[Item.Id],
@@ -114,7 +128,11 @@ function ToolsWorldClient.Start(self: Module)
             return
         end
 
-        local Behavior = self._ToolBehaviors["TestBehavior"]
+        local Behavior = self._ToolBehaviors[Item.Name]
+
+        if not Behavior then
+            return
+        end
 
         if Item.Category ~= "Tool" then
             return 
@@ -128,15 +146,11 @@ function ToolsWorldClient.Start(self: Module)
 
         self._LastActivated = os.clock()
 
-        Behavior:OnUnequipped({
+        Behavior:OnActivated({
             State = self._ItemIdToToolState[Item.Id],
             Item = Item
         })
     end)
-
-    self._Maid:Add(self._InventoryServiceClient.Signals.ItemAdded:Connect(function(item: ReactiveItemTypes.ReactiveItem)
-        self._ItemIdToToolState[item.Id] = {}
-    end))
 
     self._Maid:Add(self._InventoryServiceClient.Signals.ItemRemoved:Connect(function(itemId: ItemTypes.ItemId)
         self._ItemIdToToolState[itemId] = nil

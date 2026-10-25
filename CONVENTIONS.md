@@ -39,6 +39,7 @@ When two names feel inconsistent, find which one broke the formula and fix that 
 | Booleans / boolean props | `Is/Should/Has` prefix | `IsOpen`, `ShouldAnimate`, `IsSelected` |
 | UI child components | `_PascalCase.lua` in feature folder | `_Bookmarks.lua`, `_PlantCard.lua` |
 | Ordered config lists | array whose order IS the order | `TabOrder`, `Categories` |
+| Durations vs instants | durations end in `Time`; recorded instants are `Last<Event>`, no suffix. Neither implies unix time — the axis is whatever clock the owner runs | `GrowthTime`, `CycleTime` vs `LastProduction`, `LastRefresh` |
 
 ## Data & persistence
 

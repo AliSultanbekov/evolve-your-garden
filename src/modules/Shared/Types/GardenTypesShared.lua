@@ -18,7 +18,6 @@ local ItemTypes = require("ItemTypes")
 export type GardenId = string
 export type SlotId = string
 
-
 -- Server Events
 export type Slot = {
     Id: SlotId,
@@ -26,7 +25,6 @@ export type Slot = {
     Harvest: {
         [ItemTypes.ItemId]: ItemTypes.Item
     },
-    HarvestCount: number,
 }
 
 export type GardenData = {
@@ -58,20 +56,14 @@ export type PlantPlacedRemotePacket = {
 }
 
 export type PlacePlantRemotePacket = {
+    GardenId: GardenId,
     SlotId: SlotId,
     ItemId: ItemTypes.ItemId,
 }
 
 export type RemovePlantRemotePacket = {
+    GardenId: GardenId,
     SlotId: SlotId,
-}
-
-export type GrowthCycleRemotePacket = {
-    Growth: {
-        [GardenId]: {
-            [SlotId]: ItemTypes.PlantItem
-        }
-    }
 }
 
 export type HarvestItemsAddedRemotePacket = {
@@ -102,6 +94,7 @@ export type GetGardensRemotePacket = {
 }
 
 export type CollectHarvestRemotePacket = {
+    GardenId: GardenId,
     SlotId: SlotId,
 }
 

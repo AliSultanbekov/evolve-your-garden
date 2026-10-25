@@ -85,8 +85,9 @@ function GardenServiceClient._SetupGardens(self: Module): GardenTypesClient.Reac
 end
 
 -- [ Public Functions ] --
-function GardenServiceClient.CollectHarvest(self: Module, slotId: GardenTypesShared.SlotId)
+function GardenServiceClient.CollectHarvest(self: Module, gardenId: GardenTypesShared.GardenId, slotId: GardenTypesShared.SlotId)
     self._GardenNetworkClient:CollectHarvest({
+        GardenId = gardenId,
         SlotId = slotId
     })
 end
@@ -220,15 +221,17 @@ function GardenServiceClient.ObserveSelectedSlotInfo(self: Module)
     return self._SelectedSlotInfo:Observe()
 end
 
-function GardenServiceClient.PlacePlant(self: Module, slotId: GardenTypesShared.SlotId, itemId: ItemTypes.ItemId)
+function GardenServiceClient.PlacePlant(self: Module, gardenId: GardenTypesShared.GardenId, slotId: GardenTypesShared.SlotId, itemId: ItemTypes.ItemId)
     self._GardenNetworkClient:PlacePlant({
+        GardenId = gardenId,
         SlotId = slotId,
         ItemId = itemId,
     })
 end
 
-function GardenServiceClient.RemovePlant(self: Module, slotId: GardenTypesShared.SlotId)
+function GardenServiceClient.RemovePlant(self: Module, gardenId: GardenTypesShared.GardenId, slotId: GardenTypesShared.SlotId)
     self._GardenNetworkClient:RemovePlant({
+        GardenId = gardenId,
         SlotId = slotId,
     })
 end
@@ -328,27 +331,6 @@ function GardenServiceClient.Start(self: Module)
         end
 
         Slot.Plant.Value = nil
-    end)
-
-    self._GardenNetworkClient.RemoteEvents.GrowthCycle:Connect(function(packet: GardenTypesShared.GrowthCycleRemotePacket)
-        for gardenId, plants in packet.Growth do
-            local Garden = self._Gardens[gardenId]
-            for slotId, plant in plants do
-                local Slot = Garden.Slots:Get(slotId)
-
-                if not Slot then
-                    continue
-                end
-
-                local Plant = Slot.Plant.Value
-
-                if not Plant then
-                    continue
-                end
-
-                ReactiveItemUtil:SyncFromPlain(Plant, plant)
-            end
-        end
     end)
 
     self._GardenNetworkClient.RemoteEvents.HarvestItemsAdded:Connect(function(packet: GardenTypesShared.HarvestItemsAddedRemotePacket)

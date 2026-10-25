@@ -38,7 +38,6 @@ function ReactiveItemUtil.ToReactive(self: Module, item: ItemTypes.Item): Reacti
             Xp = ValueObject.new(item.Xp),
             LastProduction = ValueObject.new(item.LastProduction),
             Mutations = ValueObject.new(item.Mutations),
-            LevelTreeChoices = ValueObject.new(item.LevelTreeChoices),
         }
     elseif item.Category == "Material" then
         return {
@@ -84,7 +83,6 @@ function ReactiveItemUtil.ToPlain(self: Module, reactiveItem: ReactiveItemTypes.
             Xp = reactiveItem.Xp.Value,
             LastProduction = reactiveItem.LastProduction.Value,
             Mutations = reactiveItem.Mutations.Value,
-            LevelTreeChoices = reactiveItem.LevelTreeChoices.Value,
         }
     elseif reactiveItem.Category == "Material" then
         return {
@@ -125,7 +123,6 @@ function ReactiveItemUtil.SyncFromPlain(self: Module, reactiveItem: ReactiveItem
         reactiveItem.Xp.Value = item.Xp
         reactiveItem.LastProduction.Value = item.LastProduction
         reactiveItem.Mutations.Value = item.Mutations
-        reactiveItem.LevelTreeChoices.Value = item.LevelTreeChoices
     elseif reactiveItem.Category == "Material" and item.Category == "Material" then
         reactiveItem.Amount.Value = item.Amount
     elseif reactiveItem.Category == "Pack" and item.Category == "Pack" then

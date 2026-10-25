@@ -4,7 +4,6 @@
 ]=]
 
 -- [ Roblox Services ] --
-local Players = game:GetService("Players")
 
 -- [ Require ] --
 local require = require(script.Parent.loader).load(script) :: typeof(require)
@@ -13,10 +12,14 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local ServiceBag = require("ServiceBag")
 local ItemTypes = require("ItemTypes")
 local ItemUtil = require("ItemUtil")
+local ItemConfig = require("ItemConfig")
+local PlayerToUserId = require("PlayerToUserId")
 local InventoryTypesShared = require("InventoryTypesShared")
+local GeneralTypesShared = require("GeneralTypesShared")
 local RxPlayerUtils = require("RxPlayerUtils")
 local Brio = require("Brio")
 local InventoryEnums = require("InventoryEnums")
+local GeneralEnums = require("GeneralEnums")
 local Signal = require("Signal")
 
 local PackActions = require(script.ItemActions._PackActions)
@@ -40,7 +43,7 @@ type ModuleData = {
     _DataServiceServer: typeof(require("DataServiceServer")),
     _InventoryNetworkServer: typeof(require("InventoryNetworkServer")),
     _EncyclopediaServiceServer: typeof(require("EncyclopediaServiceServer")),
-    _PlayersInventoryItemCount: { [Player]: number },
+    _UserIdToItemCount: { [string]: number },
     Signals: Signals,
 }
 
@@ -54,7 +57,7 @@ function InventoryServiceServer._GetItem(self: Module, player: Player, itemId: I
 end
 
 function InventoryServiceServer._GetInventoryItemCount(self: Module, player: Player)
-    return self._PlayersInventoryItemCount[player]
+    return self._UserIdToItemCount[PlayerToUserId(player)]
 end
 
 function InventoryServiceServer._IsInventoryFull(self: Module, player: Player)
@@ -75,11 +78,11 @@ function InventoryServiceServer.UseAction(self: Module, player: Player, action: 
     end
 
     local Gateway = {
-        AddRawItems = function(items: { [any]: ItemTypes.RawItem }, discover: boolean?, transmitDelay: number?)
-            self:AddRawItems(player, items, discover, transmitDelay)
+        AddRawItems = function(items: { [any]: ItemTypes.RawItem }, discover: boolean?)
+            self:AddRawItems(player, items, discover)
         end,
-        AddItems = function(items: { [any]: ItemTypes.Item }, discover: boolean?, transmitDelay: number?)
-            self:AddItems(player, items, discover, transmitDelay)
+        AddItems = function(items: { [any]: ItemTypes.Item }, discover: boolean?)
+            self:AddItems(player, items, discover)
         end,
         RemoveItems = function(items: { [any]: ItemTypes.Item })
             self:RemoveItems(player, items)
@@ -138,96 +141,110 @@ function InventoryServiceServer.AddRawItems(
     self: Module, 
     player: Player, 
     rawItems: { [any]: ItemTypes.RawItem },
-    discover: boolean?,
-    transmitDelay: number?
-)
+    discover: boolean?
+): GeneralTypesShared.DefaultResult
     local Items: { ItemTypes.Item } = {}
 
     for _, rawItem in rawItems do
         table.insert(Items, ItemUtil:ProcessRawItem(rawItem))
     end
 
-    self:AddItems(player, Items, discover, transmitDelay)
+    return self:AddItems(player, Items, discover)
 end
 
 function InventoryServiceServer.AddItems(
     self: Module, 
     player: Player, 
     items: { [any]: ItemTypes.Item },
-    discover: boolean?,
-    transmitDelay: number?
-): InventoryTypesShared.Result
+    discover: boolean?
+): GeneralTypesShared.DefaultResult
     local Data = self._DataServiceServer:GetProfile(player).Data
-    local InventoryData = Data.Inventory
+    local UserId = PlayerToUserId(player)
     local ItemCount = self:_GetInventoryItemCount(player)
+    local Batch: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
+    local PredictedItemCount = ItemCount
 
-    local NewItemsCount = 0
     for _, item in items do
-        if not InventoryData[item.Id] then
-            NewItemsCount += 1
-        end
+        ItemUtil:OnStorageMode(item, {
+            ["All"] = function(item: ItemTypes.Item)
+                if Batch[item.Id] then
+                    return
+                end
+
+                Batch[item.Id] = item
+
+                if not Data.Inventory[item.Id] then
+                    PredictedItemCount += 1
+                end
+            end,
+            ["Stackable"] = function(item: ItemTypes.StackableItem)
+                local ExistingItem = Batch[item.Id] :: ItemTypes.StackableItem
+
+                if ExistingItem == item then
+                    return
+                end
+
+                (ExistingItem :: ItemTypes.Stackable).Amount = math.clamp(ExistingItem.Amount + item.Amount, 0, ItemConfig.MaxAmount)
+            end,
+        })
+    end
+
+    if PredictedItemCount > INVENTORY_CAPACITY then
+        return GeneralEnums.Result.Fail
     end
 
     local AddedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
     local UpdatedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
 
     if discover then
-        self._EncyclopediaServiceServer:DiscoverItems(player, items)
+        self._EncyclopediaServiceServer:DiscoverItems(player, Batch)
     end
-
-    for _, item in items do
+    
+    -- commit
+    for _, item in Batch do
         ItemUtil:OnStorageMode(item, {
-            Unique = function(item: ItemTypes.UniqueItem)
+            ["All"] = function(item: ItemTypes.Item)
+                if Data.Inventory[item.Id] then
+                    return
+                end
+
                 Data.Inventory[item.Id] = item
                 ItemCount += 1
-                self._PlayersInventoryItemCount[player] = ItemCount
                 AddedItems[item.Id] = item
             end,
-            Stackable = function(item: ItemTypes.StackableItem)
+            ["Stackable"] = function(item: ItemTypes.StackableItem)
+                if AddedItems[item.Id] then
+                    return
+                end
+
                 local StoredItem = Data.Inventory[item.Id] :: ItemTypes.StackableItem
 
-                if StoredItem then
-                    local StoredStackable: ItemTypes.Stackable = StoredItem
-                    StoredStackable.Amount += item.Amount
-
-                    if not AddedItems[item.Id] then
-                        UpdatedItems[item.Id] = StoredItem
-                    end
-                else
-                    Data.Inventory[item.Id] = item
-                    self._PlayersInventoryItemCount[player] = ItemCount + 1
-                    ItemCount += 1
-                    AddedItems[item.Id] = item
-                end
+                (StoredItem :: ItemTypes.Stackable).Amount = math.clamp(StoredItem.Amount + item.Amount, 0, ItemConfig.MaxAmount)
+                UpdatedItems[item.Id] = StoredItem
             end,
         })
     end
 
-    if next(AddedItems) then
-        task.delay(transmitDelay or 0, function()
-            if player.Parent ~= Players then
-                return
-            end
+    self._UserIdToItemCount[UserId] = ItemCount
 
-            self._InventoryNetworkServer:ItemsAdded(player, { Items = AddedItems })
-        end)
+    for _, item in AddedItems do
+        self.Signals.ItemAdded:Fire(player, item)
+    end
+
+    if next(AddedItems) then
+        self._InventoryNetworkServer:ItemsAdded(player, { Items = AddedItems })
     end
 
     if next(UpdatedItems) then
-        task.delay(transmitDelay or 0, function()
-            if player.Parent ~= Players then
-                return
-            end
-            
-            self._InventoryNetworkServer:ItemsUpdated(player, { Items = UpdatedItems })
-        end)
+        self._InventoryNetworkServer:ItemsUpdated(player, { Items = UpdatedItems })
     end
 
-    return InventoryEnums.Result.Success
+    return GeneralEnums.Result.Success
 end
 
 function InventoryServiceServer.RemoveItems(self: Module, player: Player, items: { ItemTypes.Item })
     local Data = self._DataServiceServer:GetProfile(player).Data
+    local UserId = PlayerToUserId(player)
     
     local RemovedItemIds: { ItemTypes.ItemId } = {}
     local UpdatedItems: { [ItemTypes.ItemId]: ItemTypes.Item } = {}
@@ -240,7 +257,7 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
                 end
 
                 Data.Inventory[item.Id] = nil
-                self._PlayersInventoryItemCount[player] -= 1
+                self._UserIdToItemCount[UserId] -= 1
                 table.insert(RemovedItemIds, item.Id)
             end,
             Stackable = function(item: ItemTypes.StackableItem)
@@ -252,7 +269,7 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
 
                 if StoredItem.Amount <= item.Amount then
                     Data.Inventory[item.Id] = nil
-                    self._PlayersInventoryItemCount[player] -= 1
+                    self._UserIdToItemCount[UserId] -= 1
                     table.insert(RemovedItemIds, item.Id)
                     UpdatedItems[item.Id] = nil
                 else
@@ -286,7 +303,7 @@ function InventoryServiceServer.Init(self: Module, serviceBag: ServiceBag.Servic
     self._DataServiceServer = self._ServiceBag:GetService(require("DataServiceServer"))
     self._InventoryNetworkServer = self._ServiceBag:GetService(require("InventoryNetworkServer"))
     self._EncyclopediaServiceServer = self._ServiceBag:GetService(require("EncyclopediaServiceServer"))
-    self._PlayersInventoryItemCount = {}
+    self._UserIdToItemCount = {}
 
     self.Signals = {
         ItemAdded = Signal.new(),
@@ -309,15 +326,16 @@ function InventoryServiceServer.Start(self: Module)
         local Maid, Player = brio:ToMaidAndValue()
 
         Maid:Add(self._DataServiceServer:OnDataReady(Player, function(Data)
+            local UserId = PlayerToUserId(Player)
             local ItemCount = 0
             for _ in Data.Inventory do
                 ItemCount += 1
             end
 
-            self._PlayersInventoryItemCount[Player] = ItemCount
+            self._UserIdToItemCount[UserId] = ItemCount
 
             return function()
-                self._PlayersInventoryItemCount[Player] = nil
+                self._UserIdToItemCount[UserId] = nil
             end
         end))
     end)

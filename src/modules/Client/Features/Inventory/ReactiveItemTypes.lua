@@ -44,7 +44,6 @@ type ReactivePlantData = {
     Xp: ValueObject.ValueObject<number>,
     LastProduction: ValueObject.ValueObject<number>,
     Mutations: ValueObject.ValueObject<{ string }>,
-    LevelTreeChoices: ValueObject.ValueObject<ItemTypes.LevelTreeChoices>,
 }
 
 type ReactiveMaterialData = {}

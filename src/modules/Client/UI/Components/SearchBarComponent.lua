@@ -52,7 +52,7 @@ local SearchBarComponent = function(props: Props)
             TextWrapped = true;
             ZIndex = 2;
             Blend.New "UIStroke" {
-                Color = props.TextBoxStrokeColor;
+                Color = props.TextBoxStrokeColor or Color3.fromRGB(43, 73, 112);
                 Thickness = 3;
             };
             [Blend.OnChange "Text"] = function(text: string)

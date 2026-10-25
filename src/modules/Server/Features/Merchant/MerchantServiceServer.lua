@@ -16,7 +16,8 @@ local Brio = require("Brio")
 local Maid = require("Maid")
 local ProfileConfig = require("ProfileConfig")
 local MerchantTypesShared = require("MerchantTypesShared")
-local InventoryTypesShared = require("InventoryTypesShared")
+local GeneralTypesShared = require("GeneralTypesShared")
+local GeneralEnums = require("GeneralEnums")
 local ChanceClass = require("ChanceClass")
 local ItemUtil = require("ItemUtil")
 local ReconcileUtil = require("ReconcileUtil")
@@ -123,9 +124,9 @@ function MerchantServiceServer.Buy(self: Module, player: Player, slotId: Merchan
     end
 
     local BoughtItem = ItemUtil:ProcessRawItem(ItemUtil:MakeRawFromName(Slot.ItemName))
-    local Result: InventoryTypesShared.Result = self._InventoryServiceServer:AddItems(player, { BoughtItem })
+    local Result: GeneralTypesShared.DefaultResult = self._InventoryServiceServer:AddItems(player, { BoughtItem })
 
-    if Result == "Fail" then
+    if Result == GeneralEnums.Result.Fail then
         return
     end
 

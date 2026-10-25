@@ -29,7 +29,6 @@ type ModuleData = {
         PlantRemoved: Signal.Signal<GardenTypesShared.PlantRemovedRemotePacket>,
         GardenClaimed: Signal.Signal<GardenTypesShared.GardenClaimedRemotePacket>,
         GardenAbandoned: Signal.Signal<GardenTypesShared.GardenAbandonedRemotePacket>,
-        GrowthCycle: Signal.Signal<GardenTypesShared.GrowthCycleRemotePacket>,
         HarvestItemsAdded: Signal.Signal<GardenTypesShared.HarvestItemsAddedRemotePacket>,
         HarvestItemsUpdated: Signal.Signal<GardenTypesShared.HarvestItemsUpdatedRemotePacket>,
         HarvestCollected: Signal.Signal<GardenTypesShared.HarvestCollectedRemotePacket>,
@@ -79,7 +78,6 @@ function GardenNetworkClient.Init(self: Module, serviceBag: ServiceBag.ServiceBa
         PlantRemoved = Signal.new(),
         GardenClaimed = Signal.new(),
         GardenAbandoned = Signal.new(),
-        GrowthCycle = Signal.new(),
         HarvestItemsAdded = Signal.new(),
         HarvestItemsUpdated = Signal.new(),
         HarvestCollected = Signal.new()
@@ -107,10 +105,6 @@ function GardenNetworkClient.Start(self: Module)
 
     Channel:Connect("GardenAbandoned", function(packet: GardenTypesShared.GardenAbandonedRemotePacket)
         self.RemoteEvents.GardenAbandoned:Fire(packet)
-    end)
-
-    Channel:Connect("GrowthCycle", function(packet: GardenTypesShared.GrowthCycleRemotePacket)
-        self.RemoteEvents.GrowthCycle:Fire(packet)
     end)
 
     Channel:Connect("HarvestItemsAdded", function(packet: GardenTypesShared.HarvestItemsAddedRemotePacket)

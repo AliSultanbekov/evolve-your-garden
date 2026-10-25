@@ -23,7 +23,8 @@ function MaterialsConfig._Init(self: Module)
         ["Fruit"] = {
             Name = "Fruit",
             Icon = "rbxassetid://115748294366089",
-            Rarity = "Common"
+            Rarity = "Common",
+            Tags = {},
         }
     }
 end
@@ -35,6 +36,7 @@ type MaterialEntry = {
     Name: string,
     Icon: string,
     Rarity: ItemTypes.Rarity,
+    Tags: { [string]: boolean },
 }
 
 type ModuleData = {

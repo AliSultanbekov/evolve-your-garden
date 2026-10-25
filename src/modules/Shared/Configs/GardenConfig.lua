@@ -21,24 +21,22 @@ function GardenConfig._Init(self: Module)
     self.PlantMutationBaseChance = 0.001
     self.BaseTick = 1
     self.MaxGardens = 1
+    self.HarvestCap = 20
     self.UpgradeStats = {
         [1] = {
             Slots = 9,
             Cols = 3,
             Spacing = 6,
-            HarvestCap = 20,
         },
         [2] = {
             Slots = 12,
             Cols = 3,
             Spacing = 6,
-            HarvestCap = 20,
         },
         [3] = {
             Slots = 15,
             Cols = 3,
             Spacing = 6,
-            HarvestCap = 20,
         }
     }
 end
@@ -54,13 +52,13 @@ export type UpgradeStatsEntry = {
     Slots: number,
     Cols: number,
     Spacing: number,
-    HarvestCap: number,
 }
 
 type ModuleData = {
     PlantMutationBaseChance: number,
     BaseTick: number,
     MaxGardens: number,
+    HarvestCap: number,
     UpgradeStats: { [number]: UpgradeStatsEntry },
 }
 

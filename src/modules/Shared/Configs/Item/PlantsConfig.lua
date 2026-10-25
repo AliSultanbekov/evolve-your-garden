@@ -20,10 +20,14 @@ local DEFAULT_AMOUNT_POOL = {
 
 local DEFAULT_GENETICS_CONFIG = {
     Speed = NumberRange.new(0.8, 1.2),
-    BabyChance = NumberRange.new(0.0001, 0.01),
     Yield = NumberRange.new(0, 2),
     Quality = NumberRange.new(0, 2),
     MutationChance = NumberRange.new(0, 2),
+}
+
+local DEFAULT_WATER_CONFIG = {
+    Max = 100,
+    UsagePerCycle = 5,
 }
 
 local DEFAULT_LEVEL = function(xp: number): (number, number, number) -- currentlevel, currentlevelxp, nextlevelxp
@@ -48,20 +52,33 @@ local PlantConfig = {}
 -- [ Private Functions ] --
 function PlantConfig._Init(self: Module)
     self.PlantsCount = 3
+    -- Offsets are part of each plant's genetic identity (seeded rolls) - never
+    -- renumber them or every existing plant's genetics change. 2 belonged to
+    -- BabyChance (removed) and stays retired.
+    self.GeneticOffsets = {
+        Speed = 1,
+        Quality = 3,
+        Yield = 4,
+        MutationChance = 5,
+    }
+    -- Level trees used to grant mutation slots; flat cap until levels return.
+    self.MaxMutationSlots = 1
     self.Plants = {
         ["Daisy"] = {
             Name = "Daisy",
             Rarity = "Uncommon",
             Icon = "rbxassetid://136682835000115",
-            BaseCycleTime = 5,
+            Tags = {},
             Level = DEFAULT_LEVEL,
             Genetics = table.clone(DEFAULT_GENETICS_CONFIG),
             Production = {
+                CycleTime = 5,
                 AmountPool = table.clone(DEFAULT_AMOUNT_POOL),
                 ItemPool = {
                     ["Fruit"] = 100
                 }
             },
+            Water = table.clone(DEFAULT_WATER_CONFIG),
             GrowthStages = {
                 [1] = 0,
                 [2] = 60,
@@ -72,15 +89,17 @@ function PlantConfig._Init(self: Module)
             Name = "Buttercup",
             Rarity = "Uncommon",
             Icon = "rbxassetid://94575197746146",
-            BaseCycleTime = 5,
+            Tags = {},
             Level = DEFAULT_LEVEL,
             Genetics = table.clone(DEFAULT_GENETICS_CONFIG),
             Production = {
+                CycleTime = 5,
                 AmountPool = table.clone(DEFAULT_AMOUNT_POOL),
                 ItemPool = {
                     ["Fruit"] = 100
                 }
             },
+            Water = table.clone(DEFAULT_WATER_CONFIG),
             GrowthStages = {
                 [1] = 0,
                 [2] = 60,
@@ -92,15 +111,17 @@ function PlantConfig._Init(self: Module)
             Name = "Tomato",
             Rarity = "Uncommon",
             Icon = "rbxassetid://115827142175801",
-            BaseCycleTime = 5,
+            Tags = {},
             Level = DEFAULT_LEVEL,
             Genetics = table.clone(DEFAULT_GENETICS_CONFIG),
             Production = {
+                CycleTime = 5,
                 AmountPool = table.clone(DEFAULT_AMOUNT_POOL),
                 ItemPool = {
                     ["Fruit"] = 100
                 }
             },
+            Water = table.clone(DEFAULT_WATER_CONFIG),
             GrowthStages = {
                 [1] = 0,
             }
@@ -169,39 +190,6 @@ function PlantConfig._Init(self: Module)
             end,
         },
     }
-
-    self.LevelTreeRewards = {
-        [5] = {
-            Choices = {
-                [1] = { Stat = "MutationSlot", Value = 1, AccumSign = "+"},
-                [2] = { Stat = "YieldMultiplier", Value = 1.2, AccumSign = "*"},
-            }
-        },
-        [10] = {
-            Choices = {
-                [1] = { Stat = "MutationSlot", Value = 1, AccumSign = "+" },
-                [2] = { Stat = "SpeedMultiplier", Value = 1.15, AccumSign = "*" },
-            }
-        },
-        [15] = {
-            Choices = {
-                [1] = { Stat = "MutationSlot", Value = 1,   AccumSign = "+" },
-                [2] = { Stat = "BabyChanceMultiplier", Value = 1.5, AccumSign = "*" },
-            }
-        },
-        [20] = {
-            Choices = {
-                [1] = { Stat = "MutationSlot", Value = 1, AccumSign = "+" },
-                [2] = { Stat = "QualityMultiplier", Value = 1.3, AccumSign = "*" },
-            }
-        },
-        [25] = {
-            Choices = {
-                [1] = { Stat = "MutationSlot", Value = 1, AccumSign = "+" },
-                [2] = { Stat = "MutationChanceMultiplier", Value = 1.5, AccumSign = "*" },
-            }
-        },
-    }
 end
 
 -- [ Public Functions ] --
@@ -209,23 +197,29 @@ end
 -- [ Types ] --
 type GeneticsConfig = {
     Speed: NumberRange,
-    BabyChance: NumberRange,
     Yield: NumberRange,
     Quality: NumberRange,
     MutationChance: NumberRange,
+}
+
+type WaterConfig = {
+    Max: number,
+    UsagePerCycle: number,
 }
 
 type PlantEntry = {
     Name: string,
     Rarity: ItemTypes.Rarity,
     Icon: string,
-    BaseCycleTime: number,
+    Tags: { [string]: boolean },
     Level: (xp: number) -> (number, number, number),
     Genetics: GeneticsConfig,
     Production: {
+        CycleTime: number,
         AmountPool: { [number]: number },
         ItemPool: { [string]: number },
     },
+    Water: WaterConfig,
     GrowthStages: {
         [number]: number
     }
@@ -238,24 +232,17 @@ type MutationEntry = {
     CanRoll: (context: any) -> boolean,
 }
 
-export type LevelTreeStat = "MutationSlot" | "YieldMultiplier" | "SpeedMultiplier" | "BabyChanceMultiplier" | "QualityMultiplier" | "MutationChanceMultiplier"
-export type LevelTreeChoices = { [number]: number }
-
-type LevelTreeChoice = {
-    Stat: LevelTreeStat,
-    Value: number,
-    AccumSign: "+" | "*",
-}
-
-type LevelTreeMilestone = {
-    Choices: { [number]: LevelTreeChoice },
-}
-
 type ModuleData = {
     PlantsCount: number,
+    GeneticOffsets: {
+        Speed: number,
+        Quality: number,
+        Yield: number,
+        MutationChance: number,
+    },
+    MaxMutationSlots: number,
     Plants: { [string]: PlantEntry },
     Mutations: { [string]: MutationEntry },
-    LevelTreeRewards: { [number]: LevelTreeMilestone },
 }
 
 export type Module = typeof(PlantConfig) & ModuleData

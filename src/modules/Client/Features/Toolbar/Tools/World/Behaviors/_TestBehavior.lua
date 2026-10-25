@@ -10,6 +10,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local Maid = require("Maid")
 local ToolsTypesClient = require("ToolsTypesClient")
+local SoundUtil = require("SoundUtil")
 
 -- [ Constants ] --
 
@@ -27,7 +28,7 @@ export type Module = typeof(TestBehavior) & ModuleData
 
 -- [ Public Functions ] --
 function TestBehavior.OnEquipped(self: Module, maid: Maid.Maid, context: ToolsTypesClient.BehaviorContext)
-    print("Item Equipped")
+    SoundUtil:PlaySound("NPC/Fart")
 end
 
 function TestBehavior.OnActivated(self: Module, context: ToolsTypesClient.BehaviorContext)

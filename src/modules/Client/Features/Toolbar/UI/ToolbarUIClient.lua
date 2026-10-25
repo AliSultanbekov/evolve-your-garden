@@ -62,8 +62,8 @@ function ToolbarUIClient.Start(self: Module)
             IsOpen = self._UIServiceClient:ObserveUI("Toolbar"),
             IsInventoryOpen = self._UIServiceClient:ObserveUI("Inventory"),
             InventorySelectedItem = self._InventoryServiceClient:ObserveSelectedItem(),
-            ObserveSlotItem = function(slotId: ToolbarTypesShared.SlotId)
-                return self._ToolbarServiceClient:ObserveSlotItem(slotId)
+            ObserveItemFromSlotId = function(slotId: ToolbarTypesShared.SlotId)
+                return self._ToolbarServiceClient:ObserveItemFromSlotId(slotId)
             end,
             ObserveEquippedSlotId = self._ToolbarServiceClient:ObserveEquippedSlotId(),
             OnSlotPressed = function(slotId: ToolbarTypesShared.SlotId)

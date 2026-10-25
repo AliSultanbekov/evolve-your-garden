@@ -25,7 +25,7 @@ local AnimatedFrameComponent = require("AnimatedFrameComponent")
 local GenericProgressBarComponent = require("GenericProgressBarComponent")
 local Rx = require("Rx")
 local PlantsConfig = require("PlantsConfig")
-local PlantUtil = require("PlantUtil")
+local PlantUtilShared = require("PlantUtilShared")
 
 -- [ Constants ] --
 
@@ -67,7 +67,7 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
         Rx.map(function(growthTime: number)
             return {
                 GrowthTime = growthTime,
-                FinalStageTime = PlantUtil:GetLastGrowthStageTime(plant.Name),
+                FinalStageTime = PlantUtilShared:GetLastGrowthStageTime(plant.Name),
             }
         end) :: any,
         Rx.shareReplay(1) :: any,

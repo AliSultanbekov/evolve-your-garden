@@ -33,10 +33,6 @@ export type Stackable = {
     Amount: number,
 }
 
-export type LevelTreeChoices = {
-    [number]: number
-}
-
 -- ===== Category-specific data =====
 
 export type PlantData = {
@@ -44,18 +40,17 @@ export type PlantData = {
     Xp: number,
     LastProduction: number,
     GeneticNumber: number,
+    Water: number,
     Mutations: { string },
-    LevelTreeChoices: LevelTreeChoices,
 }
 
 export type MaterialData = {
-
+    
 }
 
 export type ToolData = {
     Durability: number?
 }
-
 
 -- ===== Concrete items =====
 -- Composed: Common + (Stackable if applicable) + category data + Category tag.
@@ -101,7 +96,6 @@ export type RawPlantItem = {
     LastProduction: number?,
     GeneticNumber: number?,
     Mutations: { string }?,
-    LevelTreeChoices: LevelTreeChoices?,
 }
 export type RawMaterialItem = {
     Id: ItemId?,

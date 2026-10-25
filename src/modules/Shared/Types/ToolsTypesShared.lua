@@ -18,4 +18,12 @@ export type ToolState = {
     [any]: any
 }
 
+-- Client Events
+-- Params carries per-tool activation intent (target slot ids etc.) - ids and
+-- clamped values only, never client-owned state. Each server behavior
+-- validates its own params shape.
+export type ActivateToolRemotePacket = {
+    Params: { [string]: any }?,
+}
+
 return nil

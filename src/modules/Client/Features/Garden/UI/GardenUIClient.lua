@@ -26,7 +26,6 @@ local HighlightComponent = require("HighlightComponent")
 local PlantPicker = require(script.Parent.Components._PlantPickerComponent)
 local PlantTooltip = require(script.Parent.Components._PlantTooltipComponent)
 local ItemTooltipComponent = require(script.Parent.Components._ItemTooltipComponent)
-local PlantHarvestComponent = require(script.Parent.Components._PlantHarvestComponent)
 
 -- [ Constants ] --
 
@@ -50,64 +49,6 @@ type ModuleData = {
 export type Module = typeof(GardenUIClient) & ModuleData
 
 -- [ Private Functions ] --
-function GardenUIClient._SetupPlantHarvest(self: Module)
-    self._Maid:Add(Rx.combineLatest({
-        IsUIOpen = self._UIServiceClient:ObserveUI("GardenPlantHarvest"),
-        SelectedSlotInfo = self._GardenServiceClient:ObserveSelectedSlotInfo(),
-    }):Pipe({
-        Rx.where(function(data)
-            if not data.IsUIOpen then
-                return false
-            end
-
-            if data.SelectedSlotInfo then
-                return false
-            end
-
-            return true
-        end) :: any
-    }):Subscribe(function()
-        self._UIServiceClient:CloseUI("GardenPlantHarvest")
-    end))
-
-    self._Maid:Add(self._UIServiceClient:MountToScreen("UIs", function() return {
-        PlantHarvestComponent({
-            IsOpen = self._UIServiceClient:ObserveUI("GardenPlantHarvest"),
-            Garden = self._GardenServiceClient:ObserveLocalGarden(),
-            Slot = self._GardenServiceClient:ObserveSelectedSlot(),
-
-            OnClose = function()
-                self._GardenServiceClient:SelectSlotInfo(nil)
-                self._UIServiceClient:CloseUI("GardenPlantHarvest")
-            end,
-            OnItemPressed = function(item: ReactiveItemTypes.ReactiveItem)
-                
-            end,
-            OnItemHovered = function(item: ReactiveItemTypes.ReactiveItem)
-                self._HoveredItem.Value = item
-            end,
-            OnItemUnhovered = function(item: ReactiveItemTypes.ReactiveItem)
-                if self._HoveredItem.Value ~= item then
-                    return
-                end
-
-                self._HoveredItem.Value = nil
-            end,
-            CollectHarvest = function()
-                local SelectedSlotInfo = self._GardenServiceClient:GetSelectedSlotInfo()
-                
-                if not SelectedSlotInfo then
-                    return
-                end
-
-                local SlotId = SelectedSlotInfo.SlotId
-
-                self._GardenServiceClient:CollectHarvest(SlotId)
-            end
-        })
-    } end))
-end
-
 function GardenUIClient._SetupHighlight(self: Module)
     local Enabled = Rx.combineLatest({
         SelectedSlotInfo = self._GardenServiceClient:ObserveSelectedSlotInfo(),
@@ -240,11 +181,17 @@ function GardenUIClient._SetupTooltip(self: Module)
                             return
                         end
 
-                        self._GardenServiceClient:RemovePlant(SelectedSlotId.SlotId)
+                        self._GardenServiceClient:RemovePlant(SelectedSlotId.GardenId, SelectedSlotId.SlotId)
                         self._GardenServiceClient:SelectSlotInfo(nil)
                     end,
                     ["Harvest"] = function()
-                        self._UIServiceClient:OpenUI("GardenPlantHarvest")
+                        local SelectedSlotInfo = self._GardenServiceClient:GetSelectedSlotInfo()
+
+                        if not SelectedSlotInfo then
+                            return
+                        end
+
+                        self._GardenServiceClient:CollectHarvest(SelectedSlotInfo.GardenId, SelectedSlotInfo.SlotId)
                     end
                 }
             })
@@ -316,7 +263,7 @@ function GardenUIClient._SetupPlantPicker(self: Module)
                     return
                 end
 
-                self._GardenServiceClient:PlacePlant(SelectedSlotInfo.SlotId, item.Id)
+                self._GardenServiceClient:PlacePlant(SelectedSlotInfo.GardenId, SelectedSlotInfo.SlotId, item.Id)
                 self._UIServiceClient:CloseUI("GardenPlantPicker")
             end,
             OnItemHovered = function(item: ReactiveItemTypes.ReactiveItem)
@@ -359,13 +306,6 @@ function GardenUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
         },
     })
 
-    self._UIServiceClient:RegisterUI({
-        UIName = "GardenPlantHarvest",
-        Category = "Main",
-        Conflicts = {
-            ["Main"] = true
-        },
-    })
 end
 
 function GardenUIClient.Start(self: Module)
@@ -373,7 +313,6 @@ function GardenUIClient.Start(self: Module)
     self:_SetupTooltip()
     self:_SetupPlantPicker()
     self:_SetupPlantPickerTooltip()
-    self:_SetupPlantHarvest()
 
     Rx.combineLatest({
         SelectedSlotInfo = self._GardenServiceClient:ObserveSelectedSlotInfo(),

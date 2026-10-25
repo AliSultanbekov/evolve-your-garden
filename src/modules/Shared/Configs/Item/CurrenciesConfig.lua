@@ -24,11 +24,13 @@ function CurrenciesConfig._Init(self: Module)
             Name = "Coins",
             Rarity = "Common",
             Icon = "rbxassetid://137822539684508",
+            Tags = {},
         },
         ["Gems"] = {
             Name = "Gems",
             Rarity = "Common",
             Icon = "rbxassetid://83087975713139",
+            Tags = {},
         }
     }
 end
@@ -40,6 +42,7 @@ type CurrencyEntry = {
     Name: string,
     Rarity: ItemTypes.Rarity,
     Icon: string,
+    Tags: { [string]: boolean },
 }
 
 type ModuleData = {

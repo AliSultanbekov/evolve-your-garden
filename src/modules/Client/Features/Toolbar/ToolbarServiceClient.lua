@@ -24,6 +24,7 @@ local Observable = require("Observable")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local Maid = require("Maid")
 local Signal = require("Signal")
+local ItemConfig = require("ItemConfig")
 
 -- [ Constants ] --
 
@@ -57,7 +58,7 @@ export type Module = typeof(ToolbarServiceClient) & ModuleData
 function ToolbarServiceClient._SetupSlots(self: Module)
     local Slots = {}
 
-    for slotId, _ in ToolbarConfig.SlotIds do
+    for _, slotId in ToolbarConfig.SlotOrder do
         Slots[slotId] = ValueObject.new()
     end
 
@@ -77,6 +78,18 @@ function ToolbarServiceClient._SetSlotItemId(self: Module, slotId: ToolbarTypesS
 
     local StaleItemId = Slot.Value
 
+    if StaleItemId == itemId then
+        return
+    end
+
+    if itemId then
+        local PreviousSlotId = self._ItemIdToSlotId[itemId]
+
+        if PreviousSlotId and PreviousSlotId ~= slotId then
+            self:_SetSlotItemId(PreviousSlotId, nil)
+        end
+    end
+
     if StaleItemId then
         self._ItemIdToSlotId[StaleItemId] = nil
     end
@@ -86,9 +99,31 @@ function ToolbarServiceClient._SetSlotItemId(self: Module, slotId: ToolbarTypesS
     if itemId then
         self._ItemIdToSlotId[itemId] = slotId
     end
+
+    if self._EquippedSlotId.Value == slotId then
+        if StaleItemId then
+            self.Signals.ItemUnequipped:Fire(StaleItemId)
+        end
+
+        if itemId then
+            self.Signals.ItemEquipped:Fire(itemId)
+        end
+    end
 end
 
 -- [ Public Functions ] --
+function ToolbarServiceClient.ObserveEquippedItemHasTag(self: Module, tag: string)
+    self:ObserveEquippedItem():Pipe({
+        Rx.map(function(item: ReactiveItemTypes.ReactiveItem?)
+            if not item then
+                return false
+            end
+
+            return ItemConfig:HasTag(item.Name, tag)
+        end) :: any
+    })
+end
+
 function ToolbarServiceClient.ObserveEquippedItem(self: Module): Observable.Observable<ReactiveItemTypes.ReactiveItem>
     return self:ObserveEquippedItemId():Pipe({
         Rx.switchMap(function(itemId: ItemTypes.ItemId?)
@@ -115,7 +150,7 @@ function ToolbarServiceClient.ObserveEquippedItemId(self: Module)
     })
 end
 
-function ToolbarServiceClient.ObserveSlotItem(self: Module, slotId: ToolbarTypesShared.SlotId)
+function ToolbarServiceClient.ObserveItemFromSlotId(self: Module, slotId: ToolbarTypesShared.SlotId)
     local Slot = self._Slots[slotId]
 
     if not Slot then
@@ -134,19 +169,29 @@ function ToolbarServiceClient.ObserveSlotItem(self: Module, slotId: ToolbarTypes
     }) :: any
 end
 
-function ToolbarServiceClient.GetEquippedSlotItem(self: Module): ReactiveItemTypes.ReactiveItem?
+function ToolbarServiceClient.GetEquippedItem(self: Module): ReactiveItemTypes.ReactiveItem?
     local SlotId = self:GetEquippedSlotId()
 
     if not SlotId then
         return
     end
 
-    local Item = self:GetSlotItem(SlotId)
+    local Item = self:GetItemFromSlotId(SlotId)
 
     return Item
 end
 
-function ToolbarServiceClient.GetSlotItem(self: Module, slotId: ToolbarTypesShared.SlotId): ReactiveItemTypes.ReactiveItem?
+function ToolbarServiceClient.GetEquippedItemId(self: Module): ItemTypes.ItemId?
+    local SlotId = self:GetEquippedSlotId()
+
+    if not SlotId then
+        return
+    end
+
+    return self._Slots[SlotId].Value
+end
+
+function ToolbarServiceClient.GetItemFromSlotId(self: Module, slotId: ToolbarTypesShared.SlotId): ReactiveItemTypes.ReactiveItem?
     local Slot = self._Slots[slotId]
     local ItemId = Slot.Value
 
@@ -190,16 +235,16 @@ function ToolbarServiceClient.EquipSlot(self: Module, slotId: ToolbarTypesShared
 end
 
 function ToolbarServiceClient.UnequipSlot(self: Module)
-    local SlotId = self._EquippedSlotId.Value
+    local EquippedSlotId = self._EquippedSlotId.Value
 
-    if not SlotId then
+    if not EquippedSlotId then
         return
     end
 
     self._EquippedSlotId.Value = nil
     self._ToolbarNetworkClient:UnequipSlot()
 
-    local ItemId = self._Slots[SlotId].Value
+    local ItemId = self._Slots[EquippedSlotId].Value
 
     if ItemId then
         self.Signals.ItemUnequipped:Fire(ItemId)
@@ -249,13 +294,13 @@ function ToolbarServiceClient.Start(self: Module)
         end
     end)
 
-    self._InventoryServiceClient.Signals.ItemRemoved:Connect(function(itemId: ItemTypes.ItemId)
+    self._Maid:Add(self._InventoryServiceClient.Signals.ItemRemoved:Connect(function(itemId: ItemTypes.ItemId)
         local SlotId = self:_GetSlotIdFromItemId(itemId)
 
         if SlotId then
             self:_SetSlotItemId(SlotId, nil)
         end
-    end)
+    end))
 end
 
 return ToolbarServiceClient :: Module
