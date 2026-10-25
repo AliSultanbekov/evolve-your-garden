@@ -16,7 +16,20 @@ local ToolsTypesShared = require("ToolsTypesShared")
 -- [ Variables ] --
 
 -- [ Types ] --
-export type BehaviorContext = {
+export type OnEquippedContext = {
+    State: ToolsTypesShared.ToolState,
+    Item: ItemTypes.Item,
+}
+
+export type OnActivatedContext = {
+    State: ToolsTypesShared.ToolState,
+    Item: ItemTypes.Item,
+    -- Built by the client behavior's ServerParams: an untrusted claim.
+    -- The behavior must typecheck every field it reads.
+    Params: { [string]: any },
+}
+
+export type OnUnequippedContext = {
     State: ToolsTypesShared.ToolState,
     Item: ItemTypes.Item,
 }

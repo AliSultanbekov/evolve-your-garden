@@ -27,15 +27,15 @@ export type Module = typeof(TestBehavior) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
-function TestBehavior.OnEquipped(self: Module, maid: Maid.Maid, context: ToolsTypesClient.BehaviorContext)
+function TestBehavior.OnEquipped(self: Module, maid: Maid.Maid, context: ToolsTypesClient.OnEquippedContext)
     SoundUtil:PlaySound("NPC/Fart")
 end
 
-function TestBehavior.OnActivated(self: Module, context: ToolsTypesClient.BehaviorContext)
+function TestBehavior.OnActivated(self: Module, context: ToolsTypesClient.OnActivatedContext)
     print("Item Activated")
 end
 
-function TestBehavior.OnUnequipped(self: Module, context: ToolsTypesClient.BehaviorContext)
+function TestBehavior.OnUnequipped(self: Module, context: ToolsTypesClient.OnUnequippedContext)
     print("Item Unequipped")
 end
 

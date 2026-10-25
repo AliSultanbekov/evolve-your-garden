@@ -38,23 +38,11 @@ function PlantUtilServer.AdvanceGrowth(self: Module, plant: ItemTypes.PlantItem,
 end
 
 function PlantUtilServer.ClaimProductionCycles(self: Module, plant: ItemTypes.PlantItem): number
-    local GrowthTime = plant.GrowthTime
-    local FinalStageTime = PlantUtilShared:GetLastGrowthStageTime(plant.Name)
-    local ProductionStart = math.max(plant.LastProduction, FinalStageTime)
+    local LastProduction, Cycle = PlantUtilShared:GetLastProductionAndCycles(plant.Name, plant.GrowthTime, plant.LastProduction, plant.GeneticNumber)
 
-    if GrowthTime <= ProductionStart then
-        return 0
-    end
+    plant.LastProduction = LastProduction
 
-    local ActualCycleTime = PlantUtilShared:GetActualCycleTime(plant.Name, plant.GeneticNumber)
-    local UnclaimedTime = GrowthTime - ProductionStart
-    local Cycles = math.floor(UnclaimedTime / ActualCycleTime)
-
-    if Cycles > 0 then
-        plant.LastProduction = GrowthTime - (UnclaimedTime % ActualCycleTime)
-    end
-
-    return Cycles
+    return Cycle
 end
 
 function PlantUtilServer.Produce(self: Module, plant: ItemTypes.PlantItem): { ItemTypes.Item }

@@ -27,15 +27,15 @@ export type Module = typeof(TestBehavior) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
-function TestBehavior.OnEquipped(self: Module, player: Player, maid: Maid.Maid, context: ToolsTypesServer.BehaviorContext)
+function TestBehavior.OnEquipped(self: Module, player: Player, maid: Maid.Maid, context: ToolsTypesServer.OnEquippedContext)
 
 end
 
-function TestBehavior.OnActivated(self: Module, player: Player, context: ToolsTypesServer.BehaviorContext)
+function TestBehavior.OnActivated(self: Module, player: Player, context: ToolsTypesServer.OnActivatedContext)
     print("Item Activated")
 end
 
-function TestBehavior.OnUnequipped(self: Module, player: Player, context: ToolsTypesServer.BehaviorContext)
+function TestBehavior.OnUnequipped(self: Module, player: Player, context: ToolsTypesServer.OnUnequippedContext)
     print("Item Unequipped")
 end
 

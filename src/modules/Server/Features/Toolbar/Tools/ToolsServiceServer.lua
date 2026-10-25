@@ -69,10 +69,6 @@ function ToolsServiceServer._GetToolState(self: Module, userId: string, itemId: 
 end
 
 -- [ Public Functions ] --
-function ToolsServiceServer.ActivateTool(self: Module, player: Player, params: { [string]: any }?)
-
-end
-
 function ToolsServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     if self._ServiceBag ~= nil then
         error("Service already initialized")
@@ -191,7 +187,8 @@ function ToolsServiceServer.Start(self: Module)
     
         Behavior:OnActivated(player, {
             Item = Item,
-            State = self:_GetToolState(UserId, Item.Id)
+            State = self:_GetToolState(UserId, Item.Id),
+            Params = packet.Params or {},
         })
     end)
 

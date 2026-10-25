@@ -95,6 +95,7 @@ export type RawPlantItem = {
     Xp: number?,
     LastProduction: number?,
     GeneticNumber: number?,
+    Water: number?,
     Mutations: { string }?,
 }
 export type RawMaterialItem = {

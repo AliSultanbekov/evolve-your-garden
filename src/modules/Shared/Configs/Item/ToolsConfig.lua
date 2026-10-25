@@ -19,6 +19,7 @@ local ToolsConfig = {}
 
 -- [ Private Functions ] --
 function ToolsConfig._Init(self: Module)
+    self.DefaultToolDurabilityCost = 1
     self.Tools = {
         ["Watering Can"] = {
             Name = "Watering Can",
@@ -34,12 +35,14 @@ end
 
 -- [ Types ] --
 type ModuleData = {
+    DefaultToolDurabilityCost: number,
     Tools: { [string]:  {
         Name: string,
         Icon: string,
         Rarity: ItemTypes.Rarity,
         Cooldown: number,
         Tags: { [string]: boolean },
+        DurabilityCost: number?,
         MaxDurability: number?,
     }},
 }

@@ -48,6 +48,7 @@ function ItemUtil.ProcessRawItem(self: Module, rawItem: ItemTypes.RawItem): Item
             Xp = rawItem.Xp or 0,
             LastProduction = rawItem.LastProduction or 0,
             GeneticNumber = rawItem.GeneticNumber or math.random(1, (2^31)-1),
+            Water = rawItem.Water or 0,
             Mutations = rawItem.Mutations or {},
         }
     elseif rawItem.Category == "Material" then
@@ -74,8 +75,6 @@ function ItemUtil.ProcessRawItem(self: Module, rawItem: ItemTypes.RawItem): Item
     elseif rawItem.Category == "Tool" then
         local ToolConfig = ToolsConfig.Tools[rawItem.Name]
 
-        -- Creation choke point for the durable-iff-config-declares invariant:
-        -- Durability exists on the item exactly when config has MaxDurability.
         return {
             Id = id,
             Name = rawItem.Name,

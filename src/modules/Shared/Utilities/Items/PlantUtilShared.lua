@@ -40,6 +40,32 @@ function PlantUtilShared._ScaleGenetic(self: Module, range: NumberRange, t: numb
 end
 
 -- [ Public Functions ] --
+function PlantUtilShared.GetLastProductionAndCycles(
+    self: Module, 
+    plantName: string, 
+    growthTime: number,
+    lastProduction: number,
+    geneticNumber: number
+): (number, number)
+    local GrowthTime = growthTime
+    local FinalStageTime = PlantUtilShared:GetLastGrowthStageTime(plantName)
+    local ProductionStart = math.max(lastProduction, FinalStageTime)
+
+    if GrowthTime <= ProductionStart then
+        return lastProduction, 0
+    end
+
+    local ActualCycleTime = PlantUtilShared:GetActualCycleTime(plantName, geneticNumber)
+    local UnclaimedTime = GrowthTime - ProductionStart
+    local Cycles = math.floor(UnclaimedTime / ActualCycleTime)
+    
+    if Cycles < 1 then
+        return lastProduction, 0
+    end
+
+    return (GrowthTime - (UnclaimedTime % ActualCycleTime)), Cycles
+end
+
 function PlantUtilShared.GetLastGrowthStageTime(self: Module, plantName: string): number
     local PlantConfig = PlantsConfig.Plants[plantName]
     local Stages = #PlantConfig.GrowthStages

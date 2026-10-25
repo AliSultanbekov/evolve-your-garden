@@ -66,14 +66,21 @@ export type RemovePlantRemotePacket = {
     SlotId: SlotId,
 }
 
+-- Production changes the plant too (LastProduction, Xp), so each slot's
+-- entry carries the harvest items alongside the plant that produced them.
+export type HarvestSlotChanges = {
+    Harvest: { [ItemTypes.ItemId]: ItemTypes.Item },
+    Item: ItemTypes.PlantItem?,
+}
+
 export type HarvestItemsAddedRemotePacket = {
     GardenId: GardenId,
-    Harvest: { [SlotId]: { [ItemTypes.ItemId]: ItemTypes.Item } }
+    Harvest: { [SlotId]: HarvestSlotChanges }
 }
 
 export type HarvestItemsUpdatedRemotePacket = {
     GardenId: GardenId,
-    Harvest: { [SlotId]: { [ItemTypes.ItemId]: ItemTypes.Item } }
+    Harvest: { [SlotId]: HarvestSlotChanges }
 }
 
 export type HarvestCollectedRemotePacket = {

@@ -60,7 +60,8 @@ function GardenWorldClient._SetupHover(self: Module)
     self._Maid:Add(Rx.combineLatest({
         IsMainOpen = self._UIServiceClient:ObserveCategory("Main"),
         Character = RxCharacterUtils.observeLocalPlayerCharacter(),
-        Model = self._MouseServiceClient:ObserveHoveredModel()
+        Model = self._MouseServiceClient:ObserveHoveredModel(),
+        EquippedItem = self._ToolbarServiceClient:ObserveEquippedItem(),
     }):Pipe({
         Rx.map(function(data: any)
             if data.IsMainOpen then
@@ -101,42 +102,48 @@ end
 
 function GardenWorldClient._SetupSelect(self: Module)
     self._Maid:Add(self._MouseServiceClient.Signals.MousePressed:Connect(function(pressedInstance: Instance?)
-        if self._UIServiceClient:IsCategoryOpen("Main") then
+        if self._ToolbarServiceClient:GetEquippedItem() then
             return
+        else
+            if self._UIServiceClient:IsCategoryOpen("Main") then
+                return
+            end
+    
+            if self._GardenServiceClient:GetSelectedSlotInfo() then
+                return
+            end
+    
+            local Character = Players.LocalPlayer.Character
+    
+            if not Character then
+                return
+            end
+    
+            local SlotInfo = self:_ResolveSlotInfo(pressedInstance)
+    
+            if not SlotInfo then
+                return
+            end
+    
+            local SlotModel = self._GardenServiceClient:GetSlotModel(SlotInfo.GardenId, SlotInfo.SlotId)
+    
+            if not SlotModel then
+                return
+            end
+    
+            if not RangeUtil:CheckModelRange(SlotModel, Character, GardenConfigClient.InteractionRange) then
+                return
+            end
+    
+            self._GardenServiceClient:SelectSlotInfo(SlotInfo)
         end
-
-        if self._GardenServiceClient:GetSelectedSlotInfo() then
-            return
-        end
-
-        local Character = Players.LocalPlayer.Character
-
-        if not Character then
-            return
-        end
-
-        local SlotInfo = self:_ResolveSlotInfo(pressedInstance)
-
-        if not SlotInfo then
-            return
-        end
-
-        local SlotModel = self._GardenServiceClient:GetSlotModel(SlotInfo.GardenId, SlotInfo.SlotId)
-
-        if not SlotModel then
-            return
-        end
-
-        if not RangeUtil:CheckModelRange(SlotModel, Character, GardenConfigClient.InteractionRange) then
-            return
-        end
-
-        self._GardenServiceClient:SelectSlotInfo(SlotInfo)
     end))
 end
 
-function GardenWorldClient._SetupTools()
-    
+function GardenWorldClient._SetupTools(self: Module)
+    self._ToolServiceClient.Signals.ToolActivated:Connect(function(itemId: string)  
+        
+    end)
 end
 
 -- [ Public Functions ] --

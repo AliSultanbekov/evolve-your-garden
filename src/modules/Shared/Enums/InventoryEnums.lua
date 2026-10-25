@@ -18,6 +18,7 @@ local InventoryEnums = {
     Actions = {
         Open = "Open" :: "Open",
         Delete = "Delete" :: "Delete",
+        UseTool = "UseTool" :: "UseTool",
     },
 }
 

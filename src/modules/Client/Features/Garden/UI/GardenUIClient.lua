@@ -41,6 +41,7 @@ type ModuleData = {
     _InventoryServiceClient: typeof(require("InventoryServiceClient")),
     _GardenServiceClient: typeof(require("GardenServiceClient")),
     _MouseServiceClient: typeof(require("MouseServiceClient")),
+    _ToolbarServiceClient: typeof(require("ToolbarServiceClient")),
     _Maid: Maid.Maid,
     _Search: ValueObject.ValueObject<string>,
     _HoveredItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>
@@ -91,8 +92,13 @@ function GardenUIClient._SetupTooltip(self: Module)
         HoveredSlotInfo = self._GardenServiceClient:ObserveHoveredSlotInfo(),
         SelectedSlotInfo = self._GardenServiceClient:ObserveSelectedSlotInfo(),
         MainOpen = self._UIServiceClient:ObserveCategory("Main"),
+        EquippedItem = self._ToolbarServiceClient:ObserveEquippedItem(),
     }):Pipe({
         Rx.switchMap(function(data)
+            if data.EquippedItem then
+                return Rx.of(nil) :: any
+            end
+
             if data.MainOpen then
                 return Rx.of(nil) :: any
             end
@@ -294,6 +300,7 @@ function GardenUIClient.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._InventoryServiceClient = self._ServiceBag:GetService(require("InventoryServiceClient"))
     self._GardenServiceClient = self._ServiceBag:GetService(require("GardenServiceClient"))
     self._MouseServiceClient = self._ServiceBag:GetService(require("MouseServiceClient"))
+    self._ToolbarServiceClient = self._ServiceBag:GetService(require("ToolbarServiceClient"))
     self._Maid = Maid.new()
     self._Search = ValueObject.new("")
     self._HoveredItem = ValueObject.new(nil)

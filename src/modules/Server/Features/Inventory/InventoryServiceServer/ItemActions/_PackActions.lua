@@ -8,11 +8,10 @@
 local require = require(script.Parent:FindFirstAncestor("Inventory").loader).load(script) :: typeof(require)
 
 -- [ Imports ] --
-local ProfileConfig = require("ProfileConfig")
 local ItemTypes = require("ItemTypes")
 local PackUtil = require("PackUtil")
 local InventoryTypesServer = require("InventoryTypesServer")
-local _ItemUtil = require("ItemUtil")
+local ItemUtil = require("ItemUtil")
 
 -- [ Constants ] --
 
@@ -22,12 +21,6 @@ local _ItemUtil = require("ItemUtil")
 local Pack = {}
 
 -- [ Types ] --
-type OpenProps = {
-    PlayerData: ProfileConfig.ProfileTemplate,
-    Item: ItemTypes.PackItem,
-    Amount: number,
-    Gateway: InventoryTypesServer.Gateway
-}
 type ModuleData = {}
 
 export type Module = typeof(Pack) & ModuleData
@@ -35,27 +28,38 @@ export type Module = typeof(Pack) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
-function Pack.Open(props: OpenProps)
-    local Item = props.Item
+function Pack.Open(context: InventoryTypesServer.ItemActionContext)
+    local Item = context.Item :: ItemTypes.PackItem
+    local Amount = context.Params.Amount or 1
 
-    if typeof(props.Amount) ~= "number" or props.Amount < 1 or math.floor(props.Amount) ~= props.Amount then
+    if typeof(Amount) ~= "number" or Amount < 1 or math.floor(Amount) ~= Amount then
         return
     end
-    
-    if Item.Amount < props.Amount then
+
+    if Item.Amount < Amount then
         return
     end
-    
-    props.Gateway.RemoveItems({
+
+    local Contents: { ItemTypes.Item } = {}
+
+    for _, rawItem in PackUtil:Open(Item.Name, Amount) do
+        table.insert(Contents, ItemUtil:ProcessRawItem(rawItem))
+    end
+
+    if not context.Gateway.CanFitItems(Contents) then
+        return
+    end
+
+    context.Gateway.RemoveItems({
         {
             Id = Item.Id,
             Name = Item.Name,
             Category = "Pack" :: "Pack",
-            Amount = props.Amount,
+            Amount = Amount,
         },
     })
 
-    props.Gateway.AddRawItems(PackUtil:Open(Item.Name, props.Amount), true)
+    context.Gateway.AddItems(Contents, true)
 end
 
 return Pack :: Module

@@ -46,6 +46,14 @@ end
 
 function ToolsInputClient.Start(self: Module)
     self._Maid:Add(UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessed: boolean)
+        if gameProcessed then
+            return
+        end
+
+        if input.UserInputType ~= Enum.UserInputType.MouseButton1 and input.UserInputType ~= Enum.UserInputType.Touch then
+            return
+        end
+
         self._ToolServiceClient:ActivateTool()
     end))
 end

@@ -4,6 +4,7 @@
 
 -- [ Roblox Services ] --
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 -- [ Require ] --
 local require = require(script.Parent.loader).load(script) :: typeof(require)
@@ -20,6 +21,8 @@ local ReactiveItemTypes = require("ReactiveItemTypes")
 local ItemTypes = require("ItemTypes")
 local PlayerToUserId = require("PlayerToUserId")
 local Rx = require("Rx")
+local GardenUtil = require("GardenUtil")
+local PlantUtilShared = require("PlantUtilShared")
 
 -- [ Constants ] --
 
@@ -82,6 +85,25 @@ function GardenServiceClient._SetupGardens(self: Module): GardenTypesClient.Reac
     end
 
     return Gardens
+end
+
+function GardenServiceClient._GrowthCycle(self: Module, elapsed: number)
+    print(elapsed)
+    for _, garden in pairs(self._Gardens) do
+        for _, slot in garden.Slots:GetValueList() do
+            local Plant = slot.Plant.Value
+
+            if not Plant then
+                continue
+            end
+
+            Plant.GrowthTime.Value += elapsed
+
+            local LastProduction = PlantUtilShared:GetLastProductionAndCycles(Plant.Name, Plant.GrowthTime.Value, Plant.LastProduction.Value, Plant.GeneticNumber)
+
+            Plant.LastProduction.Value = LastProduction
+        end
+    end
 end
 
 -- [ Public Functions ] --
@@ -299,8 +321,6 @@ function GardenServiceClient.Start(self: Module)
         Garden.Owner.Value = nil
         Garden.Level.Value = nil
 
-        -- Clear the slots too — otherwise the next claimant inherits the
-        -- previous owner's slots/plants/harvest client-side.
         for _, slotId in Garden.Slots:GetKeyList() do
             Garden.Slots:Remove(slotId)
         end
@@ -340,15 +360,21 @@ function GardenServiceClient.Start(self: Module)
             return
         end
 
-        for slotId, items in packet.Harvest do
+        for slotId, slotChanges in packet.Harvest do
             local Slot = Garden.Slots:Get(slotId)
 
             if not Slot then
                 continue
             end
 
-            for _, item in items do
+            for _, item in slotChanges.Harvest do
                 Slot.Harvest:Set(item.Id, ReactiveItemUtil:ToReactive(item))
+            end
+
+            local Plant = Slot.Plant.Value
+
+            if slotChanges.Item and Plant then
+                ReactiveItemUtil:SyncFromPlain(Plant, slotChanges.Item)
             end
         end
     end)
@@ -360,14 +386,14 @@ function GardenServiceClient.Start(self: Module)
             return
         end
 
-        for slotId, items in packet.Harvest :: { [GardenTypesShared.SlotId]: { [any]: ItemTypes.StackableItem } } do
+        for slotId, slotChanges in packet.Harvest do
             local Slot = Garden.Slots:Get(slotId)
 
             if not Slot then
                 continue
             end
 
-            for _, item in items do
+            for _, item in slotChanges.Harvest :: { [any]: ItemTypes.StackableItem } do
                 local ReactiveItem = Slot.Harvest:Get(item.Id) :: ReactiveItemTypes.ReactiveStackableItem?
 
                 if not ReactiveItem then
@@ -375,6 +401,12 @@ function GardenServiceClient.Start(self: Module)
                 end
 
                 ReactiveItem.Amount.Value = item.Amount
+            end
+
+            local Plant = Slot.Plant.Value
+
+            if slotChanges.Item and Plant then
+                ReactiveItemUtil:SyncFromPlain(Plant, slotChanges.Item)
             end
         end
     end)
@@ -397,6 +429,20 @@ function GardenServiceClient.Start(self: Module)
         for _, key in Harvest:GetKeyList() do
             Harvest:Remove(key)
         end
+    end)
+
+    local Elapsed = 0
+
+    RunService.Heartbeat:Connect(function(dt: number)
+        if not GardenUtil:TickCheck(Elapsed) then
+            Elapsed += dt
+            return
+        end
+
+        local ElapsedGrowth = Elapsed
+        Elapsed = 0
+
+        self:_GrowthCycle(ElapsedGrowth)
     end)
 end
 

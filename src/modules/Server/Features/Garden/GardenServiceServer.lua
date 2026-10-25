@@ -27,6 +27,7 @@ local GeneralTypesShared = require("GeneralTypesShared")
 local ReconcileUtil = require("ReconcileUtil")
 local GeneralEnums = require("GeneralEnums")
 local Table = require("Table")
+local GardenUtil = require("GardenUtil")
 
 -- [ Constants ] --
 local GARDEN_TEMPLATE = {
@@ -276,8 +277,8 @@ function GardenServiceServer.AddHarvestItems(self: Module, player: Player, garde
         return GeneralEnums.Result.Fail
     end
 
-    local AddedItemsHarvest: { [GardenTypesShared.SlotId]: { [ItemTypes.ItemId]: ItemTypes.Item } } = {}
-    local UpdatedItemsHarvest: { [GardenTypesShared.SlotId]: { [ItemTypes.ItemId]: ItemTypes.Item } } = {}
+    local AddedItemsHarvest: { [GardenTypesShared.SlotId]: GardenTypesShared.HarvestSlotChanges } = {}
+    local UpdatedItemsHarvest: { [GardenTypesShared.SlotId]: GardenTypesShared.HarvestSlotChanges } = {}
 
     local Data = self._DataServiceServer:GetProfile(player).Data
     local HarvestCap = GardenConfig.HarvestCap
@@ -346,13 +347,13 @@ function GardenServiceServer.AddHarvestItems(self: Module, player: Player, garde
                     HarvestData[item.Id] = item
 
                     if not AddedItemsHarvest[slotId] then
-                        AddedItemsHarvest[slotId] = {}
+                        AddedItemsHarvest[slotId] = { Harvest = {}, Item = SlotData.Plant }
                     end
 
-                    AddedItemsHarvest[slotId][item.Id] = item
+                    AddedItemsHarvest[slotId].Harvest[item.Id] = item
                 end,
                 ["Stackable"] = function(item: ItemTypes.StackableItem)
-                    local IsRecentlyAdded = AddedItemsHarvest[slotId] and AddedItemsHarvest[slotId][item.Id]
+                    local IsRecentlyAdded = AddedItemsHarvest[slotId] and AddedItemsHarvest[slotId].Harvest[item.Id]
                     local ExistingItem = HarvestData[item.Id] :: ItemTypes.StackableItem
 
                     if IsRecentlyAdded then
@@ -366,10 +367,10 @@ function GardenServiceServer.AddHarvestItems(self: Module, player: Player, garde
                     (ExistingItem :: ItemTypes.Stackable).Amount = math.clamp(ExistingItem.Amount + item.Amount, 0, ItemConfig.MaxAmount)
 
                     if not UpdatedItemsHarvest[slotId] then
-                        UpdatedItemsHarvest[slotId] = {}
+                        UpdatedItemsHarvest[slotId] = { Harvest = {}, Item = SlotData.Plant }
                     end
 
-                    UpdatedItemsHarvest[slotId][item.Id] = ExistingItem
+                    UpdatedItemsHarvest[slotId].Harvest[item.Id] = ExistingItem
                 end
             })
         end
@@ -578,15 +579,15 @@ function GardenServiceServer.Start(self: Module)
     local Elapsed = 0
 
     self._Maid:Add(RunService.Heartbeat:Connect(function(dt: number)
-        if Elapsed < GardenConfig.BaseTick then
+        if not GardenUtil:TickCheck(Elapsed) then
             Elapsed += dt
             return
         end
 
-        local GrowthElapsed = Elapsed
+        local ElapsedGrowth = Elapsed
         Elapsed = 0
 
-        self:GrowthCycle(GrowthElapsed)
+        self:GrowthCycle(ElapsedGrowth)
     end))
 
     self._GardenNetworkServer.RemoteEvents.PlacePlant:Connect(function(player: Player, packet: GardenTypesShared.PlacePlantRemotePacket)

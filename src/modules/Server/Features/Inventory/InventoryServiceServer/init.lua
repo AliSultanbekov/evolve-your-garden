@@ -21,8 +21,12 @@ local Brio = require("Brio")
 local InventoryEnums = require("InventoryEnums")
 local GeneralEnums = require("GeneralEnums")
 local Signal = require("Signal")
+local InventoryConfig = require("InventoryConfig")
+
+local InventoryTypesServer = require("InventoryTypesServer")
 
 local PackActions = require(script.ItemActions._PackActions)
+local ToolActions = require(script.ItemActions._ToolActions)
 
 -- [ Constants ] --
 local INVENTORY_CAPACITY = 200
@@ -68,6 +72,26 @@ function InventoryServiceServer._IsInventoryFull(self: Module, player: Player)
     end
 end
 
+function InventoryServiceServer._CanFitItems(self: Module, player: Player, items: { [any]: ItemTypes.Item }): boolean
+    local Data = self._DataServiceServer:GetProfile(player).Data
+    local PredictedItemCount = self:_GetInventoryItemCount(player)
+    local SeenItemIds = {}
+
+    for _, item in items do
+        if SeenItemIds[item.Id] then
+            continue
+        end
+
+        SeenItemIds[item.Id] = true
+
+        if not Data.Inventory[item.Id] then
+            PredictedItemCount += 1
+        end
+    end
+
+    return PredictedItemCount <= INVENTORY_CAPACITY
+end
+
 -- [ Public Functions ] --
 function InventoryServiceServer.UseAction(self: Module, player: Player, action: string, itemId: ItemTypes.ItemId, params: { [string]: any }?)
     local PlayerData = self._DataServiceServer:GetData(player)
@@ -77,44 +101,50 @@ function InventoryServiceServer.UseAction(self: Module, player: Player, action: 
         return
     end
 
-    local Gateway = {
-        AddRawItems = function(items: { [any]: ItemTypes.RawItem }, discover: boolean?)
-            self:AddRawItems(player, items, discover)
-        end,
-        AddItems = function(items: { [any]: ItemTypes.Item }, discover: boolean?)
-            self:AddItems(player, items, discover)
-        end,
-        RemoveItems = function(items: { [any]: ItemTypes.Item })
-            self:RemoveItems(player, items)
-        end,
-        UpdateItems = function(items: { [any]: ItemTypes.Item })
-            self._InventoryNetworkServer:ItemsUpdated(player, { Items = items })
-        end
+    local Context: InventoryTypesServer.ItemActionContext = {
+        PlayerData = PlayerData,
+        Item = Item,
+        Params = params or {},
+        Gateway = {
+            AddRawItems = function(items: { [any]: ItemTypes.RawItem }, discover: boolean?): GeneralTypesShared.DefaultResult
+                return self:AddRawItems(player, items, discover)
+            end,
+            AddItems = function(items: { [any]: ItemTypes.Item }, discover: boolean?): GeneralTypesShared.DefaultResult
+                return self:AddItems(player, items, discover)
+            end,
+            RemoveItems = function(items: { [any]: ItemTypes.Item })
+                self:RemoveItems(player, items)
+            end,
+            UpdateItems = function(items: { [any]: ItemTypes.Item })
+                self._InventoryNetworkServer:ItemsUpdated(player, { Items = items })
+            end,
+            IsInventoryFull = function(): boolean
+                return self:_IsInventoryFull(player)
+            end,
+            CanFitItems = function(items: { [any]: ItemTypes.Item }): boolean
+                return self:_CanFitItems(player, items)
+            end,
+        },
     }
 
     if action == InventoryEnums.Actions.Open then
         if Item.Category ~= "Pack" then
             return
         end
-        
-        if self:_IsInventoryFull(player) then
-            return
-        end
 
-        local Amount = if not params then 1 else if not params["Amount"] then 1 else params["Amount"]
-
-        PackActions.Open({
-            PlayerData = PlayerData,
-            Item = Item,
-            Amount = Amount,
-            Gateway = Gateway,
-        })
+        PackActions.Open(Context)
     elseif action == InventoryEnums.Actions.Delete then
         if Item.Category == "Currency" then
             return
         end
 
         self:RemoveItems(player, { Item })
+    elseif action == InventoryEnums.Actions.UseTool then
+        if Item.Category ~= "Tool" then
+            return
+        end
+
+        ToolActions:Use(Context)
     end
 end
 
@@ -319,6 +349,10 @@ function InventoryServiceServer.Start(self: Module)
     end
 
     self._InventoryNetworkServer.RemoteEvents.UseAction:Connect(function(player: Player, packet: InventoryTypesShared.UseActionRemotePacket)
+        if not InventoryConfig.Actions[packet.Action] then
+            return
+        end
+        
         self:UseAction(player, packet.Action, packet.ItemId, packet.Params)
     end)
 
