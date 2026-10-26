@@ -85,6 +85,7 @@ function ToolsServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag
     self._UserIdToLastActivated = {}
     self._ToolBehaviors = {
         ["Test"] = require(script.Parent.Behaviors._TestBehavior),
+        ["Watering Can"] = require(script.Parent.Behaviors._WateringCanBehavior),
     }
 end
 
@@ -131,6 +132,7 @@ function ToolsServiceServer.Start(self: Module)
         end
 
         Behavior:OnEquipped(player, EquipMaid, {
+            ServiceBag = self._ServiceBag,
             Item = Item,
             State = self:_GetToolState(UserId, Item.Id)
         })
@@ -148,6 +150,7 @@ function ToolsServiceServer.Start(self: Module)
 
             if Behavior then
                 Behavior:OnUnequipped(player, {
+                    ServiceBag = self._ServiceBag,
                     Item = Item,
                     State = self:_GetToolState(UserId, Item.Id)
                 })
@@ -186,6 +189,7 @@ function ToolsServiceServer.Start(self: Module)
         self._UserIdToLastActivated[UserId] = os.clock()
     
         Behavior:OnActivated(player, {
+            ServiceBag = self._ServiceBag,
             Item = Item,
             State = self:_GetToolState(UserId, Item.Id),
             Params = packet.Params or {},

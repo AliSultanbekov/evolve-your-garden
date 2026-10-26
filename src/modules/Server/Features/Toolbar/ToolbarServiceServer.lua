@@ -19,7 +19,6 @@ local Brio = require("Brio")
 local PlayerToUserId = require("PlayerToUserId")
 local ToolbarTypesShared = require("ToolbarTypesShared")
 local ToolbarConfig = require("ToolbarConfig")
-local ReconcileUtil = require("ReconcileUtil")
 local Signal = require("Signal")
 
 -- [ Constants ] --
@@ -192,6 +191,7 @@ function ToolbarServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceB
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._InventoryServiceServer = self._ServiceBag:GetService(require("InventoryServiceServer"))
     self._DataServiceServer = self._ServiceBag:GetService(require("DataServiceServer"))
+    self._DataServiceServer:RegisterTemplate("Toolbar", TOOLBAR_TEMPLATE)
     self._ToolbarNetworkServer = self._ServiceBag:GetService(require("ToolbarNetworkServer"))
     self._UserIdToItemIdToSlotId = {}
     self._UserIdToEquippedSlotId = {}
@@ -248,9 +248,7 @@ function ToolbarServiceServer.Start(self: Module)
         end)
 
         Maid:Add(self._DataServiceServer:OnDataReady(Player, function(Data)
-            local ToolbarData = Data.Toolbar 
-
-            ReconcileUtil:Reconcile(ToolbarData, TOOLBAR_TEMPLATE)
+            local ToolbarData = Data.Toolbar
 
             for slotId, itemId: ItemTypes.ItemId in ToolbarData do
                 local SlotIds = {}

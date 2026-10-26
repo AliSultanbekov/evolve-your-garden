@@ -27,6 +27,7 @@ type ModuleData = {
     RemoteEvents: {
         PlantPlaced: Signal.Signal<GardenTypesShared.PlantPlacedRemotePacket>,
         PlantRemoved: Signal.Signal<GardenTypesShared.PlantRemovedRemotePacket>,
+        PlantWatered: Signal.Signal<GardenTypesShared.PlantWateredRemotePacket>,
         GardenClaimed: Signal.Signal<GardenTypesShared.GardenClaimedRemotePacket>,
         GardenAbandoned: Signal.Signal<GardenTypesShared.GardenAbandonedRemotePacket>,
         HarvestItemsAdded: Signal.Signal<GardenTypesShared.HarvestItemsAddedRemotePacket>,
@@ -76,6 +77,7 @@ function GardenNetworkClient.Init(self: Module, serviceBag: ServiceBag.ServiceBa
     self.RemoteEvents = {
         PlantPlaced = Signal.new(),
         PlantRemoved = Signal.new(),
+        PlantWatered = Signal.new(),
         GardenClaimed = Signal.new(),
         GardenAbandoned = Signal.new(),
         HarvestItemsAdded = Signal.new(),
@@ -97,6 +99,10 @@ function GardenNetworkClient.Start(self: Module)
 
     Channel:Connect("PlantRemoved", function(packet: GardenTypesShared.PlantRemovedRemotePacket)
         self.RemoteEvents.PlantRemoved:Fire(packet)
+    end)
+
+    Channel:Connect("PlantWatered", function(packet: GardenTypesShared.PlantWateredRemotePacket)
+        self.RemoteEvents.PlantWatered:Fire(packet)
     end)
 
     Channel:Connect("GardenClaimed", function(packet: GardenTypesShared.GardenClaimedRemotePacket)

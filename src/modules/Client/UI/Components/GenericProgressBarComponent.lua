@@ -10,6 +10,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local Blend = require("Blend")
 local Observable = require("Observable")
+local SpringAnimationPresets = require("SpringAnimationPresets")
 
 -- [ Components ] --
 
@@ -21,12 +22,14 @@ local Observable = require("Observable")
 local GenericProgressBarComponent = function(props: Props)
     -- Shared by Fill, InnerStroke and the optional fill-hugging OuterStroke
     -- so they always agree on the filled width.
-    local FillWidth = Blend.Computed(props.Progress, function(progress)
-        return UDim2.fromScale(progress, 0) + UDim2.fromOffset(if progress <= 0.1 then props.FillSize.X.Offset else 0, props.FillSize.Y.Offset)
-    end)
+    local FillWidth = Blend.Spring(
+        Blend.Computed(props.Progress, function(progress)
+            return UDim2.fromScale(progress, 0) + UDim2.fromOffset(if progress <= 0.1 then props.FillSize.X.Offset else 0, props.FillSize.Y.Offset)
+        end),
+        SpringAnimationPresets.Slide.Speed,
+        SpringAnimationPresets.Slide.Damper
+    )
 
-    -- At 0% a zero-width fill still renders its border stroke as a small
-    -- blob at the left edge — hide the fill layers entirely instead.
     local HasProgress = Blend.Computed(props.Progress, function(progress)
         return progress > 0
     end)

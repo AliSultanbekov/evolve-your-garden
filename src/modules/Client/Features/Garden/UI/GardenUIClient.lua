@@ -92,13 +92,8 @@ function GardenUIClient._SetupTooltip(self: Module)
         HoveredSlotInfo = self._GardenServiceClient:ObserveHoveredSlotInfo(),
         SelectedSlotInfo = self._GardenServiceClient:ObserveSelectedSlotInfo(),
         MainOpen = self._UIServiceClient:ObserveCategory("Main"),
-        EquippedItem = self._ToolbarServiceClient:ObserveEquippedItem(),
     }):Pipe({
         Rx.switchMap(function(data)
-            if data.EquippedItem then
-                return Rx.of(nil) :: any
-            end
-
             if data.MainOpen then
                 return Rx.of(nil) :: any
             end

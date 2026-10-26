@@ -43,6 +43,7 @@ type ReactivePlantData = {
     GrowthTime: ValueObject.ValueObject<number>,
     Xp: ValueObject.ValueObject<number>,
     LastProduction: ValueObject.ValueObject<number>,
+    Water: ValueObject.ValueObject<number>,
     Mutations: ValueObject.ValueObject<{ string }>,
 }
 

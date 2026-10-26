@@ -24,10 +24,10 @@ local ItemUtil = require("ItemUtil")
 local Maid = require("Maid")
 local ItemConfig = require("ItemConfig")
 local GeneralTypesShared = require("GeneralTypesShared")
-local ReconcileUtil = require("ReconcileUtil")
 local GeneralEnums = require("GeneralEnums")
 local Table = require("Table")
 local GardenUtil = require("GardenUtil")
+local PlantsConfig = require("PlantsConfig")
 
 -- [ Constants ] --
 local GARDEN_TEMPLATE = {
@@ -100,11 +100,13 @@ function GardenServiceServer._CreateAllSlots(self: Module, player: Player)
         local Slot = Data.Garden.Slots[SlotId]
 
         if not Slot then
-            Data.Garden.Slots[SlotId] = {
+            Slot = {
                 Id = SlotId,
                 Plant = nil,
                 Harvest = {},
             }
+
+            Data.Garden.Slots[SlotId] = Slot
         end
 
         SlotIdToHarvestFill[SlotId] = Table.count(Slot.Harvest)
@@ -112,22 +114,106 @@ function GardenServiceServer._CreateAllSlots(self: Module, player: Player)
 end
 
 -- [ Public Functions ] --
+function GardenServiceServer.GetPlant(
+    self: Module,
+    player: Player,
+    gardenId: GardenTypesShared.GardenId,
+    slotId: GardenTypesShared.SlotId
+): ItemTypes.PlantItem?
+    if not self:_CanAccessGarden(player, gardenId) then
+        return nil
+    end
+
+    local Data = self._DataServiceServer:GetProfile(player).Data
+    local Slot = Data.Garden.Slots[slotId]
+
+    if not Slot then
+        return nil
+    end
+
+    return Slot.Plant
+end
+
+function GardenServiceServer.IsPlantWaterFull(
+    self: Module,
+    player: Player,
+    gardenId: GardenTypesShared.GardenId,
+    slotId: GardenTypesShared.SlotId
+): boolean
+    local Plant = self:GetPlant(player, gardenId, slotId)
+
+    if not Plant then
+        return false
+    end
+
+    return PlantUtilShared:IsWaterFull(Plant.Name, Plant.Water)
+end
+
+function GardenServiceServer.WaterPlant(
+    self: Module, 
+    player: Player, 
+    gardenId: GardenTypesShared.GardenId,
+    slotId: GardenTypesShared.SlotId,
+    water: number
+): GeneralTypesShared.DefaultResult
+    if not self:_CanAccessGarden(player, gardenId) then
+        return GeneralEnums.Result.Fail
+    end
+
+    local PlayerData = self._DataServiceServer:GetProfile(player).Data
+    local GardenData = PlayerData.Garden
+    local SlotsData = GardenData.Slots
+    local Slot = SlotsData[slotId]
+
+    if not Slot then
+        return GeneralEnums.Result.Fail
+    end
+
+    local Plant = Slot.Plant
+
+    if not Plant then
+        return GeneralEnums.Result.Fail
+    end
+
+    local PlantConfig = PlantsConfig.Plants[Plant.Name]
+
+    if not PlantConfig then
+        return GeneralEnums.Result.Fail
+    end
+
+    -- A full plant takes nothing, so callers never pay (durability, cooldown)
+    -- for a watering that changed nothing.
+    if PlantUtilShared:IsWaterFull(Plant.Name, Plant.Water) then
+        return GeneralEnums.Result.Fail
+    end
+
+    Plant.Water = math.min(PlantConfig.Water.Max, Plant.Water + water)
+
+    self._GardenNetworkServer:PlantWatered({
+        GardenId = gardenId,
+        SlotId = slotId,
+        Plant = Plant
+    })
+
+    return GeneralEnums.Result.Success
+end
+
 function GardenServiceServer.CollectHarvest(self: Module, player: Player, gardenId: GardenTypesShared.GardenId, slotId: GardenTypesShared.SlotId): GeneralTypesShared.DefaultResult
     if not self:_CanAccessGarden(player, gardenId) then
         return GeneralEnums.Result.Fail
     end
 
-    local Data = self._DataServiceServer:GetProfile(player).Data
+    local PlayerData = self._DataServiceServer:GetProfile(player).Data
     local UserId = PlayerToUserId(player)
     local SlotIdToHarvestFill = self._UserIdToSlotIdToHarvestFill[UserId]
 
-    local SlotData = Data.Garden.Slots[slotId]
+    local Slot = PlayerData.Garden.Slots[slotId]
 
-    if not SlotData then
+    if not Slot then
         return GeneralEnums.Result.Fail
     end
 
-    local Harvest = SlotData.Harvest
+    local Harvest = Slot.Harvest
 
     local Result: GeneralTypesShared.DefaultResult = self._InventoryServiceServer:AddItems(player, Harvest)
 
@@ -135,7 +221,7 @@ function GardenServiceServer.CollectHarvest(self: Module, player: Player, garden
         return GeneralEnums.Result.Fail
     end
 
-    SlotData.Harvest = {}
+    Slot.Harvest = {}
     SlotIdToHarvestFill[slotId] = 0
 
     self._GardenNetworkServer:HarvestCollected({
@@ -200,77 +286,6 @@ function GardenServiceServer.AdvanceGrowth(self: Module, players: { Player }, el
         end
     end
 end
-
---[[function GardenServiceServer.GrowthCycle(self: Module, dt: number)
-    local Packet = {}
-
-    for _, player in Players:GetChildren() do
-        local UserId = PlayerToUserId(player)
-        
-        local GardenId = self._UserIdToGardenId[UserId]
-
-        if not GardenId then
-            continue
-        end
-
-        local Data = self._DataServiceServer:GetProfile(player).Data
-        local HarvestCap = GardenConfig.HarvestCap
-
-        Packet[GardenId] = {}
-
-        local Harvest = {}
-    
-        for _, slotData: GardenTypesShared.Slot in Data.Garden.Slots do
-            local Plant = slotData.Plant
-
-            if not Plant then
-                continue
-            end
-
-            PlantUtil:AdvanceGrowth(Plant, dt)
-            PlantUtil:RollMutation(Plant)
-
-            Packet[GardenId][slotData.Id] = Plant
-            
-            if not PlantUtil:IsPlantFullyGrown(Plant.Name, Plant.GrowthTime) then
-                continue
-            end
-    
-            local HarvestDelta = HarvestCap - slotData.HarvestCount
-    
-            if HarvestDelta <= 0 then
-                continue
-            end
-
-            local Cycles = PlantUtil:ClaimProductionCycles(Plant)
-
-            if Cycles <= 0 then
-                continue
-            end
-
-            if not Harvest[slotData.Id] then
-                Harvest[slotData.Id] = {}
-            end
-
-            PlantUtil:AddXp(Plant, Cycles)
-
-            local SafeCycles = math.min(Cycles, HarvestDelta)
-    
-            for _ = 1, SafeCycles do
-                local CycleItems = PlantUtil:Produce(Plant)
-                table.move(CycleItems, 1, #CycleItems, #Harvest[slotData.Id] + 1, Harvest[slotData.Id])
-            end
-        end
-
-        self:AddHarvestItems(player, Harvest)
-    end
-
-    if next(Packet) then
-        self._GardenNetworkServer:GrowthCycle({
-            Growth = Packet
-        })
-    end
-end]]
 
 function GardenServiceServer.AddHarvestItems(self: Module, player: Player, gardenId: GardenTypesShared.GardenId, harvests: { [GardenTypesShared.SlotId]: { [any]: ItemTypes.Item } }): GeneralTypesShared.DefaultResult
     if not self:_CanAccessGarden(player, gardenId) then
@@ -520,6 +535,7 @@ function GardenServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBa
     self._GardenNetworkServer = self._ServiceBag:GetService(require("GardenNetworkServer"))
     self._UpgradesServiceServer = self._ServiceBag:GetService(require("UpgradesServiceServer"))
     self._DataServiceServer = self._ServiceBag:GetService(require("DataServiceServer"))
+    self._DataServiceServer:RegisterTemplate("Garden", GARDEN_TEMPLATE)
     self._InventoryServiceServer = self._ServiceBag:GetService(require("InventoryServiceServer"))
     self._Maid = Maid.new()
     self._GardenIdToUserId = {}
@@ -565,8 +581,6 @@ function GardenServiceServer.Start(self: Module)
         end)
 
         PlayerMaid:Add(self._DataServiceServer:OnDataReady(Player, function(data)
-            ReconcileUtil:Reconcile(data.Garden, GARDEN_TEMPLATE)
-            
             self:_CreateAllSlots(Player)
             self:ClaimGarden(Player)
 

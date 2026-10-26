@@ -16,6 +16,13 @@ local Signal = require("Signal")
 local StatsConfig = require("StatsConfig")
 
 -- [ Constants ] --
+-- Every declared stat starts at 0; derived from StatsConfig so adding a stat
+-- there seeds old saves automatically.
+local STATS_TEMPLATE = {}
+
+for _, stat in StatsConfig.Stats do
+    STATS_TEMPLATE[stat] = 0
+end
 
 -- [ Variables ] --
 
@@ -41,13 +48,13 @@ function StatsService.GetStat(self: Module, player: Player, stat: string): numbe
     local PlayerData = self._DataServiceServer:GetData(player)
     local StatsData = PlayerData.Stats
 
-    local StatData = StatsData[stat]
-
-    if not StatData then
-        error(`[StatsService] Stat "{stat}" not found for player {player.Name}`) 
+    if not table.find(StatsConfig.Stats, stat) then
+        error(`[StatsService] Stat "{stat}" is not declared in StatsConfig`)
     end
 
-    return StatData
+    -- Declared but not yet seeded (another service's OnDataReady ran first):
+    -- a counter that hasn't counted yet is 0.
+    return StatsData[stat] or 0
 end
 
 function StatsService.UpdateStat(self: Module, player: Player, stat: string, value: number)
@@ -75,6 +82,7 @@ function StatsService.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._DataServiceServer = self._ServiceBag:GetService(require("DataServiceServer"))
+    self._DataServiceServer:RegisterTemplate("Stats", STATS_TEMPLATE)
     self._StatsNetworkServer = self._ServiceBag:GetService(require("StatsNetworkServer"))
     self.Signals = {
         StatUpdated = Signal.new()
@@ -101,14 +109,6 @@ function StatsService.Start(self: Module)
         local MaidObject: Maid.Maid, Player: Player = brio:ToMaidAndValue()
 
         MaidObject:Add(self._DataServiceServer:OnDataReady(Player, function(data)
-            local StatsData = data.Stats
-
-            for _, stat in StatsConfig.Stats do
-                if not StatsData[stat] then
-                    StatsData[stat] = 0
-                end
-            end
-
             local SessionStart = os.time()
             local Flushed = 0
             local Running = true

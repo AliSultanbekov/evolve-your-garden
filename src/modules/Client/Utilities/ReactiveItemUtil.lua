@@ -37,6 +37,7 @@ function ReactiveItemUtil.ToReactive(self: Module, item: ItemTypes.Item): Reacti
             GrowthTime = ValueObject.new(item.GrowthTime),
             Xp = ValueObject.new(item.Xp),
             LastProduction = ValueObject.new(item.LastProduction),
+            Water = ValueObject.new(item.Water),
             Mutations = ValueObject.new(item.Mutations),
         }
     elseif item.Category == "Material" then
@@ -82,6 +83,7 @@ function ReactiveItemUtil.ToPlain(self: Module, reactiveItem: ReactiveItemTypes.
             GrowthTime = reactiveItem.GrowthTime.Value,
             Xp = reactiveItem.Xp.Value,
             LastProduction = reactiveItem.LastProduction.Value,
+            Water = reactiveItem.Water.Value,
             Mutations = reactiveItem.Mutations.Value,
         }
     elseif reactiveItem.Category == "Material" then
@@ -122,6 +124,7 @@ function ReactiveItemUtil.SyncFromPlain(self: Module, reactiveItem: ReactiveItem
         reactiveItem.GrowthTime.Value = item.GrowthTime
         reactiveItem.Xp.Value = item.Xp
         reactiveItem.LastProduction.Value = item.LastProduction
+        reactiveItem.Water.Value = item.Water
         reactiveItem.Mutations.Value = item.Mutations
     elseif reactiveItem.Category == "Material" and item.Category == "Material" then
         reactiveItem.Amount.Value = item.Amount

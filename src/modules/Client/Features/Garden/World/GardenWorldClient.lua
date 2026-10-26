@@ -101,6 +101,21 @@ function GardenWorldClient._SetupHover(self: Module)
 end
 
 function GardenWorldClient._SetupSelect(self: Module)
+    Rx.combineLatest({
+        SelectedSlot = self._GardenServiceClient:ObserveSelectedSlot(),
+        EquippedItem = self._ToolbarServiceClient:ObserveEquippedItem()
+    }):Subscribe(function(data: any)
+        if not data.SelectedSlot then
+            return 
+        end
+
+        if not data.EquippedItem then
+            return
+        end
+        
+        self._GardenServiceClient:SelectSlotInfo(nil)
+    end)
+
     self._Maid:Add(self._MouseServiceClient.Signals.MousePressed:Connect(function(pressedInstance: Instance?)
         if self._ToolbarServiceClient:GetEquippedItem() then
             return

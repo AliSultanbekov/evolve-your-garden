@@ -38,9 +38,10 @@ function PlantUtilServer.AdvanceGrowth(self: Module, plant: ItemTypes.PlantItem,
 end
 
 function PlantUtilServer.ClaimProductionCycles(self: Module, plant: ItemTypes.PlantItem): number
-    local LastProduction, Cycle = PlantUtilShared:GetLastProductionAndCycles(plant.Name, plant.GrowthTime, plant.LastProduction, plant.GeneticNumber)
+    local LastProduction, Cycle = PlantUtilShared:GetLastProductionAndCycles(plant.Name, plant.GrowthTime, plant.LastProduction, plant.GeneticNumber, plant.Water)
 
     plant.LastProduction = LastProduction
+    plant.Water -= Cycle * PlantsConfig.Plants[plant.Name].Water.UsagePerCycle
 
     return Cycle
 end

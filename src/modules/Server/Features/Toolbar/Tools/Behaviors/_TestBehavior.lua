@@ -10,7 +10,6 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local Maid = require("Maid")
 local ToolsTypesServer = require("ToolsTypesServer")
-local SoundUtil = require("SoundUtil")
 
 -- [ Constants ] --
 
@@ -32,7 +31,7 @@ function TestBehavior.OnEquipped(self: Module, player: Player, maid: Maid.Maid, 
 end
 
 function TestBehavior.OnActivated(self: Module, player: Player, context: ToolsTypesServer.OnActivatedContext)
-    print("Item Activated")
+
 end
 
 function TestBehavior.OnUnequipped(self: Module, player: Player, context: ToolsTypesServer.OnUnequippedContext)

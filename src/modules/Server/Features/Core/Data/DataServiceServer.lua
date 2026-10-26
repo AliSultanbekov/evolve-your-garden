@@ -16,11 +16,12 @@ local ServiceBag = require("ServiceBag")
 local RxPlayerUtils = require("RxPlayerUtils")
 local Brio = require("Brio")
 local Signal = require("Signal")
+local ReconcileUtil = require("ReconcileUtil")
 
 -- [ Constants ] --
 
 -- [ Variables ] --
-local KEY = "BETA_V_15"
+local KEY = "BETA_V_17"
 local PROFILE_TEMPLATE = ProfileConfig.Template
 local PROFILE_WAIT_TIMEOUT = 60
 
@@ -37,6 +38,7 @@ type ModuleData = {
     _ProfileUnloaded: Signal.Signal<Player>,
     _PlayerStore: ProfileStore.ProfileStore<ProfileConfig.ProfileTemplate>,
     _Leaderstats: { [Player]: { [string]: NumberValue } },
+    _SectionToTemplate: { [string]: { [any]: any } },
 }
 
 export type Module = typeof(DataServiceServer) & ModuleData
@@ -69,6 +71,16 @@ function DataServiceServer._SetupPlayerProfile(self: Module, player: Player)
 
     Profile:AddUserId(player.UserId)
     Profile:Reconcile()
+
+    -- Seed every registered section before any OnDataReady callback runs, so
+    -- no service (or remote call) can ever read another's unseeded section.
+    for section, template in self._SectionToTemplate do
+        if Profile.Data[section] == nil then
+            Profile.Data[section] = {}
+        end
+
+        ReconcileUtil:Reconcile(Profile.Data[section], template)
+    end
 
     Profile.OnSessionEnd:Connect(function()
         -- Fire BEFORE removing the profile: unload teardowns (OnDataReady
@@ -109,6 +121,11 @@ function DataServiceServer._CreateLeaderstats(self: Module, player: Player)
 end
 
 -- [ Public Functions ] --
+-- Call from a service's Init: profiles load in Start, after every Init has run.
+function DataServiceServer.RegisterTemplate(self: Module, section: string, template: { [any]: any })
+    self._SectionToTemplate[section] = template
+end
+
 function DataServiceServer.GetData(self: Module, player: Player): ProfileConfig.ProfileTemplate
     return self:GetProfile(player).Data
 end
@@ -226,6 +243,7 @@ function DataServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._Leaderstats = {}
     self._Profiles = {}
+    self._SectionToTemplate = {}
     self._ProfileLoaded = Signal.new() :: any
     self._ProfileUnloaded = Signal.new() :: any
 end

@@ -12,6 +12,8 @@ local ItemTypes = require("ItemTypes")
 local PackUtil = require("PackUtil")
 local InventoryTypesServer = require("InventoryTypesServer")
 local ItemUtil = require("ItemUtil")
+local GeneralTypesShared = require("GeneralTypesShared")
+local GeneralEnums = require("GeneralEnums")
 
 -- [ Constants ] --
 
@@ -28,16 +30,16 @@ export type Module = typeof(Pack) & ModuleData
 -- [ Private Functions ] --
 
 -- [ Public Functions ] --
-function Pack.Open(context: InventoryTypesServer.ItemActionContext)
+function Pack.Open(context: InventoryTypesServer.ItemActionContext): GeneralTypesShared.DefaultResult
     local Item = context.Item :: ItemTypes.PackItem
     local Amount = context.Params.Amount or 1
 
     if typeof(Amount) ~= "number" or Amount < 1 or math.floor(Amount) ~= Amount then
-        return
+        return GeneralEnums.Result.Fail
     end
 
     if Item.Amount < Amount then
-        return
+        return GeneralEnums.Result.Fail
     end
 
     local Contents: { ItemTypes.Item } = {}
@@ -47,7 +49,7 @@ function Pack.Open(context: InventoryTypesServer.ItemActionContext)
     end
 
     if not context.Gateway.CanFitItems(Contents) then
-        return
+        return GeneralEnums.Result.Fail
     end
 
     context.Gateway.RemoveItems({
@@ -60,6 +62,8 @@ function Pack.Open(context: InventoryTypesServer.ItemActionContext)
     })
 
     context.Gateway.AddItems(Contents, true)
+
+    return GeneralEnums.Result.Success
 end
 
 return Pack :: Module

@@ -20,13 +20,15 @@ local ToolsConfig = {}
 -- [ Private Functions ] --
 function ToolsConfig._Init(self: Module)
     self.DefaultToolDurabilityCost = 1
+    self.DefaultWaterPerUse = 1
     self.Tools = {
         ["Watering Can"] = {
             Name = "Watering Can",
             Icon = "rbxassetid://115170506789276",
             Rarity = "Common",
-            Cooldown = 10,
+            Cooldown = 0.3,
             Tags = {},
+            WaterPerUse = 25,
         },
     }
 end
@@ -36,6 +38,7 @@ end
 -- [ Types ] --
 type ModuleData = {
     DefaultToolDurabilityCost: number,
+    DefaultWaterPerUse: number,
     Tools: { [string]:  {
         Name: string,
         Icon: string,
@@ -44,6 +47,7 @@ type ModuleData = {
         Tags: { [string]: boolean },
         DurabilityCost: number?,
         MaxDurability: number?,
+        WaterPerUse: number?,
     }},
 }
 

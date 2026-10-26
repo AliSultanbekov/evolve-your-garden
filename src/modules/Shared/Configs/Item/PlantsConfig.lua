@@ -27,7 +27,7 @@ local DEFAULT_GENETICS_CONFIG = {
 
 local DEFAULT_WATER_CONFIG = {
     Max = 100,
-    UsagePerCycle = 5,
+    UsagePerCycle = 20,
 }
 
 local DEFAULT_LEVEL = function(xp: number): (number, number, number) -- currentlevel, currentlevelxp, nextlevelxp
@@ -52,16 +52,12 @@ local PlantConfig = {}
 -- [ Private Functions ] --
 function PlantConfig._Init(self: Module)
     self.PlantsCount = 3
-    -- Offsets are part of each plant's genetic identity (seeded rolls) - never
-    -- renumber them or every existing plant's genetics change. 2 belonged to
-    -- BabyChance (removed) and stays retired.
     self.GeneticOffsets = {
         Speed = 1,
         Quality = 3,
         Yield = 4,
         MutationChance = 5,
     }
-    -- Level trees used to grant mutation slots; flat cap until levels return.
     self.MaxMutationSlots = 1
     self.Plants = {
         ["Daisy"] = {

@@ -93,12 +93,12 @@ function InventoryServiceServer._CanFitItems(self: Module, player: Player, items
 end
 
 -- [ Public Functions ] --
-function InventoryServiceServer.UseAction(self: Module, player: Player, action: string, itemId: ItemTypes.ItemId, params: { [string]: any }?)
+function InventoryServiceServer.UseAction(self: Module, player: Player, action: string, itemId: ItemTypes.ItemId, params: { [string]: any }?): GeneralTypesShared.DefaultResult
     local PlayerData = self._DataServiceServer:GetData(player)
     local Item = self:_GetItem(player, itemId)
 
     if not Item then
-        return
+        return GeneralEnums.Result.Fail
     end
 
     local Context: InventoryTypesServer.ItemActionContext = {
@@ -129,22 +129,24 @@ function InventoryServiceServer.UseAction(self: Module, player: Player, action: 
 
     if action == InventoryEnums.Actions.Open then
         if Item.Category ~= "Pack" then
-            return
+            return GeneralEnums.Result.Fail
         end
 
-        PackActions.Open(Context)
+        return PackActions.Open(Context)
     elseif action == InventoryEnums.Actions.Delete then
         if Item.Category == "Currency" then
-            return
+            return GeneralEnums.Result.Fail
         end
 
-        self:RemoveItems(player, { Item })
+        return self:RemoveItems(player, { Item })
     elseif action == InventoryEnums.Actions.UseTool then
         if Item.Category ~= "Tool" then
-            return
+            return GeneralEnums.Result.Fail
         end
 
-        ToolActions:Use(Context)
+        return ToolActions:Use(Context)
+    else
+        return GeneralEnums.Result.Fail
     end
 end
 
@@ -272,7 +274,7 @@ function InventoryServiceServer.AddItems(
     return GeneralEnums.Result.Success
 end
 
-function InventoryServiceServer.RemoveItems(self: Module, player: Player, items: { ItemTypes.Item })
+function InventoryServiceServer.RemoveItems(self: Module, player: Player, items: { ItemTypes.Item }): GeneralTypesShared.DefaultResult
     local Data = self._DataServiceServer:GetProfile(player).Data
     local UserId = PlayerToUserId(player)
     
@@ -322,6 +324,8 @@ function InventoryServiceServer.RemoveItems(self: Module, player: Player, items:
     if next(UpdatedItems) then
         self._InventoryNetworkServer:ItemsUpdated(player, { Items = UpdatedItems })
     end
+
+    return GeneralEnums.Result.Success
 end
 
 function InventoryServiceServer.Init(self: Module, serviceBag: ServiceBag.ServiceBag)

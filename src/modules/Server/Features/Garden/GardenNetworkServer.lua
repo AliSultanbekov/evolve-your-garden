@@ -69,6 +69,12 @@ function GardenNetworkServer.PlantRemoved(self: Module, packet: GardenTypesShare
     Channel:FireAllClients("PlantRemoved", packet)
 end
 
+function GardenNetworkServer.PlantWatered(self: Module, packet: GardenTypesShared.PlantWateredRemotePacket)
+    local Channel = self._NetworkServiceShared:GetChannel("Garden")
+
+    Channel:FireAllClients("PlantWatered", packet)
+end
+
 function GardenNetworkServer.GardenClaimed(self: Module, packet: GardenTypesShared.GardenClaimedRemotePacket)
     local Channel = self._NetworkServiceShared:GetChannel("Garden")
 
@@ -105,6 +111,7 @@ function GardenNetworkServer.Start(self: Module)
 
     Channel:DeclareEvent("PlantPlaced")
     Channel:DeclareEvent("PlantRemoved")
+    Channel:DeclareEvent("PlantWatered")
     Channel:DeclareEvent("GardenClaimed")
     Channel:DeclareEvent("GardenAbandoned")
     Channel:DeclareEvent("HarvestItemsAdded")

@@ -20,6 +20,7 @@ local ReactiveItemUtil = require("ReactiveItemUtil")
 local ReactiveItemTypes = require("ReactiveItemTypes")
 local ItemTypes = require("ItemTypes")
 local PlayerToUserId = require("PlayerToUserId")
+local PlantsConfig = require("PlantsConfig")
 local Rx = require("Rx")
 local GardenUtil = require("GardenUtil")
 local PlantUtilShared = require("PlantUtilShared")
@@ -99,9 +100,10 @@ function GardenServiceClient._GrowthCycle(self: Module, elapsed: number)
 
             Plant.GrowthTime.Value += elapsed
 
-            local LastProduction = PlantUtilShared:GetLastProductionAndCycles(Plant.Name, Plant.GrowthTime.Value, Plant.LastProduction.Value, Plant.GeneticNumber)
+            local LastProduction, Cycles = PlantUtilShared:GetLastProductionAndCycles(Plant.Name, Plant.GrowthTime.Value, Plant.LastProduction.Value, Plant.GeneticNumber, Plant.Water.Value)
 
             Plant.LastProduction.Value = LastProduction
+            Plant.Water.Value -= Cycles * PlantsConfig.Plants[Plant.Name].Water.UsagePerCycle
         end
     end
 end
@@ -351,6 +353,28 @@ function GardenServiceClient.Start(self: Module)
         end
 
         Slot.Plant.Value = nil
+    end)
+
+    self._GardenNetworkClient.RemoteEvents.PlantWatered:Connect(function(packet: GardenTypesShared.PlantWateredRemotePacket)
+        local Garden = self._Gardens[packet.GardenId]
+
+        if not Garden then
+            return
+        end
+
+        local Slot = Garden.Slots:Get(packet.SlotId)
+
+        if not Slot then
+            return
+        end
+
+        local Plant = Slot.Plant.Value
+
+        if not Plant then
+            return
+        end
+
+        ReactiveItemUtil:SyncFromPlain(Plant, packet.Plant)
     end)
 
     self._GardenNetworkClient.RemoteEvents.HarvestItemsAdded:Connect(function(packet: GardenTypesShared.HarvestItemsAddedRemotePacket)

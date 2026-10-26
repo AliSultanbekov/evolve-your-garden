@@ -20,7 +20,6 @@ local GeneralTypesShared = require("GeneralTypesShared")
 local GeneralEnums = require("GeneralEnums")
 local ChanceClass = require("ChanceClass")
 local ItemUtil = require("ItemUtil")
-local ReconcileUtil = require("ReconcileUtil")
 
 -- [ Constants ] --
 local MERCHANT_TEMPLATE = {
@@ -193,6 +192,7 @@ function MerchantServiceServer.Init(self: Module, serviceBag: ServiceBag.Service
     self._MerchantNetworkServer = self._ServiceBag:GetService(require("MerchantNetworkServer"))
     self._InventoryServiceServer = self._ServiceBag:GetService(require("InventoryServiceServer"))
     self._DataServiceServer = self._ServiceBag:GetService(require("DataServiceServer"))
+    self._DataServiceServer:RegisterTemplate("Merchant", MERCHANT_TEMPLATE)
 end
 
 function MerchantServiceServer.Start(self: Module)
@@ -218,8 +218,6 @@ function MerchantServiceServer.Start(self: Module)
 
 
         Maid:Add(self._DataServiceServer:OnDataReady(Player, function(data: ProfileConfig.ProfileTemplate)
-            ReconcileUtil:Reconcile(data.Merchant, MERCHANT_TEMPLATE)
-
             local Running = true
 
             task.spawn(function()

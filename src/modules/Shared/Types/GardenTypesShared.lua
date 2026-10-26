@@ -55,6 +55,12 @@ export type PlantPlacedRemotePacket = {
     Plant: ItemTypes.PlantItem,
 }
 
+export type PlantWateredRemotePacket = {
+    GardenId: GardenId,
+    SlotId: SlotId,
+    Plant: ItemTypes.PlantItem,
+}
+
 export type PlacePlantRemotePacket = {
     GardenId: GardenId,
     SlotId: SlotId,

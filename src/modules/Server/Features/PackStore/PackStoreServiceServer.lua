@@ -20,7 +20,6 @@ local GeneralTypesShared = require("GeneralTypesShared")
 local GeneralEnums = require("GeneralEnums")
 local ItemUtil = require("ItemUtil")
 local Table = require("Table")
-local ReconcileUtil = require("ReconcileUtil")
 
 -- [ Constants ] --
 local PACK_STORE_TEMPLATE = {
@@ -177,6 +176,7 @@ function PackStoreService.Init(self: Module, serviceBag: ServiceBag.ServiceBag)
     self._PackStoreNetworkServer = self._ServiceBag:GetService(require("PackStoreNetworkServer"))
     self._JavaBackendServiceServer = self._ServiceBag:GetService(require("JavaBackendServiceServer"))
     self._DataServiceServer = self._ServiceBag:GetService(require("DataServiceServer"))
+    self._DataServiceServer:RegisterTemplate("PackStore", PACK_STORE_TEMPLATE)
     self._InventoryServiceServer = self._ServiceBag:GetService(require("InventoryServiceServer"))
     self._CurrentSale = {
         SaleId = "",
@@ -219,8 +219,6 @@ function PackStoreService.Start(self: Module)
             local Maid, Player = brio:ToMaidAndValue()
 
             Maid:Add(self._DataServiceServer:OnDataReady(Player, function(data)
-                ReconcileUtil:Reconcile(data.PackStore, PACK_STORE_TEMPLATE)
-
                 if data.PackStore.SaleId ~= self._CurrentSale.SaleId then
                     self:Refresh(self._CurrentSale.SaleId, self._CurrentSale.GlobalPacks, self._CurrentSale.StartTime, { Player })
                 end

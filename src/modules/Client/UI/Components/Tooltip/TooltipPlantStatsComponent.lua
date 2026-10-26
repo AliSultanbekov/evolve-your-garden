@@ -79,6 +79,23 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
         end) :: any,
     }) :: any
 
+    local MaxWater = PlantsConfig.Plants[plant.Name].Water.Max
+
+    -- `or 0`: plants saved before Water existed have no value yet.
+    local Water = plant.Water:Observe():Pipe({
+        Rx.map(function(water: number?)
+            return water or 0
+        end) :: any,
+        Rx.distinct() :: any,
+        Rx.shareReplay(1) :: any,
+    }) :: any
+
+    local WaterProgress = Water:Pipe({
+        Rx.map(function(water: number)
+            return math.clamp(water / MaxWater, 0, 1)
+        end) :: any,
+    }) :: any
+
     return Blend.New "Frame" {
         Name = "PlantStats";
         Size = UDim2.fromScale(1, 0);
@@ -194,6 +211,56 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
                         FillInnerStrokeThickness = 2;
                         UICorner = 30;
                         Progress = GrowthProgress;
+                    });
+                }
+            });
+            AnimatedFrameComponent({
+                Name = "Water";
+                LayoutOrder = 3;
+                Size = UDim2.fromOffset(215, 28);
+                BackgroundColor3 = Color3.fromRGB(163, 162, 165);
+                BackgroundTransparency = 1;
+                IsOpen = true;
+                Children = {
+                    Blend.New "TextLabel" {
+                        Name = "Info";
+                        Position = UDim2.fromOffset(0, 1);
+                        Size = UDim2.fromOffset(215, 15);
+                        BackgroundColor3 = Color3.fromRGB(163, 162, 165);
+                        BackgroundTransparency = 1;
+                        FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
+                        Text = Blend.Computed(Water, function(water: number)
+                            return "Water " .. math.floor(water) .. "/" .. MaxWater
+                        end),
+                        TextColor3 = Color3.fromRGB(255, 255, 255);
+                        TextSize = 17;
+                        TextWrapped = true;
+                        TextXAlignment = Enum.TextXAlignment.Left;
+                        ZIndex = 5;
+                        Blend.New "UIStroke" {
+                            Color = Color3.fromRGB(16, 58, 112);
+                            Thickness = 2;
+                        };
+                    };
+                    GenericProgressBarComponent({
+                        Position = UDim2.fromOffset(0, 14);
+                        Size = UDim2.fromOffset(215, 12);
+                        BarBackgroundPosition = UDim2.fromOffset(0, 0);
+                        BarBackgroundSize = UDim2.fromScale(1, 1);
+                        BarBackgroundColor3 = Color3.fromRGB(13, 45, 92);
+                        BarBackgroundUIStokeColor = Color3.fromRGB(13, 45, 92);
+                        BarBackgroundUIStokeSize = 0;
+                        FillPosition = UDim2.fromOffset(0, 0);
+                        FillSize = UDim2.fromOffset(0, 12);
+                        FillColorSequence = ColorSequence.new(Color3.fromRGB(104, 206, 255), Color3.fromRGB(30, 136, 235));
+                        FillGradientRotation = 90;
+                        FillUICorner = 30;
+                        FillStrokeColor = Color3.fromRGB(13, 45, 92);
+                        FillStrokeThickness = 2;
+                        FillInnerStrokeColorSequence = ColorSequence.new(Color3.fromRGB(160, 228, 255), Color3.fromRGB(75, 175, 255));
+                        FillInnerStrokeThickness = 2;
+                        UICorner = 30;
+                        Progress = WaterProgress;
                     });
                 }
             });

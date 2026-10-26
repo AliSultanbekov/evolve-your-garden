@@ -45,7 +45,8 @@ function PlantUtilShared.GetLastProductionAndCycles(
     plantName: string, 
     growthTime: number,
     lastProduction: number,
-    geneticNumber: number
+    geneticNumber: number,
+    water: number
 ): (number, number)
     local GrowthTime = growthTime
     local FinalStageTime = PlantUtilShared:GetLastGrowthStageTime(plantName)
@@ -58,12 +59,16 @@ function PlantUtilShared.GetLastProductionAndCycles(
     local ActualCycleTime = PlantUtilShared:GetActualCycleTime(plantName, geneticNumber)
     local UnclaimedTime = GrowthTime - ProductionStart
     local Cycles = math.floor(UnclaimedTime / ActualCycleTime)
-    
-    if Cycles < 1 then
+
+    local UsagePerCycle = PlantsConfig.Plants[plantName].Water.UsagePerCycle
+    local AffordableCycles = if UsagePerCycle > 0 then math.floor(water / UsagePerCycle) else Cycles
+    local PaidCycles = math.min(Cycles, AffordableCycles)
+
+    if PaidCycles < 1 then
         return lastProduction, 0
     end
 
-    return (GrowthTime - (UnclaimedTime % ActualCycleTime)), Cycles
+    return ProductionStart + (PaidCycles * ActualCycleTime), PaidCycles
 end
 
 function PlantUtilShared.GetLastGrowthStageTime(self: Module, plantName: string): number
@@ -95,6 +100,12 @@ function PlantUtilShared.IsPlantFullyGrown(self: Module, plantName: string, grow
     local FinalStageTime = PlantConfig.GrowthStages[FinalStage]
 
     return FinalStageTime <= growthTime
+end
+
+function PlantUtilShared.IsWaterFull(self: Module, plantName: string, water: number): boolean
+    local PlantConfig = PlantsConfig.Plants[plantName]
+
+    return water >= PlantConfig.Water.Max
 end
 
 function PlantUtilShared.GetActualCycleTime(self: Module, plantName: string, geneticNumber: number): number

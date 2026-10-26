@@ -11,10 +11,6 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 local ServiceBag = require("ServiceBag")
 local UpgradesConfig = require("UpgradesConfig")
 local ItemTypes = require("ItemTypes")
-local RxPlayerUtils = require("RxPlayerUtils")
-local Brio = require("Brio")
-local Maid = require("Maid")
-local ReconcileUtil = require("ReconcileUtil")
 
 -- [ Constants ] --
 -- Every configured upgrade starts at level 1; derived from UpgradesConfig so
@@ -99,19 +95,12 @@ function UpgradesServiceServer.Init(self: Module, serviceBag: ServiceBag.Service
 
     self._ServiceBag = assert(serviceBag, "No serviceBag")
     self._DataServiceServer = self._ServiceBag:GetService(require("DataServiceServer"))
+    self._DataServiceServer:RegisterTemplate("Upgrades", UPGRADES_TEMPLATE)
     self._InventoryServiceServer = self._ServiceBag:GetService(require("InventoryServiceServer"))
 end
 
 function UpgradesServiceServer.Start(self: Module)
-    RxPlayerUtils.observePlayersBrio():Subscribe(function(brio: Brio.Brio<Player>)
-        local MaidObject: Maid.Maid, Player: Player = brio:ToMaidAndValue()
 
-        MaidObject:Add(self._DataServiceServer:OnDataReady(Player, function(data)
-            ReconcileUtil:Reconcile(data.Upgrades, UPGRADES_TEMPLATE)
-
-            return
-        end))
-    end)
 end
 
 return UpgradesServiceServer :: Module
