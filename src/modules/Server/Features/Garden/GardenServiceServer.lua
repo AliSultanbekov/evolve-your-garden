@@ -181,10 +181,12 @@ function GardenServiceServer.WaterPlant(
         return GeneralEnums.Result.Fail
     end
 
-    -- A full plant takes nothing, so callers never pay (durability, cooldown)
-    -- for a watering that changed nothing.
     if PlantUtilShared:IsWaterFull(Plant.Name, Plant.Water) then
         return GeneralEnums.Result.Fail
+    end
+
+    if Plant.Water < PlantConfig.Water.UsagePerCycle then
+        Plant.LastProduction = Plant.GrowthTime
     end
 
     Plant.Water = math.min(PlantConfig.Water.Max, Plant.Water + water)

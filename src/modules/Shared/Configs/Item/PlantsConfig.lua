@@ -27,7 +27,7 @@ local DEFAULT_GENETICS_CONFIG = {
 
 local DEFAULT_WATER_CONFIG = {
     Max = 100,
-    UsagePerCycle = 20,
+    UsagePerCycle = 5,
 }
 
 local DEFAULT_LEVEL = function(xp: number): (number, number, number) -- currentlevel, currentlevelxp, nextlevelxp

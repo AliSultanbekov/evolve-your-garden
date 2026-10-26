@@ -102,6 +102,8 @@ function GardenServiceClient._GrowthCycle(self: Module, elapsed: number)
 
             local LastProduction, Cycles = PlantUtilShared:GetLastProductionAndCycles(Plant.Name, Plant.GrowthTime.Value, Plant.LastProduction.Value, Plant.GeneticNumber, Plant.Water.Value)
 
+            print(LastProduction, Cycles)
+
             Plant.LastProduction.Value = LastProduction
             Plant.Water.Value -= Cycles * PlantsConfig.Plants[Plant.Name].Water.UsagePerCycle
         end

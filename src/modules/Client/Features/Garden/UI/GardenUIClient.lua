@@ -136,7 +136,6 @@ function GardenUIClient._SetupTooltip(self: Module)
                         end
 
                         local WorldPoint = SlotModel:GetPivot():PointToWorldSpace(Vector3.new(0, 5, 0))
-                        -- Viewport variant matches the IgnoreGuiInset "UIs" screen.
                         local ScreenPoint = workspace.CurrentCamera:WorldToViewportPoint(WorldPoint)
 
                         return UDim2.fromOffset(ScreenPoint.X + 30, ScreenPoint.Y) :: any

@@ -1,15 +1,13 @@
 --[=[
     @class TooltipPlantStatsComponent
 
-    Shared tooltip stats section. Shows Level / Growth bars, but only for Plant
-    items. The whole plant-stats subtree is gated at the top: the component
-    `switchMap`s on the item and only mounts `PlantStats(plant)` when the item is
-    a Plant, passing the concrete plant down. Inside `PlantStats` the plant is
-    therefore guaranteed non-nil and always a Plant, so there are no
-    per-observable category/nil guards.
+    Shared tooltip stats section. Shows Level / Growth / Water bars, but only
+    for Plant items. The UI is built once; non-plant items map to nil, which
+    hides the section. Values `switchMap` to the current plant, so the bars'
+    springs slide between plants instead of being remounted.
 
     Used by every tooltip that shows plant stats (inventory item, garden item,
-    world plant). Take an item Observable via props; non-plant items render nothing.
+    world plant). Take an item Observable via props.
 ]=]
 
 -- [ Roblox Services ] --
@@ -36,16 +34,33 @@ local function FormatMMSS(seconds: number): string
     return string.format("%02d:%02d", math.floor(seconds / 60), math.floor(seconds % 60))
 end
 
--- Built only for Plant items (gated below), so `plant` is always a concrete,
--- non-nil ReactivePlantItem here. No ShouldShow / nil guards needed.
-local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
-    local LevelInfo = plant.Xp:Observe():Pipe({
-        Rx.map(function(xp: number)
-            local Level, CurrentLevelXp, NextLevelXp = PlantsConfig.Plants[plant.Name].Level(xp)
+local function PlantStats(plant: Observable.Observable<ReactiveItemTypes.ReactivePlantItem?>)
+    local Plant = plant:Pipe({
+        Rx.where(function(plant: ReactiveItemTypes.ReactivePlantItem?): boolean
+            return plant ~= nil
+        end) :: any
+    }) :: any
+
+    local Stats = Plant:Pipe({
+        Rx.switchMap(function(plant: ReactiveItemTypes.ReactivePlantItem)
+            return Rx.combineLatest({
+                Name = plant.Name,
+                Xp = plant.Xp:Observe(),
+                GrowthTime = plant.GrowthTime:Observe(),
+                Water = plant.Water:Observe(),
+                MaxWater = PlantsConfig.Plants[plant.Name].Water.Max
+            })
+        end) :: any,
+        Rx.shareReplay(1) :: any,
+    }) :: any
+
+    local LevelInfo = Stats:Pipe({
+        Rx.map(function(plantStats: any)
+            local Level, CurrentLevelXp, NextLevelXp = PlantsConfig.Plants[plantStats.Name].Level(plantStats.Xp)
 
             return {
                 Level = Level,
-                CurrentXp = xp,
+                CurrentXp = plantStats.Xp,
                 CurrentLevelXp = CurrentLevelXp,
                 NextLevelXp = NextLevelXp,
             }
@@ -56,18 +71,17 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
 
     local LevelProgress = LevelInfo:Pipe({
         Rx.map(function(levelInfo: any)
-            -- Flat bars hide their fill at exactly 0, so no minimum-nub clamp.
             return math.clamp((levelInfo.CurrentXp - levelInfo.CurrentLevelXp) / (levelInfo.NextLevelXp - levelInfo.CurrentLevelXp), 0, 1)
         end) :: any,
         Rx.distinct(),
         Rx.shareReplay(1)
     }) :: any
 
-    local GrowthInfo = plant.GrowthTime:Observe():Pipe({
-        Rx.map(function(growthTime: number)
+    local GrowthInfo = Stats:Pipe({
+        Rx.map(function(plantStats: any)
             return {
-                GrowthTime = growthTime,
-                FinalStageTime = PlantUtilShared:GetLastGrowthStageTime(plant.Name),
+                GrowthTime = plantStats.GrowthTime,
+                FinalStageTime = PlantUtilShared:GetLastGrowthStageTime(plantStats.Name),
             }
         end) :: any,
         Rx.shareReplay(1) :: any,
@@ -79,21 +93,11 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
         end) :: any,
     }) :: any
 
-    local MaxWater = PlantsConfig.Plants[plant.Name].Water.Max
-
-    -- `or 0`: plants saved before Water existed have no value yet.
-    local Water = plant.Water:Observe():Pipe({
-        Rx.map(function(water: number?)
-            return water or 0
+    local WaterProgress = Stats:Pipe({
+        Rx.map(function(plantStats: any)
+            return math.clamp(plantStats.Water / plantStats.MaxWater, 0, 1)
         end) :: any,
         Rx.distinct() :: any,
-        Rx.shareReplay(1) :: any,
-    }) :: any
-
-    local WaterProgress = Water:Pipe({
-        Rx.map(function(water: number)
-            return math.clamp(water / MaxWater, 0, 1)
-        end) :: any,
     }) :: any
 
     return Blend.New "Frame" {
@@ -101,6 +105,9 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
         Size = UDim2.fromScale(1, 0);
         AutomaticSize = Enum.AutomaticSize.Y;
         BackgroundTransparency = 1;
+        Visible = Blend.Computed(plant, function(plantNonObs: ReactiveItemTypes.ReactivePlantItem?)
+            return plantNonObs ~= nil
+        end),
         Blend.New "UIListLayout" {
             HorizontalAlignment = Enum.HorizontalAlignment.Center;
             Padding = UDim.new(0, 10);
@@ -229,8 +236,8 @@ local function PlantStats(plant: ReactiveItemTypes.ReactivePlantItem)
                         BackgroundColor3 = Color3.fromRGB(163, 162, 165);
                         BackgroundTransparency = 1;
                         FontFace = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy, Enum.FontStyle.Normal);
-                        Text = Blend.Computed(Water, function(water: number)
-                            return "Water " .. math.floor(water) .. "/" .. MaxWater
+                        Text = Blend.Computed(Stats, function(plantStats: any)
+                            return "Water " .. math.floor(plantStats.Water) .. "/" .. plantStats.MaxWater
                         end),
                         TextColor3 = Color3.fromRGB(255, 255, 255);
                         TextSize = 17;
@@ -270,6 +277,14 @@ end
 
 -- [ Module Table ] --
 local TooltipPlantStatsComponent = function(props: Props)
+    local Plant: Observable.Observable<ReactiveItemTypes.ReactivePlantItem?> = props.Item:Pipe({
+        Rx.map(function(item: ReactiveItemTypes.ReactiveItem)
+            return if item.Category == "Plant" then item else nil
+        end) :: any,
+        Rx.distinct() :: any,
+        Rx.shareReplay(1) :: any,
+    }) :: any
+
     return Blend.New "Frame" {
         Name = "Stats";
         LayoutOrder = 1;
@@ -293,16 +308,7 @@ local TooltipPlantStatsComponent = function(props: Props)
                 return UDim.new(0, if item.Category == "Plant" then 10 else 0)
             end),
         };
-        props.Item:Pipe({
-            Rx.distinct() :: any,
-            Rx.switchMap(function(item: ReactiveItemTypes.ReactiveItem)
-                if item.Category ~= "Plant" then
-                    return Rx.of(nil) :: any
-                end
-
-                return PlantStats(item :: ReactiveItemTypes.ReactivePlantItem) :: any
-            end) :: any,
-        }) :: any;
+        PlantStats(Plant);
     }
 end
 
