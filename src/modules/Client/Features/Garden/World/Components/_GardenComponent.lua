@@ -15,6 +15,7 @@ local Rx = require("Rx")
 local AssetProvider = require("AssetProvider")
 local GardenConfig = require("GardenConfig")
 local Brio = require("Brio")
+local Observable = require("Observable")
 
 -- [ Components ] --
 local SlotComponent = require(script.Parent._SlotComponent)
@@ -64,10 +65,7 @@ local GardenComponent = function(props: Props)
     MaidObject:Add(Rx.combineLatest({
         Owner = Garden.Owner:Observe(),
         Level = Garden.Level:Observe(),
-    }):Subscribe(function(data: { Owner: string?, Level: number? })
-        -- Tear down the previous garden on EVERY emission (owner left, level
-        -- changed, ...), then rebuild only when the garden is fully defined.
-        -- Cleanup lives here, not in a where() predicate — filters must be pure.
+    }):Subscribe(function(data: any)
         GardenMaid:DoCleaning()
 
         if not (data.Owner and data.Level) then
@@ -105,6 +103,25 @@ local GardenComponent = function(props: Props)
                 Slot = Slot,
                 SlotCFrame = GetSlotCFrame(GardenModel, data.Level, SlotNumber),
                 GardenModel = GardenModel,
+                IsSlotSelected = props.SelectedSlot:Pipe({
+                    Rx.map(function(selectedSlot: GardenTypesClient.ReactiveSlot?)
+                        return selectedSlot == Slot
+                    end) :: any,
+                    Rx.distinct() :: any,
+                }) :: any,
+                SlotPressed = props.SlotPressed:Pipe({
+                    Rx.where(function(slotInfo: GardenTypesClient.SlotInfo)
+                        return slotInfo.GardenId == Garden.Id and slotInfo.SlotId == SlotId
+                    end) :: any,
+                }) :: any,
+                PlantWatered = props.PlantWatered:Pipe({
+                    Rx.where(function(slotInfo: GardenTypesClient.SlotInfo)
+                        return slotInfo.GardenId == Garden.Id and slotInfo.SlotId == SlotId
+                    end) :: any,
+                    Rx.map(function()
+                        return nil
+                    end) :: any,
+                }) :: any,
 
                 OnSlotCreated = function(slotModel: GardenTypesClient.SlotModel)
                     props.OnSlotCreated(SlotId, slotModel)
@@ -122,6 +139,9 @@ end
 -- [ Types ] --
 type Props = {
     Garden: GardenTypesClient.ReactiveGarden,
+    SelectedSlot: Observable.Observable<GardenTypesClient.ReactiveSlot?>,
+    SlotPressed: Observable.Observable<GardenTypesClient.SlotInfo>,
+    PlantWatered: Observable.Observable<GardenTypesClient.SlotInfo>,
 
     OnGardenCreated: (gardenModel: GardenTypesClient.GardenModel) -> (),
     OnGardenDestroyed: () -> (),

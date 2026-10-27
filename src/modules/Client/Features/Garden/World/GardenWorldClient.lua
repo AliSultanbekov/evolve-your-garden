@@ -101,64 +101,64 @@ function GardenWorldClient._SetupHover(self: Module)
 end
 
 function GardenWorldClient._SetupSelect(self: Module)
-    Rx.combineLatest({
+    self._Maid:Add(Rx.combineLatest({
         SelectedSlot = self._GardenServiceClient:ObserveSelectedSlot(),
         EquippedItem = self._ToolbarServiceClient:ObserveEquippedItem()
     }):Subscribe(function(data: any)
         if not data.SelectedSlot then
-            return 
+            return
         end
 
         if not data.EquippedItem then
             return
         end
-        
-        self._GardenServiceClient:SelectSlotInfo(nil)
-    end)
 
+        self._GardenServiceClient:SelectSlotInfo(nil)
+    end))
+
+    -- One click, two outcomes: every valid press fires SlotPressed (feedback),
+    -- and only presses the selection rules allow also select the slot (state).
     self._Maid:Add(self._MouseServiceClient.Signals.MousePressed:Connect(function(pressedInstance: Instance?)
+        if self._UIServiceClient:IsCategoryOpen("Main") then
+            return
+        end
+
+        -- While a slot is selected its window owns input. Equipping a tool clears
+        -- the selection, so tool presses never get blocked here.
+        if self._GardenServiceClient:GetSelectedSlotInfo() then
+            return
+        end
+
+        local Character = Players.LocalPlayer.Character
+
+        if not Character then
+            return
+        end
+
+        local SlotInfo = self:_ResolveSlotInfo(pressedInstance)
+
+        if not SlotInfo then
+            return
+        end
+
+        local SlotModel = self._GardenServiceClient:GetSlotModel(SlotInfo.GardenId, SlotInfo.SlotId)
+
+        if not SlotModel then
+            return
+        end
+
+        if not RangeUtil:CheckModelRange(SlotModel, Character, GardenConfigClient.InteractionRange) then
+            return
+        end
+
+        self._GardenServiceClient:PressSlotInfo(SlotInfo)
+
         if self._ToolbarServiceClient:GetEquippedItem() then
             return
-        else
-            if self._UIServiceClient:IsCategoryOpen("Main") then
-                return
-            end
-    
-            if self._GardenServiceClient:GetSelectedSlotInfo() then
-                return
-            end
-    
-            local Character = Players.LocalPlayer.Character
-    
-            if not Character then
-                return
-            end
-    
-            local SlotInfo = self:_ResolveSlotInfo(pressedInstance)
-    
-            if not SlotInfo then
-                return
-            end
-    
-            local SlotModel = self._GardenServiceClient:GetSlotModel(SlotInfo.GardenId, SlotInfo.SlotId)
-    
-            if not SlotModel then
-                return
-            end
-    
-            if not RangeUtil:CheckModelRange(SlotModel, Character, GardenConfigClient.InteractionRange) then
-                return
-            end
-    
-            self._GardenServiceClient:SelectSlotInfo(SlotInfo)
         end
-    end))
-end
 
-function GardenWorldClient._SetupTools(self: Module)
-    self._ToolServiceClient.Signals.ToolActivated:Connect(function(itemId: string)  
-        
-    end)
+        self._GardenServiceClient:SelectSlotInfo(SlotInfo)
+    end))
 end
 
 -- [ Public Functions ] --
@@ -187,6 +187,9 @@ function GardenWorldClient.Start(self: Module)
 
         self._Maid:Add(GardenComponent({
             Garden = garden,
+            SelectedSlot = self._GardenServiceClient:ObserveSelectedSlot(),
+            SlotPressed = Rx.fromSignal(self._GardenServiceClient.Signals.SlotPressed :: any) :: any,
+            PlantWatered = Rx.fromSignal(self._GardenServiceClient.Signals.PlantWatered :: any) :: any,
 
             OnGardenCreated = function(gardenModel: GardenTypesClient.GardenModel)
                 self._GardenServiceClient:RegisterGardenModel(garden.Id, gardenModel)

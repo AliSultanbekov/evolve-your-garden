@@ -64,14 +64,6 @@ function InventoryServiceServer._GetInventoryItemCount(self: Module, player: Pla
     return self._UserIdToItemCount[PlayerToUserId(player)]
 end
 
-function InventoryServiceServer._IsInventoryFull(self: Module, player: Player)
-    if self:_GetInventoryItemCount(player) >= INVENTORY_CAPACITY then
-        return true
-    else
-        return false
-    end
-end
-
 function InventoryServiceServer._CanFitItems(self: Module, player: Player, items: { [any]: ItemTypes.Item }): boolean
     local Data = self._DataServiceServer:GetProfile(player).Data
     local PredictedItemCount = self:_GetInventoryItemCount(player)
@@ -93,6 +85,14 @@ function InventoryServiceServer._CanFitItems(self: Module, player: Player, items
 end
 
 -- [ Public Functions ] --
+function InventoryServiceServer.IsInventoryFull(self: Module, player: Player)
+    if self:_GetInventoryItemCount(player) >= INVENTORY_CAPACITY then
+        return true
+    else
+        return false
+    end
+end
+
 function InventoryServiceServer.UseAction(self: Module, player: Player, action: string, itemId: ItemTypes.ItemId, params: { [string]: any }?): GeneralTypesShared.DefaultResult
     local PlayerData = self._DataServiceServer:GetData(player)
     local Item = self:_GetItem(player, itemId)
@@ -119,7 +119,7 @@ function InventoryServiceServer.UseAction(self: Module, player: Player, action: 
                 self._InventoryNetworkServer:ItemsUpdated(player, { Items = items })
             end,
             IsInventoryFull = function(): boolean
-                return self:_IsInventoryFull(player)
+                return self:IsInventoryFull(player)
             end,
             CanFitItems = function(items: { [any]: ItemTypes.Item }): boolean
                 return self:_CanFitItems(player, items)

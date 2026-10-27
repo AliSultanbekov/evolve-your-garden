@@ -12,6 +12,7 @@ local Maid = require("Maid")
 local GardenTypesClient = require("GardenTypesClient")
 local AssetProvider = require("AssetProvider")
 local ReactiveItemTypes = require("ReactiveItemTypes")
+local Observable = require("Observable")
 
 -- [ Components ] --
 local PlantComponent = require(script.Parent._PlantComponent)
@@ -61,6 +62,9 @@ local SlotComponent = function(props: Props)
         PlantMaid:Add(PlantComponent({
             Plant = plant,
             SlotModel = SlotModel,
+            IsSlotSelected = props.IsSlotSelected,
+            SlotPressed = props.SlotPressed,
+            PlantWatered = props.PlantWatered,
         }))
     end))
 
@@ -72,6 +76,9 @@ type Props = {
     Slot: GardenTypesClient.ReactiveSlot,
     SlotCFrame: CFrame,
     GardenModel: GardenTypesClient.GardenModel,
+    IsSlotSelected: Observable.Observable<boolean>,
+    SlotPressed: Observable.Observable<GardenTypesClient.SlotInfo>,
+    PlantWatered: Observable.Observable<nil>,
 
     OnSlotCreated: (slotModel: GardenTypesClient.SlotModel) -> (),
     OnSlotDestroyed: (slotModel: GardenTypesClient.SlotModel) -> (),

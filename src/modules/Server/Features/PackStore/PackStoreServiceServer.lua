@@ -16,7 +16,6 @@ local RxPlayerUtils = require("RxPlayerUtils")
 local Brio = require("Brio")
 local PackStoreConfig = require("PackStoreConfig")
 local PackStoreTypesShared = require("PackStoreTypesShared")
-local GeneralTypesShared = require("GeneralTypesShared")
 local GeneralEnums = require("GeneralEnums")
 local ItemUtil = require("ItemUtil")
 local Table = require("Table")
@@ -97,20 +96,25 @@ function PackStoreService.BuyPack(self: Module, player: Player, packId: PackStor
         return
     end
 
+    CurrencyItem.Amount = PackPrice
+
+    if self._InventoryServiceServer:IsInventoryFull(player) then
+        return
+    end
+
+    if self._InventoryServiceServer:RemoveItems(player, {CurrencyItem}) == GeneralEnums.Result.Fail then
+        return
+    end
+
     local PackItem = ItemUtil:ProcessRawItem({
         Category = "Pack",
         Name = Pack.Name,
         Amount = 1,
     })
-    local Result: GeneralTypesShared.DefaultResult = self._InventoryServiceServer:AddItems(player, { PackItem }, true)
 
-    if Result == GeneralEnums.Result.Fail then
+    if self._InventoryServiceServer:AddItems(player, { PackItem }, true) == GeneralEnums.Result.Fail then
         return
     end
-
-    CurrencyItem.Amount = PackPrice
-
-    self._InventoryServiceServer:RemoveItems(player, {CurrencyItem})
 
     Pack.Left -= 1
 
@@ -205,7 +209,9 @@ function PackStoreService.Start(self: Module)
             return self._JavaBackendServiceServer:GetPackStoreCurrentSale()
         end)
 
+        print(Ok)
         if Ok and Packet then
+            print(Packet)
             self:Refresh(Packet.SaleId, Packet.Packs, Packet.StartTime, Players:GetPlayers())
         else
             warn("[PackStoreService] Failed to fetch current sale from backend:", Packet)

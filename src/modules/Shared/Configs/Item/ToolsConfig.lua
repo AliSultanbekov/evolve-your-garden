@@ -27,7 +27,9 @@ function ToolsConfig._Init(self: Module)
             Icon = "rbxassetid://115170506789276",
             Rarity = "Common",
             Cooldown = 0.3,
-            Tags = {},
+            Tags = {
+                ["Watering Can"] = true,
+            },
             WaterPerUse = 25,
         },
     }

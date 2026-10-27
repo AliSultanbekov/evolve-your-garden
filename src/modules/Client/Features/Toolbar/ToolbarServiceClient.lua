@@ -112,16 +112,17 @@ function ToolbarServiceClient._SetSlotItemId(self: Module, slotId: ToolbarTypesS
 end
 
 -- [ Public Functions ] --
-function ToolbarServiceClient.ObserveEquippedItemHasTag(self: Module, tag: string)
-    self:ObserveEquippedItem():Pipe({
+function ToolbarServiceClient.ObserveEquippedItemHasTag(self: Module, tag: string): Observable.Observable<boolean>
+    return self:ObserveEquippedItem():Pipe({
         Rx.map(function(item: ReactiveItemTypes.ReactiveItem?)
             if not item then
                 return false
             end
 
             return ItemConfig:HasTag(item.Name, tag)
-        end) :: any
-    })
+        end) :: any,
+        Rx.distinct() :: any,
+    }) :: any
 end
 
 function ToolbarServiceClient.ObserveEquippedItem(self: Module): Observable.Observable<ReactiveItemTypes.ReactiveItem>

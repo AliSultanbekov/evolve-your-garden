@@ -40,6 +40,9 @@ function SpringAnimationPresets._Init(self: Module)
 
     -- World highlight fade in/out.
     self.WorldFade = { Speed = 10, Damper = 1.5 }
+
+    -- World models popping in or growing (slight bounce).
+    self.ModelPop = { Speed = 30, Damper = 0.5 }
 end
 
 -- [ Public Functions ] --
@@ -58,6 +61,7 @@ type ModuleData = {
     Slide: SpringAnimationPreset,
     SlideBouncy: SpringAnimationPreset,
     WorldFade: SpringAnimationPreset,
+    ModelPop: SpringAnimationPreset,
 }
 
 export type Module = typeof(SpringAnimationPresets) & ModuleData

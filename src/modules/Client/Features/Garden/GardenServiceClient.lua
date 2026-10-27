@@ -24,6 +24,7 @@ local PlantsConfig = require("PlantsConfig")
 local Rx = require("Rx")
 local GardenUtil = require("GardenUtil")
 local PlantUtilShared = require("PlantUtilShared")
+local Signal = require("Signal")
 
 -- [ Constants ] --
 
@@ -35,6 +36,11 @@ local LocalUserId = PlayerToUserId(LocalPlayer)
 local GardenServiceClient = {}
 
 -- [ Types ] --
+type Signals = {
+    SlotPressed: Signal.Signal<GardenTypesClient.SlotInfo>,
+    PlantWatered: Signal.Signal<GardenTypesClient.SlotInfo>,
+}
+
 type ModuleData = {
     _ServiceBag: ServiceBag.ServiceBag,
     _GardenNetworkClient: typeof(require("GardenNetworkClient")),
@@ -44,6 +50,8 @@ type ModuleData = {
     _SlotModels: { [GardenTypesShared.GardenId]: { [GardenTypesShared.SlotId]: GardenTypesClient.SlotModel} },
     _SelectedSlotInfo: ValueObject.ValueObject<GardenTypesClient.SlotInfo?>,
     _HoveredSlotInfo: ValueObject.ValueObject<GardenTypesClient.SlotInfo?>,
+
+    Signals: Signals,
 }
 
 export type Module = typeof(GardenServiceClient) & ModuleData
@@ -89,7 +97,6 @@ function GardenServiceClient._SetupGardens(self: Module): GardenTypesClient.Reac
 end
 
 function GardenServiceClient._GrowthCycle(self: Module, elapsed: number)
-    print(elapsed)
     for _, garden in pairs(self._Gardens) do
         for _, slot in garden.Slots:GetValueList() do
             local Plant = slot.Plant.Value
@@ -101,8 +108,6 @@ function GardenServiceClient._GrowthCycle(self: Module, elapsed: number)
             Plant.GrowthTime.Value += elapsed
 
             local LastProduction, Cycles = PlantUtilShared:GetLastProductionAndCycles(Plant.Name, Plant.GrowthTime.Value, Plant.LastProduction.Value, Plant.GeneticNumber, Plant.Water.Value)
-
-            print(LastProduction, Cycles)
 
             Plant.LastProduction.Value = LastProduction
             Plant.Water.Value -= Cycles * PlantsConfig.Plants[Plant.Name].Water.UsagePerCycle
@@ -205,6 +210,10 @@ function GardenServiceClient.SelectSlotInfo(self: Module, slotInfo: GardenTypesC
     self._SelectedSlotInfo.Value = slotInfo
 end
 
+function GardenServiceClient.PressSlotInfo(self: Module, slotInfo: GardenTypesClient.SlotInfo)
+    self.Signals.SlotPressed:Fire(slotInfo)
+end
+
 function GardenServiceClient.GetHoveredSlotInfo(self: Module)
     return self._HoveredSlotInfo.Value
 end
@@ -285,6 +294,11 @@ function GardenServiceClient.Init(self: Module, serviceBag: ServiceBag.ServiceBa
     self._SlotModels = {}
     self._SelectedSlotInfo = ValueObject.new()
     self._HoveredSlotInfo = ValueObject.new()
+
+    self.Signals = {
+        SlotPressed = Signal.new(),
+        PlantWatered = Signal.new(),
+    }
 end
 
 function GardenServiceClient.Start(self: Module)
@@ -377,6 +391,11 @@ function GardenServiceClient.Start(self: Module)
         end
 
         ReactiveItemUtil:SyncFromPlain(Plant, packet.Plant)
+
+        self.Signals.PlantWatered:Fire({
+            GardenId = packet.GardenId,
+            SlotId = packet.SlotId,
+        })
     end)
 
     self._GardenNetworkClient.RemoteEvents.HarvestItemsAdded:Connect(function(packet: GardenTypesShared.HarvestItemsAddedRemotePacket)

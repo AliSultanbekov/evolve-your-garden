@@ -21,7 +21,8 @@ export type ItemsRemovedRemotePacket = {
     ItemIds: { ItemTypes.ItemId }
 }
 export type ItemsAddedRemotePacket = {
-    Items: { [ItemTypes.ItemId]: ItemTypes.Item }
+    Items: { [ItemTypes.ItemId]: ItemTypes.Item },
+    RevealAt: number?
 }
 export type ItemsUpdatedRemotePacket = {
     Items: { [ItemTypes.ItemId]: ItemTypes.Item },

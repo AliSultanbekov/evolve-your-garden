@@ -76,12 +76,14 @@ end
 
 function PackStoreServiceClient.Start(self: Module)
     self._PackStoreNetworkClient:GetCurrentSale():Then(function(packet: PackStoreTypesShared.GetCurrentSaleRemotePacket)
+        print(packet)
         self:UpdatePacks(packet.Packs, packet.StartTime)
     end):Catch(function(err)
         warn("[PackStoreServiceClient] GetCurrentSale failed:", err)
     end)
 
     self._PackStoreNetworkClient.RemoteEvents.Refreshed:Connect(function(packet: PackStoreTypesShared.RefreshedRemotePacket)
+        print(packet)
         self:UpdatePacks(packet.Packs, packet.StartTime)
     end)
 
