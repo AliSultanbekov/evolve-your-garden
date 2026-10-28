@@ -30,5 +30,9 @@ export type TabsConfig = {
 export type Actions = {
     [string]: (...any) -> (...any)
 }
+export type PendingItemEntry = {
+    Item: ItemTypes.Item,
+    ReleaseTime: number
+}
 
 return nil

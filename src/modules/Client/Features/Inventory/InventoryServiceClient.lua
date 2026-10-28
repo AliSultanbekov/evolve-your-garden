@@ -19,6 +19,7 @@ local ReactiveItemTypes = require("ReactiveItemTypes")
 local ItemConfig = require("ItemConfig")
 local Signal = require("Signal")
 local ValueObject = require("ValueObject")
+local ItemUtil = require("ItemUtil")
 
 -- [ Constants ] --
 
@@ -40,6 +41,7 @@ type ModuleData = {
     _TabToItems: InventoryTypesClient.TabToItems,
     _CategoryToItems: InventoryTypesClient.CategoryToItems,
     _SelectedItem: ValueObject.ValueObject<ReactiveItemTypes.ReactiveItem?>,
+    _PendingItemIdToPendingItemEntry: { [ItemTypes.ItemId]: { InventoryTypesClient.PendingItemEntry } },
 
     Signals: Signals,
 }
@@ -57,20 +59,31 @@ function InventoryServiceClient._SetupItemIndexes(self: Module)
     end
 end
 
-function InventoryServiceClient._AddItems(self: Module, items: { [any]: ItemTypes.Item })
+function InventoryServiceClient._AddItems(self: Module, items: { [any]: ItemTypes.Item }, revealAt: number?)
     for _, item in items do
-        local ReactiveItem = ReactiveItemUtil:ToReactive(item)
-        local Tab = InventoryConfigClient.CategoryToTab[item.Category]
-
-        if not self._TabToItems[Tab] then
-            continue
+        if not revealAt then
+            local ReactiveItem = ReactiveItemUtil:ToReactive(item)
+            local Tab = InventoryConfigClient.CategoryToTab[item.Category]
+    
+            if not self._TabToItems[Tab] then
+                continue
+            end
+    
+            self._Items:Set(item.Id, ReactiveItem)
+            self._TabToItems[Tab]:Set(item.Id, ReactiveItem)
+            self._CategoryToItems[item.Category]:Set(item.Id, ReactiveItem)
+    
+            self.Signals.ItemAdded:Fire(ReactiveItem)
+        else
+            ItemUtil:OnStorageMode(item, {
+                ["All"] = function(anyItem: ItemTypes.Item)
+                    if self.
+                end,
+                ["Stackable"] = function(stackableItem: ItemTypes.Item)
+                    
+                end,
+            })
         end
-
-        self._Items:Set(item.Id, ReactiveItem)
-        self._TabToItems[Tab]:Set(item.Id, ReactiveItem)
-        self._CategoryToItems[item.Category]:Set(item.Id, ReactiveItem)
-
-        self.Signals.ItemAdded:Fire(ReactiveItem)
     end
 end
 
@@ -182,12 +195,14 @@ function InventoryServiceClient.Start(self: Module)
     end)    
 
     self._InventoryNetworkClient.RemoteEvents.ItemsAdded:Connect(function(packet: InventoryTypesShared.ItemsAddedRemotePacket)
-        self:_AddItems(packet.Items)
+        self:_AddItems(packet.Items, packet.RevealAt)
     end)
 
     self._InventoryNetworkClient.RemoteEvents.ItemsRemoved:Connect(function(packet: InventoryTypesShared.ItemsRemovedRemotePacket)
         self:_RemoveItems(packet.ItemIds)
     end)
+
+
 end
 
 return InventoryServiceClient :: Module
