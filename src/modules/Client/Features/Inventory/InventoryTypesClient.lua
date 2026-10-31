@@ -10,6 +10,7 @@ local require = require(script.Parent.loader).load(script) :: typeof(require)
 -- [ Imports ] --
 local ItemTypes = require("ItemTypes")
 local ReactiveItemTypes = require("ReactiveItemTypes")
+local ValueObject = require("ValueObject")
 
 -- [ Constants ] --
 
@@ -30,9 +31,22 @@ export type TabsConfig = {
 export type Actions = {
     [string]: (...any) -> (...any)
 }
+export type CollectedItem = {
+    Name: string,
+    Category: ItemTypes.Category,
+    Amount: number,
+}
+export type CollectedEntry = {
+    Name: string,
+    Category: ItemTypes.Category,
+    Amount: ValueObject.ValueObject<number>,
+    IsOpen: ValueObject.ValueObject<boolean>,
+    LayoutOrder: number,
+}
 export type PendingItemEntry = {
     Item: ItemTypes.Item,
-    ReleaseTime: number
+    RevealAt: number,
+    Thread: thread,
 }
 
 return nil

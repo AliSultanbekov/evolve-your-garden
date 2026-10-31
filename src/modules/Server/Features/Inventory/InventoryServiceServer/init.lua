@@ -173,7 +173,8 @@ function InventoryServiceServer.AddRawItems(
     self: Module, 
     player: Player, 
     rawItems: { [any]: ItemTypes.RawItem },
-    discover: boolean?
+    discover: boolean?,
+    revealAt: number?
 ): GeneralTypesShared.DefaultResult
     local Items: { ItemTypes.Item } = {}
 
@@ -181,14 +182,15 @@ function InventoryServiceServer.AddRawItems(
         table.insert(Items, ItemUtil:ProcessRawItem(rawItem))
     end
 
-    return self:AddItems(player, Items, discover)
+    return self:AddItems(player, Items, discover, revealAt)
 end
 
 function InventoryServiceServer.AddItems(
     self: Module, 
     player: Player, 
     items: { [any]: ItemTypes.Item },
-    discover: boolean?
+    discover: boolean?,
+    revealAt: number?
 ): GeneralTypesShared.DefaultResult
     local Data = self._DataServiceServer:GetProfile(player).Data
     local UserId = PlayerToUserId(player)
@@ -264,11 +266,11 @@ function InventoryServiceServer.AddItems(
     end
 
     if next(AddedItems) then
-        self._InventoryNetworkServer:ItemsAdded(player, { Items = AddedItems })
+        self._InventoryNetworkServer:ItemsAdded(player, { Items = AddedItems, RevealAt = revealAt })
     end
 
     if next(UpdatedItems) then
-        self._InventoryNetworkServer:ItemsUpdated(player, { Items = UpdatedItems })
+        self._InventoryNetworkServer:ItemsUpdated(player, { Items = UpdatedItems, RevealAt = revealAt })
     end
 
     return GeneralEnums.Result.Success

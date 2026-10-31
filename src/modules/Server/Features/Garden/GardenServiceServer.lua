@@ -30,6 +30,7 @@ local GardenUtil = require("GardenUtil")
 local PlantsConfig = require("PlantsConfig")
 
 -- [ Constants ] --
+local HARVEST_REVEAL_TIME = 1
 local GARDEN_TEMPLATE = {
     Slots = {},
 }
@@ -217,7 +218,8 @@ function GardenServiceServer.CollectHarvest(self: Module, player: Player, garden
 
     local Harvest = Slot.Harvest
 
-    local Result: GeneralTypesShared.DefaultResult = self._InventoryServiceServer:AddItems(player, Harvest)
+    local RevealAt = workspace:GetServerTimeNow() + HARVEST_REVEAL_TIME
+    local Result: GeneralTypesShared.DefaultResult = self._InventoryServiceServer:AddItems(player, Harvest, nil, RevealAt)
 
     if Result == GeneralEnums.Result.Fail then
         return GeneralEnums.Result.Fail

@@ -36,7 +36,7 @@ function ToolActions.Use(self: Module, context: InventoryTypesServer.ItemActionC
     local DurabilityCost = ToolConfig.DurabilityCost or ToolsConfig.DefaultToolDurabilityCost
 
     if not Durability then
-        return GeneralEnums.Result.Fail
+        return GeneralEnums.Result.Success
     end
 
     Tool.Durability = math.max(0, Durability - DurabilityCost)
